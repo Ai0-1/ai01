@@ -3,190 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 原点 | 0-1 硬核社区</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>AI 原点 | 深度学习社区</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ==================== 核心风格定义 ==================== */
-        /* 经典沙漠黄底色，高对比度文字 */
-        body { background-color: #f7f5f0; color: #333; font-family: 'Verdana', 'Arial', sans-serif; font-size: 12px; line-height: 1.4; }
-        
-        /* 链接样式：老派蓝 */
-        a { color: #004499; text-decoration: none; cursor: pointer; }
-        a:hover { text-decoration: underline; background-color: #e6e6e6; }
-        .red-link { color: #cc0000; font-weight: bold; }
-        .grey-info { color: #888; font-size: 10px; }
-
-        /* 容器：严丝合缝的边框 */
-        .container-box { max-width: 800px; margin: 0 auto; background: #fff; border: 1px solid #999; margin-bottom: -1px; }
-        
-        /* 顶部导航条 */
-        .topbar { background: #444; color: #ddd; padding: 5px 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-        .topbar a { color: #fff; }
-        
-        /* 版块标题栏：经典渐变 */
-        .cat-header { 
-            background: linear-gradient(to bottom, #fcfaf5, #e8e4d0); 
-            padding: 6px 10px; border-bottom: 1px solid #ccc; border-top: 1px solid #ccc;
-            font-weight: bold; color: #8b4513; display: flex; justify-content: space-between;
+        /* ================= 重塑硬核老炮风格 ================= */
+        /* 1. 全局样式：去除现代感的柔和，回归硬朗 */
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #f5f1e8; /* 经典的论坛沙漠黄底色 */
+            color: #333; 
+            font-family: "Verdana", "SimSun", sans-serif; /* 尽量用宋体或无衬线，增加严肃感 */
+            font-size: 12px; 
+            margin: 0; padding: 0;
+            line-height: 1.5;
         }
 
-        /* 密集列表行 */
-        .forum-row { display: flex; padding: 8px; border-bottom: 1px dashed #ddd; align-items: center; }
-        .forum-row:last-child { border-bottom: none; }
+        /* 链接颜色：经典论坛蓝 */
+        a { text-decoration: none; color: #333; cursor: pointer; }
+        a:hover { text-decoration: underline; background-color: #ddd; }
+        .link-blue { color: #004499; font-weight: bold; }
+        .link-red { color: #cc0000; }
+
+        /* 2. 布局容器：模仿 1024px 时代的定宽布局，居中 */
+        .main-container {
+            max-width: 100%; /* 手机端铺满 */
+            margin: 0 auto;
+            background: #fff;
+            border-bottom: 2px solid #bba378; /* 底部加重 */
+        }
+        
+        /* PC端稍微限制宽度，模仿老论坛 */
+        @media (min-width: 600px) {
+            .main-container { max-width: 900px; border: 1px solid #c8c0b0; border-top: none; }
+        }
+
+        /* 3. 顶部导航条：黑底白字，极高密度 */
+        .top-nav { background: #4b4b4b; color: #ccc; padding: 0 10px; height: 28px; line-height: 28px; display: flex; justify-content: space-between; font-size: 11px; }
+        .top-nav a { color: #fff; margin-left: 10px; }
+
+        /* 4. 头部区域：Logo + 搜索 + 广告位布局 */
+        .header-section { padding: 12px 10px; background: #fffdf9; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dcdcdc; }
+        .logo-text { font-size: 22px; font-weight: 900; color: #8b5a2b; font-family: "Georgia", serif; letter-spacing: -1px; }
+        .slogan { font-size: 10px; color: #999; margin-top: -2px; }
+
+        /* 5. 统计条：极细边框，数据密集 */
+        .stats-bar { 
+            background: #fffaf0; border: 1px solid #e6dcc6; margin: 5px; padding: 6px; 
+            font-size: 11px; color: #666; display: flex; flex-wrap: wrap; gap: 10px; 
+        }
+        .stats-item { border-right: 1px solid #ddd; padding-right: 10px; }
+        .stats-item:last-child { border: none; }
+
+        /* 6. 版块容器：经典的“窗体”设计 */
+        .forum-box { margin: 8px 5px; border: 1px solid #cdcdcd; background: #fff; }
+        
+        /* 版块标题：渐变色，模拟立体感 */
+        .box-header { 
+            background: linear-gradient(to bottom, #fcfaf5 0%, #ebe5d2 100%); 
+            padding: 6px 10px; 
+            border-bottom: 1px solid #c8c0b0;
+            color: #8b4513; font-weight: bold; font-size: 13px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* 7. 列表项：高密度表格布局 */
+        .forum-row { 
+            display: flex; padding: 8px; border-bottom: 1px dotted #ccc; 
+            align-items: flex-start;
+        }
+        .forum-row:last-child { border: none; }
         
         /* 图标格 */
-        .icon-box { 
-            width: 36px; height: 36px; background: #f0f0f0; border: 1px solid #ccc; 
+        .f-icon { 
+            width: 32px; height: 32px; background: #f4f4f4; border: 1px solid #bbb; 
             display: flex; align-items: center; justify-content: center; 
-            font-size: 10px; color: #666; font-weight: bold; margin-right: 10px;
+            font-size: 9px; color: #666; margin-right: 8px; flex-shrink: 0;
         }
-        
+
         /* 内容格 */
-        .content-box { flex: 1; }
-        .title-text { font-size: 13px; font-weight: bold; }
-        .sub-links { font-size: 10px; margin-top: 2px; color: #666; }
-        .sub-links span { margin: 0 3px; color: #ccc; }
+        .f-content { flex: 1; }
+        .f-title { font-size: 13px; font-weight: bold; color: #004499; display: block; margin-bottom: 3px; }
+        .f-sub { font-size: 11px; color: #888; }
+        .f-sub a { margin-right: 6px; color: #666; border-bottom: 1px solid #eee; }
 
         /* 数据格 */
-        .stats-box { width: 80px; text-align: right; font-size: 10px; color: #999; border-left: 1px solid #eee; padding-left: 8px; }
-        
-        /* 状态灯 */
-        .status-dot { display: inline-block; width: 8px; height: 8px; background: #ccc; border-radius: 50%; margin-right: 4px; }
-        .dot-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
-        .dot-red { background: #ef4444; }
+        .f-stat { width: 60px; text-align: right; font-size: 10px; color: #999; margin-left: 5px; }
 
-        /* 调试控制台 */
-        #debug-console { 
-            display: none; padding: 10px; background: #000; color: #0f0; 
-            font-family: monospace; font-size: 10px; border-top: 2px solid #cc0000;
-            max-height: 100px; overflow-y: scroll;
+        /* 8. 诊断终端（黑匣子） */
+        #console-log {
+            background: #000; color: #00ff00; font-family: monospace; 
+            font-size: 10px; padding: 10px; margin: 10px 5px; 
+            border: 2px solid #cc0000; display: block;
         }
     </style>
 </head>
 <body>
 
-    <div class="topbar">
+    <div class="top-nav">
         <div>
-            <span class="status-dot" id="db-light"></span>
-            <span id="db-status">连接中...</span>
+            <span id="sys-status" style="color:#aaa;">系统初始化...</span>
         </div>
         <div>
-            <a href="javascript:alert('开发中：请点击下方的注册按钮');">手机版</a> | 
-            <a href="#" onclick="showRegister()">注册</a> | 
-            <a href="#" onclick="showLogin()">登录</a>
+            <a href="#">收藏本站</a>
+            <a href="#" onclick="alert('请等待下方数据库连接成功')">注册</a>
+            <a href="#" onclick="alert('请等待下方数据库连接成功')">登录</a>
         </div>
     </div>
 
-    <div class="container-box" style="padding: 15px; background: #fffdf5;">
-        <div style="font-size: 20px; font-weight: 900; color: #bba378; letter-spacing: -1px; font-family: serif;">AI 原点</div>
-        <div style="font-size: 11px; color: #666;">科技向善 · 0 到 1 · 价值社区</div>
-        
-        <div style="margin-top: 10px; padding: 5px; background: #fff; border: 1px solid #e0d8c0; display: flex; font-size: 11px;">
-            <div style="flex:1;">Token池: <b class="red-link" id="token-count">--</b></div>
-            <div style="flex:1; border-left: 1px solid #ddd; padding-left: 10px;">今日: <b>1,024</b></div>
-            <div style="flex:1; border-left: 1px solid #ddd; padding-left: 10px;">会员: <b>421</b></div>
+    <div class="main-container">
+        <div class="header-section">
+            <div>
+                <div class="logo-text">AI 原点</div>
+                <div class="slogan">科技向善 · 0 到 1 · 价值社区</div>
+            </div>
+            <div style="border:1px solid #bba378; padding:2px; background:#fff;">
+                <span style="font-size:11px; color:#ccc; padding:0 5px;">搜索帖子...</span>
+                <button style="background:#8b5a2b; color:#fff; border:none; padding:2px 8px; font-size:11px;">搜索</button>
+            </div>
         </div>
-    </div>
 
-    <div class="container-box" style="margin-top: 10px;">
-        <div class="cat-header">
-            <span>🌍 国际主流模型 (Models)</span>
-            <span style="font-weight: normal; font-size: 10px;">分区: 老王</span>
+        <div class="stats-bar">
+            <div class="stats-item">Token池: <b class="link-red" id="token-display">--</b></div>
+            <div class="stats-item">今日: <b>1,024</b></div>
+            <div class="stats-item">昨日: <b>892</b></div>
+            <div class="stats-item">会员: <b>45,210</b></div>
+            <div class="stats-item" style="border:none;">新帖: <a href="#" class="link-blue">DeepSeek R1 本地部署指南</a></div>
         </div>
-        
-        <div class="forum-row">
-            <div class="icon-box" style="background:#e6f4ea; color:#10a37f;">GPT</div>
-            <div class="content-box">
-                <a href="#" class="title-text">ChatGPT 综合讨论区</a> <span class="red-link" style="font-size:10px;">(Hot)</span>
-                <div class="sub-links">
-                    <a href="#">封号解救</a> <span>|</span> <a href="#">Plus拼车</a> <span>|</span> <a href="#">API对接</a>
+
+        <div class="forum-box">
+            <div class="box-header">
+                <span>🌍 国际主流模型 (Models)</span>
+                <span style="font-weight:normal; font-size:10px; color:#666;">分区版主: Admin</span>
+            </div>
+            
+            <div class="forum-row">
+                <div class="f-icon" style="background:#e6f4ea; color:#10a37f;">GPT</div>
+                <div class="f-content">
+                    <a href="#" class="f-title">ChatGPT 综合交流区</a>
+                    <div class="f-sub">
+                        <a href="#">账号注册</a> <a href="#">Plus拼车</a> <a href="#">封号申诉</a> <a href="#">API对接</a>
+                    </div>
+                </div>
+                <div class="f-stat"><span class="link-red">102</span><br>今日</div>
+            </div>
+
+            <div class="forum-row">
+                <div class="f-icon" style="background:#fff0e6; color:#d97757;">CL</div>
+                <div class="f-content">
+                    <a href="#" class="f-title">Claude 深度研讨</a>
+                    <div class="f-sub">
+                        <a href="#">长文本分析</a> <a href="#">代码生成</a> <a href="#">酒馆破限</a>
+                    </div>
+                </div>
+                <div class="f-stat"><span>56</span><br>今日</div>
+            </div>
+        </div>
+
+        <div class="forum-box">
+            <div class="box-header">
+                <span>🛠️ 国产与开源 (Open Source)</span>
+            </div>
+            
+            <div class="forum-row">
+                <div class="f-icon" style="background:#eef2ff; color:#4f46e5;">DS</div>
+                <div class="f-content">
+                    <a href="#" class="f-title link-blue">DeepSeek 深度求索</a>
+                    <div class="f-sub">
+                        <span class="link-red">[火爆]</span> 本地部署教程，打破算力霸权。
+                        <br><a href="#">显卡推荐</a> <a href="#">微调训练</a> <a href="#">Ollama</a>
+                    </div>
+                </div>
+                <div class="f-stat"><span class="link-red font-bold">589</span><br>今日</div>
+            </div>
+        </div>
+
+        <div class="forum-box" style="border-color:#e6a23c;">
+            <div class="box-header" style="background:#fff7e6; color:#d48806;">
+                <span>💰 变现与集市 (Market)</span>
+            </div>
+            <div class="forum-row">
+                <div class="f-icon" style="background:#333; color:#fff;">$</div>
+                <div class="f-content">
+                    <a href="#" class="f-title">任务悬赏 & 兼职大厅</a>
+                    <div class="f-sub">
+                        <span style="background:#cc0000; color:#fff; padding:0 2px;">置顶</span> 
+                        <a href="#" class="link-blue">求小红书爆款文案 Prompt (200 Token)</a>
+                    </div>
                 </div>
             </div>
-            <div class="stats-box">
-                <b class="red-link">58</b><br>新帖
-            </div>
         </div>
 
-        <div class="forum-row">
-            <div class="icon-box" style="background:#fff0e6; color:#d97757;">CL</div>
-            <div class="content-box">
-                <a href="#" class="title-text">Claude 深度研讨</a>
-                <div class="sub-links">
-                    <a href="#">长文档分析</a> <span>|</span> <a href="#">代码生成</a>
-                </div>
-            </div>
-            <div class="stats-box">21<br>新帖</div>
-        </div>
     </div>
 
-    <div class="container-box">
-        <div class="cat-header">
-            <span>🛠️ 国产与开源 (Open Source)</span>
-        </div>
-        <div class="forum-row">
-            <div class="icon-box" style="background:#eef2ff; color:#4f46e5;">DS</div>
-            <div class="content-box">
-                <a href="#" class="title-text link-blue">DeepSeek 深度求索</a>
-                <div class="sub-links">
-                    <a href="#">本地部署</a> <span>|</span> <a href="#">微调训练</a> <span>|</span> <a href="#">提示词</a>
-                </div>
-            </div>
-            <div class="stats-box">
-                <b class="red-link">102</b><br>爆贴
-            </div>
-        </div>
+    <div style="text-align:center; padding:15px; color:#999; font-size:10px;">
+        Powered by Ai01-Study © 2026<br>
+        Processed in 0.013s, Gzip On.
     </div>
 
-    <div class="container-box">
-        <div class="cat-header">
-            <span style="color:#cc0000;">💰 变现与悬赏 (Market)</span>
-        </div>
-        <div class="forum-row">
-            <div class="icon-box" style="background:#fffbe6; color:#d48806;">$</div>
-            <div class="content-box">
-                <a href="#" class="title-text">任务悬赏大厅</a>
-                <div style="font-size:11px; margin-top:2px;">
-                    <span style="background:#cc0000; color:white; padding:0 2px; font-size:9px;">置顶</span>
-                    求小红书爆款文案Prompt (200 Token)
-                </div>
-            </div>
-        </div>
+    <div id="console-log">
+        [系统启动] 正在加载 Supabase 组件...<br>
     </div>
-
-    <div style="text-align:center; padding: 20px; font-size:10px; color:#999;">
-        Powered by Ai01-Study &copy; 2026
-    </div>
-
-    <div id="debug-console">系统日志启动...<br></div>
 
     <script>
-        // 配置 Supabase
-        const supabaseUrl = 'https://dodvxzmzggxlztuhivvp.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
-        
-        // 日志工具
+        // 1. 日志输出函数
         function log(msg) {
-            const consoleDiv = document.getElementById('debug-console');
-            consoleDiv.style.display = 'block'; // 有日志就显示出来
-            consoleDiv.innerHTML += `> ${msg}<br>`;
+            const box = document.getElementById('console-log');
+            const time = new Date().toLocaleTimeString();
+            box.innerHTML += `[${time}] ${msg}<br>`;
         }
 
-        // 简单的弹窗反馈
-        function showRegister() { alert('注册系统正在初始化... (数据库连接中)'); }
-        function showLogin() { alert('请先等待右上角绿灯亮起'); }
+        // 2. 数据库配置
+        const supabaseUrl = 'https://dodvxzmzggxlztuhivvp.supabase.co';
+        // 注意：这里用的是你之前提供的 Key，如果之前复制错了，这里就会报错
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
 
-        async function initApp() {
+        // 3. 初始化逻辑
+        async function init() {
             try {
-                // 检查库是否加载
                 if (!window.supabase) {
-                    throw new Error("Supabase SDK 未加载，请检查网络");
+                    throw new Error("Supabase SDK 未能加载 (网络问题?)");
                 }
-
+                
+                log("SDK 加载成功，正在握手...");
                 const client = window.supabase.createClient(supabaseUrl, supabaseKey);
-                log("正在尝试握手...");
 
-                // 读取数据
+                // 尝试读取数据
                 let { data, error } = await client
                     .from('system_stats')
                     .select('stat_value')
@@ -194,33 +235,29 @@
                     .single();
 
                 if (error) {
-                    throw error;
+                    throw new Error("数据库拒绝连接: " + error.message);
                 }
 
-                // 成功逻辑
-                document.getElementById('db-light').className = 'status-dot dot-green';
-                document.getElementById('db-status').innerText = '已连接金库';
-                document.getElementById('db-status').style.color = '#22c55e';
+                // 成功
+                log(">>> 连接成功！读取到 Token: " + data.stat_value);
+                document.getElementById('token-display').innerText = data.stat_value.toLocaleString();
+                document.getElementById('sys-status').innerText = "🟢 数据金库已连接";
+                document.getElementById('sys-status').style.color = "#22c55e";
                 
-                if (data) {
-                    document.getElementById('token-count').innerText = data.stat_value.toLocaleString();
-                    log("数据同步成功: " + data.stat_value);
-                    // 隐藏日志窗口，保持界面干净
-                    document.getElementById('debug-console').style.display = 'none'; 
-                }
+                // 3秒后隐藏日志框，保持美观
+                setTimeout(() => {
+                    document.getElementById('console-log').style.display = 'none';
+                }, 3000);
 
             } catch (err) {
-                // 失败逻辑
-                document.getElementById('db-light').className = 'status-dot dot-red';
-                document.getElementById('db-status').innerText = '连接中断';
-                document.getElementById('db-status').style.color = '#ef4444';
-                log("错误详情: " + err.message);
-                log("请截图发给技术合伙人");
+                log("!!! 致命错误: " + err.message);
+                document.getElementById('sys-status').innerText = "🔴 连接失败";
+                document.getElementById('sys-status').style.color = "red";
             }
         }
 
-        // 延迟 500ms 执行，确保库加载完毕
-        setTimeout(initApp, 500);
+        // 延迟执行，防止 SDK 还没下载完
+        setTimeout(init, 1000);
     </script>
 </body>
 </html>
