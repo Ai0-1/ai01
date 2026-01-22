@@ -3,42 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 原点 | 0-1 学习交流</title>
+    <title>AI 原点 | 硬核进化</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* 沙漠黄硬核配色 - 越野e族风格 */
+        body { background-color: #f7f5f0; color: #444; font-family: 'Verdana', sans-serif; font-size: 12px; line-height: 1.5; }
+        a { text-decoration: none; color: #333; }
+        .link-blue { color: #004499; }
+        .link-red { color: #cc0000; }
+        .forum-container { max-width: 1000px; margin: 0 auto; background: #fff; border: 1px solid #cdcdcd; }
+        .top-bar { background: #3c3c3c; color: #ddd; padding: 0 10px; height: 30px; line-height: 30px; display: flex; justify-content: space-between; font-size: 11px; }
+        .header-area { background: #fdfcf8; padding: 15px 10px; border-bottom: 2px solid #bba378; display: flex; justify-content: space-between; align-items: center; }
+        .logo-box { font-size: 24px; font-weight: 900; color: #8b5a2b; font-family: 'Georgia', serif; }
+        .stats-bar { background: #fffaf0; border-bottom: 1px solid #e6dcc6; padding: 8px 10px; font-size: 11px; color: #666; display: flex; gap: 15px; }
+        .category-box { margin-top: 10px; border-top: 2px solid #bba378; border-bottom: 1px solid #cdcdcd; background: #fff; }
+        .cat-header { background: linear-gradient(to bottom, #fcfaf5, #f0ebd8); padding: 8px 12px; font-weight: bold; color: #8b4513; border-bottom: 1px solid #e6dcc6; }
+        .forum-row { display: flex; padding: 10px; border-bottom: 1px solid #f2f2f2; }
+        .icon-img { width: 40px; height: 40px; background: #e0e0e0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #999; font-size: 10px; }
+        .forum-title { font-size: 14px; font-weight: bold; color: #004499; display: block; }
+        /* 数据库状态指示灯 */
+        .db-status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; }
+        .status-ok { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+        .status-err { background: #ef4444; }
+    </style>
 </head>
-<body class="bg-white text-slate-900">
-    <nav class="border-b p-4 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur">
-        <div class="text-xl font-black text-blue-600">AI 原点</div>
-        <div class="space-x-2">
-            <a href="#" class="text-xs border px-3 py-2 rounded-full">领Token</a>
-            <a href="#" class="text-xs bg-blue-600 text-white px-3 py-2 rounded-full font-bold">加入社群</a>
+<body>
+
+    <div class="top-bar">
+        <div>设为首页 | 收藏本站</div>
+        <div id="user-area">
+            <span style="color:#bba378;">Ai01-Study</span> 
+            [ <a href="#">登录</a> ] [ <a href="#">注册</a> ]
         </div>
-    </nav>
-    <main class="p-6 max-w-xl mx-auto space-y-8">
-        <section>
-            <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">探索分类</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="p-4 bg-slate-50 rounded-2xl border text-center font-bold text-sm text-slate-700">🎓 学生专区</div>
-                <div class="p-4 bg-slate-50 rounded-2xl border text-center font-bold text-sm text-slate-700">💼 职场提效</div>
+    </div>
+
+    <div class="forum-container" style="border:none; border-bottom: 1px solid #cdcdcd;">
+        <div class="header-area">
+            <div>
+                <div class="logo-box">AI 原点 <span style="font-size:12px; color:#666; font-weight:normal;">/ 越野级社区</span></div>
+                <div style="font-size:11px; color:#888;">科技向善，从 0 到 1</div>
             </div>
-        </section>
-        <section class="space-y-4">
-            <h2 class="text-lg font-bold italic">最新悬赏任务</h2>
-            <div class="p-4 border border-blue-100 rounded-2xl space-y-2 bg-blue-50/30">
-                <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">悬赏 200 TOKEN</span>
-                <h3 class="font-bold text-sm">求 AI 批量生成 100 张产品电商图教程</h3>
+            <div class="text-right">
+                <div style="font-size:10px; color:#999; margin-bottom:4px;">系统状态</div>
+                <div style="font-size:11px; font-weight:bold; color:#555; display:flex; align-items:center;">
+                    <span id="db-light" class="db-status"></span>
+                    <span id="db-text">正在连接数据库...</span>
+                </div>
             </div>
-            <div class="p-4 border rounded-2xl space-y-2">
-                <span class="text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded font-bold">必修课</span>
-                <h3 class="font-bold text-sm">【0基础】普通人如何用上 GPT-4o</h3>
+        </div>
+        
+        <div class="stats-bar">
+            <span>全网已产出Token: <b class="link-red" id="token-count">--</b></span>
+            <span style="border-left:1px solid #ddd; padding-left:10px;">会员: <b>45,210</b></span>
+            <span style="border-left:1px solid #ddd; padding-left:10px;">新帖: <a href="#" class="link-blue">DeepSeek 本地部署教程...</a></span>
+        </div>
+    </div>
+
+    <div class="forum-container" style="margin-top:10px; padding: 5px; background: #f7f5f0; border:none;">
+        
+        <div class="category-box">
+            <div class="cat-header"><span>🚘 国际主流模型 (Models)</span></div>
+            <div style="display:grid; grid-template-columns: 1fr;">
+                <div class="forum-row">
+                    <div style="width:50px; margin-right:10px;"><div class="icon-img" style="background:#e6f4ea; color:#10a37f;">GPT</div></div>
+                    <div style="flex:1;">
+                        <a href="#" class="forum-title">ChatGPT 综合交流区</a>
+                        <div style="font-size:11px; color:#444;">全球最强 LLM 实战探讨，Plus 拼车。</div>
+                    </div>
+                    <div style="width:70px; text-align:right; font-size:10px; color:#999;">
+                        <span class="link-red">(102)</span><br>4.5万帖
+                    </div>
+                </div>
             </div>
-        </section>
-        <section class="p-6 bg-blue-600 rounded-3xl text-white shadow-xl shadow-blue-100">
-            <h3 class="font-bold mb-1 italic">原点实验室</h3>
-            <p class="text-xs opacity-80 mb-4">筛选最适合新手的 AI 工具推荐</p>
-            <div class="bg-white text-blue-600 p-3 rounded-xl text-center font-bold text-xs shadow-sm">查看工具清单</div>
-        </section>
-    </main>
-    <footer class="p-10 text-center text-[10px] text-slate-400">AI Origin | 科技向善，从 0 到 1</footer>
+        </div>
+
+        <div class="category-box">
+            <div class="cat-header"><span>🛠️ 国产与开源 (Open Source)</span></div>
+            <div style="display:grid; grid-template-columns: 1fr;">
+                <div class="forum-row">
+                    <div style="width:50px; margin-right:10px;"><div class="icon-img" style="background:#eef2ff; color:#4f46e5;">DS</div></div>
+                    <div style="flex:1;">
+                        <a href="#" class="forum-title link-red">DeepSeek 深度求索</a>
+                        <div style="font-size:11px; color:#444;">国产最强开源模型，本地部署教程。</div>
+                    </div>
+                    <div style="width:70px; text-align:right; font-size:10px; color:#999;">
+                        <span class="link-red font-bold">(589)</span><br>9.8万帖
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="forum-container" style="border:none; margin-top:20px; text-align:center; padding:20px; background:none; font-size:10px; color:#999;">
+        Powered by <b>Ai01-Study</b> (Supabase Linked)
+    </div>
+
+    <script>
+        // 1. 配置连接信息 (这是你刚才发我的金库钥匙)
+        const supabaseUrl = 'https://dodvxzmzggxlztuhivvp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
+        
+        // 2. 初始化客户端
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 3. 执行连接测试
+        async function initSystem() {
+            const dbLight = document.getElementById('db-light');
+            const dbText = document.getElementById('db-text');
+            const tokenDisplay = document.getElementById('token-count');
+
+            try {
+                // 查询数据库里的 token 总数
+                let { data, error } = await supabase
+                    .from('system_stats')
+                    .select('stat_value')
+                    .eq('stat_key', 'total_tokens_mined')
+                    .single();
+
+                if (error) throw error;
+
+                // 连接成功：变绿灯，显示数值
+                dbLight.classList.add('status-ok');
+                dbText.innerText = "数据金库已连接";
+                dbText.style.color = "#22c55e";
+                
+                // 动态显示刚才在数据库填的 21000
+                if(data) {
+                    tokenDisplay.innerText = data.stat_value.toLocaleString();
+                }
+
+            } catch (err) {
+                // 连接失败：变红灯
+                console.error("连接失败:", err);
+                dbLight.classList.add('status-err');
+                dbText.innerText = "数据库离线";
+                dbText.style.color = "#ef4444";
+            }
+        }
+
+        // 页面加载后立即执行
+        initSystem();
+    </script>
 </body>
 </html>
