@@ -2,66 +2,110 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 原点 | 深度学习社区</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI 原点 | 越野级硬核社区</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= 核心风格 ================= */
-        * { box-sizing: border-box; }
-        body { background-color: #f5f1e8; color: #333; font-family: "Verdana", sans-serif; font-size: 12px; margin: 0; padding: 0; line-height: 1.5; }
-        a { text-decoration: none; color: #333; cursor: pointer; }
-        a:hover { text-decoration: underline; background-color: #ddd; }
-        .link-blue { color: #004499; font-weight: bold; }
-        .link-red { color: #cc0000; }
-        
-        /* 布局 */
-        .main-container { max-width: 100%; margin: 0 auto; background: #fff; border-bottom: 2px solid #bba378; }
-        @media (min-width: 600px) { .main-container { max-width: 900px; border: 1px solid #c8c0b0; border-top: none; } }
-        
-        /* 导航 */
-        .top-nav { background: #4b4b4b; color: #ccc; padding: 0 10px; height: 28px; line-height: 28px; display: flex; justify-content: space-between; font-size: 11px; }
-        .top-nav a { color: #fff; margin-left: 10px; }
-        
-        /* 头部 */
-        .header-section { padding: 12px 10px; background: #fffdf9; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dcdcdc; }
-        .logo-text { font-size: 22px; font-weight: 900; color: #8b5a2b; font-family: "Georgia", serif; letter-spacing: -1px; }
-        
-        /* 统计条 */
-        .stats-bar { background: #fffaf0; border: 1px solid #e6dcc6; margin: 5px; padding: 6px; font-size: 11px; color: #666; display: flex; flex-wrap: wrap; gap: 10px; }
-        
-        /* 版块 */
-        .forum-box { margin: 8px 5px; border: 1px solid #cdcdcd; background: #fff; }
-        .box-header { background: linear-gradient(to bottom, #fcfaf5, #ebe5d2); padding: 6px 10px; border-bottom: 1px solid #c8c0b0; color: #8b4513; font-weight: bold; font-size: 13px; }
-        .forum-row { display: flex; padding: 8px; border-bottom: 1px dotted #ccc; align-items: center; }
-        .f-icon { width: 32px; height: 32px; background: #f4f4f4; border: 1px solid #bbb; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #666; margin-right: 8px; }
-        .f-content { flex: 1; }
-        .f-title { font-size: 13px; font-weight: bold; color: #004499; display: block; }
-        .f-stat { width: 60px; text-align: right; font-size: 10px; color: #999; }
+        /* ================= 核心：复刻 2005 年代硬核论坛风 ================= */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: #f7f5f0; /* 经典沙漠黄 */
+            color: #333; 
+            font-family: "Verdana", "SimSun", sans-serif; 
+            font-size: 11px; /* 强制小字体，增加密度 */
+            margin: 0; padding: 0; line-height: 1.4;
+        }
 
-        /* ================= 弹窗组件 ================= */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; justify-content: center; align-items: center; }
-        .modal-box { background: #f5f1e8; border: 2px solid #8b5a2b; width: 300px; padding: 2px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .modal-header { background: #8b5a2b; color: white; padding: 5px 10px; font-weight: bold; display: flex; justify-content: space-between; }
-        .modal-body { padding: 20px; text-align: center; }
-        .input-field { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; }
-        .btn-submit { background: #004499; color: white; border: 1px solid #002266; padding: 6px 20px; cursor: pointer; font-weight: bold; width: 100%; }
-        .toggle-link { display: block; margin-top: 10px; color: #004499; text-decoration: underline; font-size: 11px; cursor: pointer; }
+        /* 链接：老派蓝，点击变红 */
+        a { text-decoration: none; color: #333; cursor: pointer; }
+        a:active { color: red; }
+        .link-blue { color: #004499; }
+        .link-red { color: #cc0000; }
+        .link-dim { color: #888; border-bottom: 1px dotted #ccc; margin-right: 4px; }
+        
+        /* 布局容器：撑满手机屏幕，不做留白 */
+        .main-container { max-width: 100%; margin: 0 auto; background: #fff; border-bottom: 2px solid #bba378; }
+        
+        /* 顶部导航：黑条高密 */
+        .top-nav { background: #333; color: #ccc; padding: 0 8px; height: 32px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+        .auth-btn { 
+            background: #cc0000; color: #fff !important; 
+            padding: 2px 8px; border-radius: 2px; margin-left: 5px; 
+            font-weight: bold; cursor: pointer; display: inline-block;
+        }
+
+        /* 头部：Logo与搜索 */
+        .header-section { padding: 10px; background: #fffdf9; border-bottom: 1px solid #dcdcdc; display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-size: 20px; font-weight: 900; color: #8b5a2b; font-family: serif; letter-spacing: -1px; }
+        .search-box { border: 1px solid #bba378; background: #fff; padding: 2px; font-size: 10px; width: 120px; text-align: right; color: #999; }
+
+        /* 统计条：密集数据格 */
+        .stats-bar { background: #fffaf0; border: 1px solid #e6dcc6; margin: 5px; padding: 5px; font-size: 10px; color: #666; display: flex; flex-wrap: wrap; gap: 8px; }
+        .stat-item { padding-right: 8px; border-right: 1px solid #ddd; }
+        
+        /* 核心版块：高密度表格 */
+        .forum-box { margin: 6px 4px; border: 1px solid #cdcdcd; background: #fff; }
+        .box-header { 
+            background: linear-gradient(to bottom, #fcfaf5, #e8e4d0); 
+            padding: 5px 8px; border-bottom: 1px solid #ccc; border-top: 1px solid #fff;
+            color: #8b4513; font-weight: bold; font-size: 12px; display: flex; justify-content: space-between;
+        }
+        
+        /* 列表行：压缩行距 */
+        .forum-row { display: flex; padding: 6px; border-bottom: 1px dotted #ccc; align-items: flex-start; }
+        .forum-row:last-child { border: none; }
+        
+        /* 左侧图标格 */
+        .f-icon { width: 30px; height: 30px; background: #f0f0f0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #666; margin-right: 6px; flex-shrink: 0; font-weight: bold; }
+        
+        /* 中间内容格 */
+        .f-content { flex: 1; }
+        .f-title { font-size: 12px; font-weight: bold; color: #004499; display: block; margin-bottom: 2px; }
+        .f-sub-links { font-size: 10px; color: #666; line-height: 1.6; } /* 密集链接区 */
+        
+        /* 右侧数据格 */
+        .f-stat { width: 50px; text-align: right; font-size: 9px; color: #999; margin-left: 4px; display: flex; flex-direction: column; justify-content: center; }
+
+        /* ================= 弹窗系统 (强制置顶) ================= */
+        .modal-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); z-index: 10000; 
+            justify-content: center; align-items: center; 
+        }
+        .modal-box { 
+            background: #f5f1e8; border: 3px solid #8b5a2b; width: 85%; max-width: 320px; 
+            padding: 2px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+        }
+        .modal-header { background: #8b5a2b; color: white; padding: 8px 10px; font-weight: bold; display: flex; justify-content: space-between; }
+        .modal-body { padding: 20px 15px; text-align: center; }
+        .input-field { 
+            width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #999; background: #fff;
+            font-size: 14px; /* 防止手机缩放 */
+        }
+        .btn-submit { 
+            background: #cc0000; color: white; border: 1px solid #8b0000; 
+            padding: 10px 0; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px;
+        }
+        .toggle-link { display: block; margin-top: 15px; color: #004499; text-decoration: underline; font-size: 12px; padding: 5px; }
+
+        /* 调试日志 */
+        #debug-log { display: none; background: #000; color: #0f0; padding: 10px; font-size: 10px; }
     </style>
 </head>
 <body>
 
     <div class="top-nav">
-        <div>
-            <span id="sys-status" style="color:#22c55e;">🟢 数据金库已连接</span>
+        <div style="display:flex; align-items:center;">
+            <span id="sys-status" style="width:8px; height:8px; background:red; border-radius:50%; display:inline-block; margin-right:5px;"></span>
+            <span id="sys-text" style="color:#aaa;">系统连接中...</span>
         </div>
-        <div id="auth-links">
-            <a href="#">收藏</a>
-            <a href="#" onclick="openModal('register')">注册</a>
-            <a href="#" onclick="openModal('login')">登录</a>
+        <div id="guest-area">
+            <span class="auth-btn" onclick="openModal('login')">登录</span>
+            <span class="auth-btn" style="background:#004499;" onclick="openModal('register')">注册</span>
         </div>
-        <div id="user-info" style="display:none;">
-            <span style="color:#ddd;">用户: <b id="username-display" style="color:#fff;">--</b></span>
-            <a href="#" onclick="logout()">[退出]</a>
+        <div id="user-area" style="display:none;">
+            <span style="color:#fff;">ID: <b id="user-display">--</b></span>
+            <a onclick="logout()" style="color:#ccc; margin-left:10px;">[退出]</a>
         </div>
     </div>
 
@@ -69,37 +113,122 @@
         <div class="header-section">
             <div>
                 <div class="logo-text">AI 原点</div>
-                <div style="font-size: 10px; color: #999;">科技向善 · 0 到 1 · 价值社区</div>
+                <div style="font-size: 10px; color: #666;">科技向善 · 0 到 1</div>
             </div>
             <div style="text-align:right;">
-                <div style="font-size:10px; color:#888;">我的 Token</div>
-                <div style="font-size:16px; font-weight:bold; color:#cc0000;" id="my-token">--</div>
+                <div class="search-box">🔍 搜索帖子 / 悬赏...</div>
             </div>
         </div>
 
         <div class="stats-bar">
-            <div>Token池: <b class="link-red" id="pool-token">--</b></div>
-            <div style="border-left:1px solid #ddd; padding-left:10px;">会员: <b>1</b></div>
+            <div class="stat-item">Token池: <b class="link-red" id="pool-token">21,000</b></div>
+            <div class="stat-item">今日: <b>1,204</b></div>
+            <div class="stat-item">昨日: <b>982</b></div>
+            <div class="stat-item">会员: <b>45,210</b></div>
+            <div class="stat-item" style="border:none;">新帖: <span class="link-blue">DeepSeek R1 指南</span></div>
         </div>
 
         <div class="forum-box">
-            <div class="box-header">🌍 国际主流模型</div>
+            <div class="box-header">
+                <span>🌍 国际主流模型 (Models)</span>
+                <span style="font-size:9px; font-weight:normal;">分区版主: Admin</span>
+            </div>
+            
             <div class="forum-row">
-                <div class="f-icon">GPT</div>
-                <div class="f-content"><a href="#" class="f-title">ChatGPT 综合交流区</a></div>
+                <div class="f-icon" style="color:#10a37f;">GPT</div>
+                <div class="f-content">
+                    <a class="f-title">ChatGPT 综合交流区 <span class="link-red" style="font-size:10px;">(Hot)</span></a>
+                    <div class="f-sub-links">
+                        <a class="link-dim">新手注册</a>
+                        <a class="link-dim">封号解救</a>
+                        <a class="link-dim">Plus拼车</a>
+                        <a class="link-dim">API对接</a>
+                        <a class="link-dim link-red">GPT-5谣言</a>
+                        <a class="link-dim">指令调优</a>
+                    </div>
+                </div>
                 <div class="f-stat"><span class="link-red">102</span><br>今日</div>
+            </div>
+
+            <div class="forum-row">
+                <div class="f-icon" style="color:#d97757;">CL</div>
+                <div class="f-content">
+                    <a class="f-title">Claude 深度研讨</a>
+                    <div class="f-sub-links">
+                        <a class="link-dim">长文本分析</a>
+                        <a class="link-dim">Artifacts技巧</a>
+                        <a class="link-dim">酒馆破限</a>
+                        <a class="link-dim">代码生成</a>
+                    </div>
+                </div>
+                <div class="f-stat"><span>56</span><br>今日</div>
+            </div>
+
+             <div class="forum-row">
+                <div class="f-icon" style="color:#4285f4;">GE</div>
+                <div class="f-content">
+                    <a class="f-title">Gemini / Google</a>
+                    <div class="f-sub-links">
+                        <a class="link-dim">1.5 Pro实测</a>
+                        <a class="link-dim">免费API申请</a>
+                        <a class="link-dim">多模态</a>
+                    </div>
+                </div>
+                <div class="f-stat"><span>12</span><br>今日</div>
             </div>
         </div>
         
-        <div class="forum-box" style="border-color:#e6a23c;">
-            <div class="box-header" style="background:#fff7e6; color:#d48806;">💰 变现与集市</div>
+        <div class="forum-box">
+            <div class="box-header"><span>🛠️ 国产与开源 (Open Source)</span></div>
+            
             <div class="forum-row">
-                <div class="f-icon">$</div>
+                <div class="f-icon" style="background:#eef2ff; color:#4f46e5;">DS</div>
                 <div class="f-content">
-                    <a href="#" class="f-title">任务悬赏 & 兼职大厅</a>
-                    <div style="font-size:11px; color:#666;">求小红书Prompt (200 Token)</div>
+                    <a class="f-title link-blue">DeepSeek 深度求索 <span class="link-red">[爆]</span></a>
+                    <div class="f-sub-links">
+                        <span class="link-red">置顶: 本地部署保姆级教程</span><br>
+                        <a class="link-dim">R1模型评测</a>
+                        <a class="link-dim">Ollama配置</a>
+                        <a class="link-dim">显卡推荐</a>
+                        <a class="link-dim">蒸馏模型</a>
+                    </div>
                 </div>
+                <div class="f-stat"><span class="link-red font-bold">589</span><br>今日</div>
             </div>
+
+             <div class="forum-row">
+                <div class="f-icon">国产</div>
+                <div class="f-content">
+                    <a class="f-title">Kimi / 豆包 / 通义</a>
+                    <div class="f-sub-links">
+                        <a class="link-dim">长文档处理</a>
+                        <a class="link-dim">语音对话</a>
+                        <a class="link-dim">AI搜索对比</a>
+                    </div>
+                </div>
+                <div class="f-stat"><span>89</span><br>今日</div>
+            </div>
+        </div>
+
+        <div class="forum-box" style="border-color:#e6a23c;">
+            <div class="box-header" style="background:#fff7e6; color:#d48806;"><span>💰 变现与集市 (Market)</span></div>
+            <div class="forum-row">
+                <div class="f-icon" style="background:#333; color:#fff;">$</div>
+                <div class="f-content">
+                    <a class="f-title">任务悬赏 & 兼职大厅</a>
+                    <div class="f-sub-links">
+                        <span style="background:#cc0000; color:#fff; padding:0 2px;">置顶</span> 求小红书爆款文案 Prompt (200 Token)<br>
+                        <span style="color:#d48806;">[悬赏]</span> 寻找能做 ComfyUI 工作流的大神 (500 Token)<br>
+                        <span style="color:#666;">[招聘]</span> 长期收 AI 洗稿文章，日结
+                    </div>
+                </div>
+                <div class="f-stat"><span>21</span><br>悬赏</div>
+            </div>
+        </div>
+
+        <div style="text-align:center; padding:20px; color:#ccc; font-size:10px;">
+            AI 原点 - 科技向善 · 从0到1<br>
+            Processed in 0.01s
         </div>
     </div>
 
@@ -107,93 +236,138 @@
         <div class="modal-box">
             <div class="modal-header">
                 <span id="modal-title">通行证办理</span>
-                <span style="cursor:pointer;" onclick="closeModal()">X</span>
+                <span onclick="closeModal()" style="cursor:pointer; font-family:sans-serif;">✕</span>
             </div>
             <div class="modal-body">
-                <input type="email" id="email" class="input-field" placeholder="真实邮箱 (需接收验证邮件)">
-                <input type="password" id="password" class="input-field" placeholder="密码 (至少6位)">
-                <button class="btn-submit" onclick="handleAuth()" id="btn-action">立即注册</button>
-                <span class="toggle-link" id="toggle-text" onclick="toggleMode()">已有账号？点击登录</span>
+                <div id="msg-box" style="display:none; color:red; margin-bottom:10px;"></div>
+                <input type="email" id="email" class="input-field" placeholder="请输入邮箱">
+                <input type="password" id="password" class="input-field" placeholder="设置密码 (至少6位)">
+                <button class="btn-submit" onclick="handleAuth()" id="btn-action">立即提交</button>
+                <div class="toggle-link" id="toggle-text" onclick="toggleMode()">没有账号？点此注册</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase配置
         const supabaseUrl = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let supabase = null;
+        let isRegisterMode = false; // 默认登录模式
 
-        let isRegisterMode = true;
-
-        // 初始化
+        // 1. 系统初始化
         async function init() {
-            // 查Token池
-            const { data } = await supabase.from('system_stats').select('stat_value').eq('stat_key', 'total_tokens_mined').single();
-            if(data) document.getElementById('pool-token').innerText = data.stat_value.toLocaleString();
+            try {
+                if(!window.supabase) throw new Error("SDK未加载");
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                
+                // 亮绿灯
+                document.getElementById('sys-status').style.background = '#22c55e';
+                document.getElementById('sys-text').innerText = '数据金库已连接';
+                document.getElementById('sys-text').style.color = '#22c55e';
 
-            // 查用户登录状态
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) showLoggedIn(user);
+                // 读取Token池 (带容错)
+                const { data, error } = await supabase.from('system_stats').select('stat_value').eq('stat_key', 'total_tokens_mined').single();
+                if (data) {
+                    document.getElementById('pool-token').innerText = data.stat_value.toLocaleString();
+                } else {
+                    console.log("未读到Token数据，使用默认值");
+                }
+
+                // 检查用户
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) showUser(user);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('sys-text').innerText = '连接中断';
+            }
         }
-        init();
 
-        // 弹窗控制
+        // 2. 弹窗控制 (暴力重置 display)
         function openModal(mode) {
-            document.getElementById('auth-modal').style.display = 'flex';
-            if (mode === 'login') {
-                isRegisterMode = false;
-                document.getElementById('modal-title').innerText = '用户登录';
-                document.getElementById('btn-action').innerText = '登录进入';
-                document.getElementById('toggle-text').innerText = '没有账号？点击注册';
-            } else {
+            document.getElementById('auth-modal').style.display = 'flex'; // 强制显示
+            
+            if (mode === 'register') {
                 isRegisterMode = true;
                 document.getElementById('modal-title').innerText = '新用户注册';
                 document.getElementById('btn-action').innerText = '立即注册';
                 document.getElementById('toggle-text').innerText = '已有账号？点击登录';
+                document.getElementById('btn-action').style.background = '#cc0000'; // 注册用红色
+            } else {
+                isRegisterMode = false;
+                document.getElementById('modal-title').innerText = '用户登录';
+                document.getElementById('btn-action').innerText = '登录进入';
+                document.getElementById('toggle-text').innerText = '没有账号？点击注册';
+                document.getElementById('btn-action').style.background = '#004499'; // 登录用蓝色
             }
         }
-        function closeModal() { document.getElementById('auth-modal').style.display = 'none'; }
-        function toggleMode() { isRegisterMode ? openModal('login') : openModal('register'); }
 
-        // 注册/登录逻辑
+        function closeModal() {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
+
+        function toggleMode() {
+            isRegisterMode ? openModal('login') : openModal('register');
+        }
+
+        // 3. 核心认证逻辑
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            if (!email || !password) return alert('请填写完整');
-            document.getElementById('btn-action').innerText = '处理中...';
+            const btn = document.getElementById('btn-action');
+            const msg = document.getElementById('msg-box');
+
+            if (!email || !password) {
+                alert("请填写邮箱和密码");
+                return;
+            }
+
+            btn.innerText = '处理中...';
+            btn.disabled = true;
+            msg.style.display = 'none';
 
             try {
+                let error;
                 if (isRegisterMode) {
                     // 注册
-                    const { error } = await supabase.auth.signUp({ email, password });
-                    if (error) throw error;
-                    alert('注册成功！请去你的邮箱点击确认链接，然后回来登录！');
-                    openModal('login'); // 自动切到登录页
+                    const res = await supabase.auth.signUp({ email, password });
+                    error = res.error;
+                    if (!error && !res.data.user) error = { message: "注册未成功，请检查邮箱" };
+                    if (!error) {
+                        alert("注册成功！\n请去邮箱点击确认链接，然后回来登录。");
+                        openModal('login');
+                    }
                 } else {
                     // 登录
-                    const { error } = await supabase.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
-                    location.reload(); // 登录成功刷新页面
+                    const res = await supabase.auth.signInWithPassword({ email, password });
+                    error = res.error;
+                    if (!error) location.reload(); // 成功则刷新
                 }
+
+                if (error) throw error;
+
             } catch (err) {
-                alert('错误: ' + err.message);
-                document.getElementById('btn-action').innerText = '重试';
+                msg.style.display = 'block';
+                msg.innerText = "错误: " + (err.message || "未知错误");
+                btn.innerText = '重试';
+                btn.disabled = false;
             }
         }
 
-        function showLoggedIn(user) {
-            document.getElementById('auth-links').style.display = 'none';
-            document.getElementById('user-info').style.display = 'block';
-            document.getElementById('username-display').innerText = user.email.split('@')[0];
-            document.getElementById('my-token').innerText = "100"; // 初始显示
+        function showUser(user) {
+            document.getElementById('guest-area').style.display = 'none';
+            document.getElementById('user-area').style.display = 'block';
+            document.getElementById('user-display').innerText = user.email.split('@')[0];
         }
 
         async function logout() {
             await supabase.auth.signOut();
             location.reload();
         }
+
+        // 启动
+        setTimeout(init, 500);
     </script>
 </body>
 </html>
