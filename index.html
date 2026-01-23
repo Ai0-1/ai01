@@ -3,372 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI 原点 | 深度学习与变现社区</title>
+    <title>AI 原点 | 硬核实战社区</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= 硬核工业风：高密度·直角·信息流 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: #e6e6e6; color: #333; font-family: "Verdana", "Arial", sans-serif; font-size: 12px; margin: 0; padding-bottom: 60px; line-height: 1.5; }
-        a { text-decoration: none; color: #333; cursor: pointer; }
-        a:hover { text-decoration: underline; color: #cc0000; }
-        
-        /* 1. 顶部黑条 */
-        .top-bar { background: #333; color: #ccc; padding: 0 10px; height: 30px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-        .top-link { color: #ccc; margin-left: 10px; }
-        
-        /* 2. 头部 Logo区 */
-        .header { background: #fff; padding: 15px 10px; border-bottom: 3px solid #cc0000; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 900; color: #cc0000; letter-spacing: -1px; font-family: "Georgia", serif; }
-        .slogan { font-size: 10px; color: #666; margin-top: 2px; text-transform: uppercase; }
-        .user-panel { text-align: right; font-size: 12px; }
-        .btn-login { background: #cc0000; color: #fff; padding: 3px 10px; font-weight: bold; font-size: 11px; display: inline-block; }
-        
-        /* 3. 统计通栏 */
-        .stats-row { background: #fffaf0; border-bottom: 1px solid #e0d0b0; padding: 6px 10px; font-size: 11px; color: #666; display: flex; gap: 15px; overflow-x: auto; white-space: nowrap; }
-        .hl-num { color: #cc0000; font-weight: bold; font-family: monospace; }
+        body { background: #f0f2f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; line-height: 1.5; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
 
-        /* 4. 核心布局容器 */
-        .container { max-width: 900px; margin: 0 auto; }
+        .top-bar { background: #fff; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .logo { font-size: 18px; font-weight: 900; color: #cc0000; letter-spacing: -0.5px; }
+        .user-tag { font-size: 12px; font-weight: bold; color: #666; display: flex; align-items: center; gap: 5px; }
 
-        /* 5. 板块容器 (仿老论坛) */
-        .section-box { background: #fff; margin-top: 10px; border: 1px solid #ccc; }
-        .sec-header { 
-            background: linear-gradient(to bottom, #f7f7f7, #e0e0e0); 
-            padding: 8px 10px; border-bottom: 1px solid #ccc; border-top: 1px solid #fff;
-            font-weight: bold; color: #333; font-size: 13px; display: flex; justify-content: space-between;
-        }
-        
-        /* 密集网格 */
-        .grid-row { display: flex; border-bottom: 1px solid #eee; }
-        .grid-row:last-child { border-bottom: none; }
-        
-        .cat-item { flex: 1; padding: 10px; border-right: 1px solid #eee; min-width: 50%; }
-        .cat-item:last-child { border-right: none; }
-        
-        .cat-title { font-size: 14px; font-weight: bold; color: #004499; display: flex; align-items: center; margin-bottom: 4px; }
-        .cat-icon { width: 16px; height: 16px; background: #ddd; color: #fff; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; font-weight: normal; }
-        
-        /* 子链接群 (增加厚度的关键) */
-        .sub-links { font-size: 10px; color: #666; line-height: 1.6; margin-top: 5px; }
-        .sub-link { display: inline-block; color: #666; margin-right: 6px; border-bottom: 1px dotted #ccc; }
+        .view-container { display: block; padding-bottom: 80px; }
+        #view-detail { display: none; background: #fff; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 200; overflow-y: auto; padding-bottom: 60px; }
 
-        /* 6. 最新帖子 (列表模式) */
-        .thread-list { background: #fff; }
-        .thread-row { 
-            display: flex; padding: 8px 10px; border-bottom: 1px dotted #ccc; align-items: flex-start; 
-            font-size: 12px; transition: background 0.1s;
-        }
-        .thread-row:active { background: #ffffcc; }
+        .stat-bar { background: #fffbe6; color: #d48806; padding: 8px 15px; font-size: 12px; border-bottom: 1px solid #ffe58f; display: flex; justify-content: center; gap: 15px; }
         
-        .t-cat { color: #666; width: 60px; flex-shrink: 0; font-size: 11px; padding-top: 2px; }
-        .t-main { flex: 1; }
-        .t-title { font-weight: bold; color: #333; font-size: 13px; display: block; margin-bottom: 2px; }
-        .t-meta { font-size: 10px; color: #999; }
-        .t-bounty { color: #d48806; font-weight: bold; margin-left: 5px; border: 1px solid #d48806; padding: 0 2px; font-size: 9px; }
-        .t-img-icon { color: #cc0000; margin-left: 3px; font-size: 10px; }
+        .section-nav { background: #fff; margin-bottom: 10px; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .nav-item { background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; padding: 10px; display: flex; align-items: center; cursor: pointer; }
+        .nav-icon { width: 30px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; margin-right: 8px; font-size: 11px; flex-shrink: 0; }
+        
+        .feed-title { padding: 15px; font-weight: bold; color: #333; border-left: 4px solid #cc0000; margin-top: 10px; background: #fff; border-bottom: 1px solid #eee; }
+        .thread-item { background: #fff; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .thread-item:active { background: #fafafa; }
+        .t-tag { display: inline-block; background: #e6f7ff; color: #1890ff; padding: 1px 5px; border-radius: 3px; font-size: 10px; margin-bottom: 5px; }
+        .t-bounty { display: inline-block; background: #fffbe6; color: #faad14; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; margin-left: 5px; }
+        .t-title { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 6px; line-height: 1.4; }
+        .t-preview { font-size: 13px; color: #666; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .t-img-indicator { margin-top: 5px; font-size: 11px; color: #999; display: flex; align-items: center; }
+        .t-meta { margin-top: 8px; font-size: 11px; color: #aaa; display: flex; justify-content: space-between; }
 
-        /* 悬浮按钮 */
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #cc0000; color: #fff; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); cursor: pointer; z-index: 900; font-family: serif; }
+        .detail-nav { height: 50px; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 15px; position: sticky; top: 0; background: #fff; z-index: 201; }
+        .back-btn { font-size: 24px; color: #333; margin-right: 15px; cursor: pointer; }
+        
+        .detail-content { padding: 20px; }
+        .d-title { font-size: 18px; font-weight: 900; color: #111; margin-bottom: 10px; line-height: 1.4; }
+        .d-meta { font-size: 12px; color: #999; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .d-body { font-size: 15px; color: #333; line-height: 1.7; white-space: pre-wrap; }
+        .d-img { width: 100%; border-radius: 8px; margin-top: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        /* 弹窗通用 */
-        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: #fff; width: 90%; max-width: 400px; border: 1px solid #666; box-shadow: 5px 5px 0px rgba(0,0,0,0.2); }
-        .modal-head { background: #333; color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; }
-        .modal-body { padding: 15px; }
-        .input { width: 100%; padding: 8px; border: 1px solid #999; margin-bottom: 10px; font-family: inherit; font-size: 13px; }
-        .btn-full { width: 100%; padding: 10px; background: #cc0000; color: #fff; border: none; font-weight: bold; cursor: pointer; }
-        .file-zone { border: 1px dashed #999; padding: 10px; text-align: center; margin-bottom: 10px; cursor: pointer; background: #f9f9f9; font-size: 12px; }
+        .comment-section { background: #f9f9f9; padding: 20px 15px; margin-top: 20px; border-top: 1px solid #eee; }
+        .cmt-header { font-weight: bold; margin-bottom: 15px; color: #333; }
+        .cmt-item { margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 10px; }
+        .cmt-user { font-size: 11px; color: #004499; font-weight: bold; margin-bottom: 3px; }
+        .cmt-text { font-size: 13px; color: #444; }
+        .cmt-time { font-size: 10px; color: #bbb; margin-top: 3px; }
+
+        .comment-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #ddd; padding: 8px 15px; display: flex; gap: 10px; align-items: center; z-index: 202; }
+        .cmt-input { flex: 1; background: #f2f2f2; border: none; padding: 10px; border-radius: 20px; font-size: 13px; }
+        .cmt-send { color: #cc0000; font-weight: bold; padding: 0 10px; cursor: pointer; }
+
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #cc0000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 90; }
+        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: #fff; width: 85%; max-width: 360px; border-radius: 8px; overflow: hidden; }
+        .modal-body { padding: 20px; }
+        .input-box { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .btn-red { width: 100%; background: #cc0000; color: #fff; padding: 12px; border: none; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .file-btn { background: #f0f0f0; color: #666; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 10px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <div>设为首页 | 收藏本站</div>
-        <div>
-            <span id="sys-status" style="color:#0f0;">● 数据金库已连接</span>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="header">
-            <div>
-                <div class="logo">AI 原点</div>
-                <div class="slogan">硬核 · 实战 · 0到1</div>
-            </div>
-            <div class="user-panel" id="auth-area">
-                <span onclick="openAuth('login')" style="cursor:pointer; margin-right:10px;">登录</span>
-                <span class="btn-login" onclick="openAuth('register')" style="cursor:pointer;">注册账号</span>
-            </div>
-        </div>
-
-        <div class="stats-row">
-            <span>🔥 Token池: <span class="hl-num" id="pool-count">21,013</span></span>
-            <span>👥 会员: <span class="hl-num">45,210</span></span>
-            <span>📝 今日发帖: <span class="hl-num">1,204</span></span>
-        </div>
-
-        <div class="section-box">
-            <div class="sec-header">
-                <span>🌍 国际主流模型 (Global)</span>
-                <span style="font-weight:normal; font-size:11px;">版主: Admin</span>
-            </div>
-            <div class="grid-row">
-                <div class="cat-item" onclick="filterFeed('gpt')">
-                    <div class="cat-title"><span class="cat-icon" style="background:#10a37f;">G</span> ChatGPT 综合区</div>
-                    <div class="sub-links">
-                        <span class="sub-link">Plus拼车</span>
-                        <span class="sub-link">封号申诉</span>
-                        <span class="sub-link">API对接</span>
-                        <span class="sub-link" style="color:red;">GPT-5爆料</span>
-                    </div>
-                </div>
-                <div class="cat-item" onclick="filterFeed('claude')">
-                    <div class="cat-title"><span class="cat-icon" style="background:#d97757;">C</span> Claude 研讨</div>
-                    <div class="sub-links">
-                        <span class="sub-link">长文本分析</span>
-                        <span class="sub-link">代码生成</span>
-                        <span class="sub-link">酒馆破限</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-box">
-            <div class="sec-header"><span>🛠️ 国产与开源 (Open Source)</span></div>
-            <div class="grid-row">
-                <div class="cat-item" onclick="filterFeed('deepseek')">
-                    <div class="cat-title"><span class="cat-icon" style="background:#4f46e5;">D</span> DeepSeek 深度求索 <span style="color:red; font-size:10px; margin-left:5px;">[爆]</span></div>
-                    <div class="sub-links">
-                        <span class="sub-link" style="color:red; font-weight:bold;">本地部署教程</span>
-                        <span class="sub-link">显卡推荐</span>
-                        <span class="sub-link">Ollama配置</span>
-                        <span class="sub-link">蒸馏模型</span>
-                    </div>
-                </div>
-                <div class="cat-item" onclick="filterFeed('china')">
-                    <div class="cat-title"><span class="cat-icon" style="background:#333;">中</span> 国内大模型</div>
-                    <div class="sub-links">
-                        <span class="sub-link">Kimi</span>
-                        <span class="sub-link">通义千问</span>
-                        <span class="sub-link">豆包</span>
-                        <span class="sub-link">智谱GLM</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-box" style="border-top: 2px solid #d48806;">
-            <div class="sec-header"><span>💰 市场 & 📢 站务</span></div>
-            <div class="grid-row">
-                <div class="cat-item" onclick="filterFeed('market')">
-                    <div class="cat-title"><span class="cat-icon" style="background:#d48806;">$</span> 任务悬赏 & 变现</div>
-                    <div class="sub-links">
-                        <span class="sub-link">求Prompt</span>
-                        <span class="sub-link">AI代写</span>
-                        <span class="sub-link">工作流定制</span>
-                        <span class="sub-link">账号交易</span>
-                    </div>
-                </div>
-                <div class="cat-item" onclick="filterFeed('feedback')">
-                    <div class="cat-title"><span class="cat-icon" style="background:#666;">议</span> 站务与建议</div>
-                    <div class="sub-links">
-                        <span class="sub-link">功能申请</span>
-                        <span class="sub-link">Bug反馈</span>
-                        <span class="sub-link">版主申请</span>
-                        <span class="sub-link">投诉</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-box">
-            <div class="sec-header" id="feed-title">
-                <span>📄 最新动态 / Thread List</span>
-                <span style="font-size:11px; font-weight:normal;">查看全部</span>
-            </div>
-            <div class="thread-list" id="feed">
-                <div style="text-align:center; padding:30px; color:#999;">正在读取数据...</div>
-            </div>
+    <div id="view-home" class="view-container">
+        <div class="top-bar">
+            <div class="logo">AI 原点</div>
+            <div class="user-tag" id="home-user" onclick="openAuth('login')">点击登录</div>
         </div>
         
-        <div style="text-align:center; padding:20px; color:#999; font-size:10px;">
-            AI 原点 &copy; 2026 | Powered by Supabase
+        <div class="stat-bar">
+            <span>🔥 Token: <b id="pool">21,013</b></span>
+            <span>📝 今日: <b>1,204</b></span>
         </div>
 
+        <div class="section-nav">
+            <div class="nav-item" onclick="filter('gpt')">
+                <div class="nav-icon" style="background:#10a37f">G</div> ChatGPT
+            </div>
+            <div class="nav-item" onclick="filter('deepseek')">
+                <div class="nav-icon" style="background:#4f46e5">D</div> DeepSeek
+            </div>
+            <div class="nav-item" onclick="filter('market')">
+                <div class="nav-icon" style="background:#d48806">$</div> 悬赏变现
+            </div>
+            <div class="nav-item" onclick="filter('feedback')">
+                <div class="nav-icon" style="background:#333">议</div> 站务建议
+            </div>
+        </div>
+
+        <div class="feed-title" id="feed-header">📢 最新动态</div>
+        <div id="feed-list">
+            <div style="text-align:center; padding:50px; color:#999;">连接中...</div>
+        </div>
+        
+        <div class="fab" onclick="openPostModal()">+</div>
     </div>
 
-    <div class="fab" onclick="openPost()">+</div>
+    <div id="view-detail">
+        <div class="detail-nav">
+            <span class="back-btn" onclick="closeDetail()">‹</span>
+            <span style="font-weight:bold;">帖子详情</span>
+        </div>
+        
+        <div class="detail-content">
+            <div class="d-title" id="d-title">标题加载中...</div>
+            <div class="d-meta">
+                <span id="d-author">楼主</span>
+                <span id="d-date">时间</span>
+            </div>
+            <div class="d-body" id="d-body">内容...</div>
+            <img id="d-img" class="d-img" style="display:none;" onclick="window.open(this.src)">
+        </div>
+
+        <div class="comment-section">
+            <div class="cmt-header">全部评论</div>
+            <div id="comment-list">
+                </div>
+            <div style="height:40px;"></div>
+        </div>
+
+        <div class="comment-bar">
+            <input id="cmt-input" class="cmt-input" placeholder="说点什么...">
+            <span class="cmt-send" onclick="submitComment()">发送</span>
+        </div>
+    </div>
 
     <div id="modal-post" class="modal-mask">
         <div class="modal">
-            <div class="modal-head">发布新帖 <span onclick="closeModal('modal-post')" style="cursor:pointer;">✕</span></div>
             <div class="modal-body">
-                <select id="p-cat" class="input">
-                    <option value="gpt">ChatGPT 交流</option>
-                    <option value="deepseek">DeepSeek 开源</option>
-                    <option value="market">悬赏与变现</option>
-                    <option value="feedback">站务与建议</option>
+                <div style="font-weight:bold; margin-bottom:15px; display:flex; justify-content:space-between;">
+                    发布内容 <span onclick="closeModal('modal-post')">✕</span>
+                </div>
+                <select id="p-cat" class="input-box">
+                    <option value="gpt">ChatGPT</option>
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="market">悬赏市场</option>
+                    <option value="feedback">站务</option>
                 </select>
-                <input id="p-title" class="input" placeholder="标题 (必填)">
-                <textarea id="p-content" class="input" style="height:100px; resize:none;" placeholder="正文内容..."></textarea>
+                <input id="p-title" class="input-box" placeholder="标题">
+                <textarea id="p-content" class="input-box" style="height:80px" placeholder="正文"></textarea>
                 
-                <div class="file-zone" onclick="document.getElementById('p-file').click()">
-                    <span id="file-label">📸 上传图片 (可选)</span>
+                <div class="file-btn" onclick="document.getElementById('p-file').click()">
+                    <span id="file-label">📸 添加图片</span>
                 </div>
-                <input type="file" id="p-file" style="display:none" accept="image/*" onchange="handleFile(this)">
+                <input type="file" id="p-file" style="display:none" accept="image/*" onchange="gotFile(this)">
                 
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
-                    <label>💰悬赏:</label>
-                    <input type="number" id="p-bounty" class="input" style="width:80px; margin:0;" value="0">
-                </div>
-                <button class="btn-full" onclick="submitPost()">发布</button>
+                <button class="btn-red" onclick="doPost()">发布</button>
             </div>
         </div>
     </div>
 
     <div id="modal-auth" class="modal-mask">
         <div class="modal">
-            <div class="modal-head"><span id="auth-title">用户登录</span> <span onclick="closeModal('modal-auth')" style="cursor:pointer;">✕</span></div>
             <div class="modal-body">
-                <input id="email" class="input" placeholder="邮箱">
-                <input id="pwd" type="password" class="input" placeholder="密码">
-                <button class="btn-full" onclick="handleAuth()">提交</button>
-                <div style="text-align:center; margin-top:15px; font-size:12px; color:#004499; cursor:pointer;" onclick="toggleAuth()">切换 注册 / 登录</div>
+                <h3 id="auth-h">登录</h3>
+                <input id="email" class="input-box" placeholder="邮箱">
+                <input id="pwd" type="password" class="input-box" placeholder="密码">
+                <button class="btn-red" onclick="doAuth()">提交</button>
+                <div style="text-align:center; margin-top:10px; color:#004499; font-size:12px;" onclick="toggleAuth()">切换 注册/登录</div>
+                <div style="text-align:center; margin-top:10px; color:#999; font-size:12px;" onclick="closeModal('modal-auth')">关闭</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase 配置
         const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
-        let sb = null;
-        let user = null;
-        let isReg = false;
-        let uploadFile = null;
+        let sb = null, user = null, isReg = false, uploadFile = null, currentPostId = null;
 
         async function init() {
             if(!window.supabase) return setTimeout(init, 500);
             sb = window.supabase.createClient(SB_URL, SB_KEY);
-            
             const { data } = await sb.auth.getUser();
-            if(data.user) {
-                user = data.user;
-                renderUser();
-            }
+            if(data.user) { user = data.user; renderUser(); }
             loadFeed();
         }
 
-        async function loadFeed(cat = null) {
-            const feed = document.getElementById('feed');
-            feed.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Loading...</div>';
+        // ============ 首页逻辑 ============
+        async function loadFeed(cat=null) {
+            const list = document.getElementById('feed-list');
+            list.innerHTML = '<div style="text-align:center; padding:30px; color:#999;">加载中...</div>';
             
             let q = sb.from('posts').select('*').order('created_at', { ascending: false });
             if(cat) q = q.eq('category', cat);
             
-            const { data, error } = await q;
-            if(!data || data.length === 0) {
-                feed.innerHTML = '<div style="text-align:center; padding:20px;">暂无内容</div>';
+            const { data } = await q;
+            if(!data || !data.length) {
+                list.innerHTML = '<div style="text-align:center; padding:30px; color:#ccc;">暂无内容</div>';
                 return;
             }
 
-            feed.innerHTML = data.map(p => `
-                <div class="thread-row" onclick="alert('帖子详情页功能开发中...')">
-                    <div class="t-cat">[${p.category.toUpperCase()}]</div>
-                    <div class="t-main">
-                        <span class="t-title">
-                            ${p.title} 
-                            ${p.image_url ? '<span class="t-img-icon">📷</span>' : ''}
-                            ${p.bounty > 0 ? `<span class="t-bounty">💰${p.bounty}</span>` : ''}
-                        </span>
-                        <div class="t-meta">
-                            <span>楼主: ${p.author_id.substring(0,6)}...</span> &nbsp;|&nbsp; 
-                            <span>${new Date(p.created_at).toLocaleDateString()}</span> &nbsp;|&nbsp; 
-                            <span>查看: ${p.view_count || 1}</span>
-                        </div>
+            list.innerHTML = data.map(p => `
+                <div class="thread-item" onclick="openDetail('${p.id}')">
+                    <div style="margin-bottom:4px;">
+                        <span class="t-tag">${p.category.toUpperCase()}</span>
+                        ${p.bounty>0 ? `<span class="t-bounty">💰${p.bounty}</span>` : ''}
+                    </div>
+                    <div class="t-title">${p.title}</div>
+                    <div class="t-preview">${p.content}</div>
+                    ${p.image_url ? '<div class="t-img-indicator">📷 包含图片</div>' : ''}
+                    <div class="t-meta">
+                        <span>${new Date(p.created_at).toLocaleDateString()}</span>
+                        <span>浏览 ${p.view_count||1}</span>
                     </div>
                 </div>
             `).join('');
-
-            if(cat) {
-                document.getElementById('feed-title').innerHTML = `<span>📂 ${cat.toUpperCase()} 区</span> <span style="font-weight:normal; font-size:11px; cursor:pointer;" onclick="loadFeed()">[返回全部]</span>`;
-            }
+            
+            if(cat) document.getElementById('feed-header').innerText = `📂 ${cat.toUpperCase()} 区`;
         }
+        function filter(cat) { loadFeed(cat); }
 
-        function filterFeed(cat) { loadFeed(cat); }
-
-        function handleFile(input) {
-            if(input.files[0]) {
-                uploadFile = input.files[0];
-                document.getElementById('file-label').innerText = "✅ 已选: " + uploadFile.name;
-            }
-        }
-
-        async function submitPost() {
-            if(!user) return alert("请先登录");
-            const btn = document.querySelector('#modal-post button');
-            btn.innerText = "发布中..."; btn.disabled = true;
-
-            try {
-                let imgUrl = null;
-                if(uploadFile) {
-                    const fname = `${Date.now()}_${uploadFile.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-                    await sb.storage.from('images').upload(fname, uploadFile);
-                    const { data } = sb.storage.from('images').getPublicUrl(fname);
-                    imgUrl = data.publicUrl;
+        // ============ 详情页 & 评论逻辑 ============
+        async function openDetail(id) {
+            currentPostId = id;
+            document.getElementById('view-detail').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 锁住背景滚动
+            
+            // 1. 加载帖子内容
+            const { data: post } = await sb.from('posts').select('*').eq('id', id).single();
+            if(post) {
+                document.getElementById('d-title').innerText = post.title;
+                document.getElementById('d-body').innerText = post.content;
+                document.getElementById('d-date').innerText = new Date(post.created_at).toLocaleString();
+                document.getElementById('d-author').innerText = "楼主"; // 后续可关联昵称
+                
+                const imgEl = document.getElementById('d-img');
+                if(post.image_url) {
+                    imgEl.src = post.image_url;
+                    imgEl.style.display = 'block';
+                } else {
+                    imgEl.style.display = 'none';
                 }
+                
+                // 增加阅读数
+                sb.from('posts').update({ view_count: (post.view_count||0)+1 }).eq('id', id);
+            }
 
+            // 2. 加载评论
+            loadComments();
+        }
+
+        async function loadComments() {
+            const list = document.getElementById('comment-list');
+            list.innerHTML = '<div style="padding:10px; color:#999;">加载评论...</div>';
+            
+            const { data } = await sb.from('comments').select('*').eq('post_id', currentPostId).order('created_at', { ascending: true });
+            
+            if(!data || !data.length) {
+                list.innerHTML = '<div style="padding:10px; color:#ccc;">暂无评论，快来抢沙发！</div>';
+                return;
+            }
+
+            list.innerHTML = data.map(c => `
+                <div class="cmt-item">
+                    <div class="cmt-user">用户 ${c.user_id.substring(0,4)}..</div>
+                    <div class="cmt-text">${c.content}</div>
+                    <div class="cmt-time">${new Date(c.created_at).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        async function submitComment() {
+            if(!user) return alert("请先登录");
+            const input = document.getElementById('cmt-input');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            const { error } = await sb.from('comments').insert({
+                post_id: currentPostId,
+                user_id: user.id,
+                content: txt
+            });
+
+            if(!error) {
+                input.value = '';
+                loadComments(); // 刷新评论
+            } else {
+                alert("发送失败");
+            }
+        }
+
+        function closeDetail() {
+            document.getElementById('view-detail').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentPostId = null;
+        }
+
+        // ============ 发帖与认证 ============
+        function gotFile(i) { if(i.files[0]) { uploadFile=i.files[0]; document.getElementById('file-label').innerText="✅ 已选图"; } }
+        
+        async function doPost() {
+            if(!user) return alert("请先登录");
+            const btn = document.querySelector('#modal-post .btn-red');
+            btn.innerText = "发布中..."; btn.disabled = true;
+            try {
+                let url = null;
+                if(uploadFile) {
+                    const fname = `${Date.now()}_${uploadFile.name.replace(/\W/g,'')}`;
+                    await sb.storage.from('images').upload(fname, uploadFile);
+                    url = sb.storage.from('images').getPublicUrl(fname).data.publicUrl;
+                }
                 await sb.from('posts').insert({
                     author_id: user.id,
                     title: document.getElementById('p-title').value,
                     content: document.getElementById('p-content').value,
                     category: document.getElementById('p-cat').value,
-                    bounty: document.getElementById('p-bounty').value,
-                    image_url: imgUrl
+                    image_url: url
                 });
-
-                alert("发布成功！");
+                alert("发布成功");
                 closeModal('modal-post');
                 loadFeed();
-                uploadFile = null; 
-                document.getElementById('file-label').innerText = "📸 上传图片";
-                document.getElementById('p-title').value = ""; 
-                document.getElementById('p-content').value = "";
-
-            } catch(e) { alert("发布失败: " + e.message); }
-            finally { btn.innerText = "发布"; btn.disabled = false; }
+            } catch(e) { alert("失败:"+e.message); }
+            finally { btn.innerText="发布"; btn.disabled=false; }
         }
 
-        async function handleAuth() {
-            const email = document.getElementById('email').value;
-            const pwd = document.getElementById('pwd').value;
+        async function doAuth() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pwd').value;
             try {
-                const { error } = isReg 
-                    ? await sb.auth.signUp({ email, password: pwd })
-                    : await sb.auth.signInWithPassword({ email, password: pwd });
+                const {error} = isReg ? await sb.auth.signUp({email:e,password:p}) : await sb.auth.signInWithPassword({email:e,password:p});
                 if(error) throw error;
-                if(isReg) { alert("去邮箱验证！"); closeModal('modal-auth'); }
+                if(isReg) { alert("去邮箱验证!"); closeModal('modal-auth'); }
                 else location.reload();
-            } catch(e) { alert(e.message); }
+            } catch(x) { alert(x.message); }
         }
 
         function renderUser() {
-            const name = user.email.split('@')[0];
-            document.getElementById('auth-area').innerHTML = `
-                <span style="color:#666; margin-right:10px;">ID: ${name}</span>
-                <span onclick="sb.auth.signOut().then(()=>location.reload())" style="cursor:pointer; color:#cc0000;">[退出]</span>
-            `;
+            document.getElementById('home-user').innerHTML = `Hi, ${user.email.split('@')[0]} <span style="margin-left:5px;color:#cc0000" onclick="sb.auth.signOut().then(()=>location.reload())">[退]</span>`;
         }
 
-        function openAuth(type) {
-            isReg = type === 'register';
-            document.getElementById('auth-title').innerText = isReg ? '注册' : '登录';
-            document.getElementById('modal-auth').style.display = 'flex';
+        // UI Helpers
+        function openPostModal() { if(!user) return openModal('modal-auth'); openModal('modal-post'); }
+        function openAuth(t) { isReg = (t==='register'); toggleAuth(); openModal('modal-auth'); }
+        function toggleAuth() { 
+            document.getElementById('auth-h').innerText = isReg ? "注册账号" : "用户登录"; 
+            isReg = !isReg; 
         }
-        function openPost() { if(!user) return openAuth('login'); document.getElementById('modal-post').style.display = 'flex'; }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function toggleAuth() { isReg = !isReg; document.getElementById('auth-title').innerText = isReg ? '注册' : '登录'; }
 
         setTimeout(init, 200);
     </script>
