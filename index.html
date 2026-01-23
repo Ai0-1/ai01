@@ -4,303 +4,232 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI 原点 | 实战社区</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= 极速硬核风 ================= */
+        /* ================= 核心风格：极速·实战 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: #f7f5f0; color: #333; font-family: "Verdana", sans-serif; font-size: 12px; margin: 0; padding-bottom: 80px; }
-        a { text-decoration: none; color: #333; cursor: pointer; }
+        body { background: #f2f3f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; margin: 0; padding-bottom: 80px; }
         
         /* 导航 */
-        .top-nav { background: #2d2d2d; color: #ccc; padding: 0 10px; height: 44px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .logo { font-weight: 900; color: #f0f0f0; font-size: 16px; letter-spacing: -1px; }
-        .user-stat { font-size: 11px; color: #e6a23c; font-family: monospace; display: flex; align-items: center; gap: 8px; }
-        .btn-action { background: #cc0000; color: #fff; padding: 5px 12px; border-radius: 3px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .nav-bar { background: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .logo { font-weight: 900; color: #cc0000; font-size: 18px; letter-spacing: -0.5px; }
+        .user-area { font-size: 12px; font-weight: 500; display: flex; gap: 10px; align-items: center; }
+        .btn-s { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #ddd; }
+        .btn-pri { background: #cc0000; color: #fff; border: none; }
         
-        /* 统计条 */
-        .stats-bar { background: #fff; padding: 8px; border-bottom: 1px solid #ddd; display: flex; gap: 15px; font-size: 11px; color: #666; justify-content: center; }
+        /* 统计 */
+        .stat-banner { background: #fff7e6; color: #d48806; padding: 8px; text-align: center; font-size: 12px; border-bottom: 1px solid #ffe58f; }
         
-        /* 容器 */
-        .container { max-width: 800px; margin: 0 auto; padding: 10px 0; }
+        /* 帖子流 */
+        .container { max-width: 600px; margin: 0 auto; padding: 10px; }
+        .post-card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .post-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .post-tag { background: #e6f7ff; color: #1890ff; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+        .post-bounty { background: #fffbe6; color: #faad14; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .post-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 6px; display: block; }
+        .post-img { width: 100%; height: 160px; object-fit: cover; border-radius: 4px; margin-top: 8px; background: #f5f5f5; }
+        .post-footer { margin-top: 10px; font-size: 12px; color: #999; display: flex; justify-content: space-between; }
         
-        /* 状态提示条 */
-        #system-msg { background: #fee2e2; color: #991b1b; padding: 10px; text-align: center; font-size: 12px; display: none; }
+        /* 悬浮按钮 */
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; background: #cc0000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 12px rgba(204,0,0,0.3); cursor: pointer; z-index: 900; }
         
-        /* 帖子列表 */
-        #post-feed { min-height: 300px; }
-        .post-card { background: #fff; border: 1px solid #dcdcdc; border-radius: 4px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .post-avatar { width: 40px; height: 40px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #888; flex-shrink: 0; font-size: 14px; }
-        .post-main { flex: 1; }
-        .post-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .post-title { font-size: 15px; font-weight: bold; color: #004499; margin-bottom: 6px; display: block; line-height: 1.4; }
-        .post-meta { font-size: 11px; color: #999; display: flex; gap: 10px; align-items: center; margin-top: 5px; }
-        .tag-bounty { background: #fff7e6; color: #d48806; border: 1px solid #d48806; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; }
-        .tag-cat { background: #eef2ff; color: #4f46e5; padding: 1px 5px; border-radius: 3px; font-size: 10px; }
-        
-        /* 悬浮发帖按钮 */
-        .fab-btn { 
-            position: fixed; bottom: 30px; right: 20px; 
-            width: 56px; height: 56px; background: #cc0000; color: #fff; 
-            border-radius: 50%; box-shadow: 0 4px 15px rgba(204,0,0,0.4);
-            display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 900;
-            transition: transform 0.1s;
-        }
-        .fab-btn:active { transform: scale(0.95); }
-
-        /* 弹窗系统 */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
-        .modal-box { background: #fff; width: 90%; max-width: 400px; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-header { background: #f9fafb; padding: 12px 15px; font-weight: bold; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        /* 弹窗 */
+        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: #fff; width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; animation: popUp 0.2s ease-out; }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-head { padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; display: flex; justify-content: space-between; }
         .modal-body { padding: 20px; }
-        .input-group { margin-bottom: 15px; }
-        .input-label { display: block; font-size: 11px; color: #666; margin-bottom: 5px; font-weight: bold; }
-        .input-field { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fcfcfc; }
-        .input-field:focus { border-color: #004499; background: #fff; }
-        .textarea-field { width: 100%; padding: 10px; height: 120px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; resize: none; }
-        .btn-submit { width: 100%; padding: 12px; background: #004499; color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        .btn-submit:active { background: #003377; }
+        .input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 12px; background: #f9f9f9; font-size: 14px; }
+        .textarea { height: 100px; resize: none; }
+        .btn-full { width: 100%; padding: 12px; background: #cc0000; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+        .file-upload { border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 15px; color: #999; font-size: 12px; cursor: pointer; }
         
-        /* 加载动画 */
-        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid #ccc; border-top-color: #333; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* 错误提示 */
+        #err-banner { background: #ff4d4f; color: #fff; padding: 10px; text-align: center; display: none; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="top-nav">
+    <div id="err-banner">⚠️ 网络连接受阻，请尝试刷新或切换网络</div>
+
+    <div class="nav-bar">
         <div class="logo">AI 原点</div>
-        <div id="auth-area">
-            <div id="loading-auth" style="color:#666; font-size:11px;">连接中...</div>
-            <div id="guest-btns" style="display:none;">
-                <span class="btn-action" style="background:#444; margin-right:5px;" onclick="openModal('login')">登录</span>
-                <span class="btn-action" onclick="openModal('register')">注册</span>
-            </div>
-            <div id="user-btns" style="display:none;" class="user-stat">
-                <span>💰 <b id="my-balance">--</b></span>
-                <span style="margin-left:8px; cursor:pointer; color:#ccc;" onclick="logout()">[退]</span>
-            </div>
+        <div class="user-area" id="auth-area">
+            <span class="btn-s" onclick="openAuth('login')">登录</span>
+            <span class="btn-s btn-pri" onclick="openAuth('register')">注册</span>
         </div>
     </div>
 
-    <div id="system-msg"></div>
-    <div class="stats-bar">
-        <span>全站 Token: <b style="color:#cc0000" id="global-token">21,000</b></span>
-        <span>会员: <b>45,210</b></span>
+    <div class="stat-banner">
+        🔥 全站 Token 池: <span id="pool-count" style="font-weight:bold;">21,000</span> | 会员: 45,210
     </div>
 
-    <div class="container">
-        <div id="post-feed">
-            <div style="text-align:center; padding:40px; color:#999;">
-                <div class="spinner"></div><br><br>正在从云端拉取数据...
-            </div>
-        </div>
+    <div class="container" id="feed">
+        <div style="text-align:center; padding:40px; color:#999;">正在连接数据库...</div>
     </div>
 
-    <div class="fab-btn" onclick="openPostModal()">+</div>
+    <div class="fab" onclick="openPost()">+</div>
 
-    <div id="auth-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header"><span id="auth-title">登录</span><span onclick="closeAuth()" style="cursor:pointer; font-size:18px;">✕</span></div>
+    <div id="modal-post" class="modal-mask">
+        <div class="modal">
+            <div class="modal-head">发布新帖 <span onclick="closeModal('modal-post')">✕</span></div>
             <div class="modal-body">
-                <div class="input-group">
-                    <input type="email" id="email" class="input-field" placeholder="请输入邮箱">
+                <select id="p-cat" class="input">
+                    <option value="GPT">ChatGPT 交流</option>
+                    <option value="DS">DeepSeek 开源</option>
+                    <option value="$$">悬赏与变现</option>
+                </select>
+                <input id="p-title" class="input" placeholder="标题: 一句话描述核心内容">
+                <textarea id="p-content" class="input textarea" placeholder="正文内容..."></textarea>
+                
+                <div class="file-upload" onclick="document.getElementById('p-file').click()">
+                    <span id="file-label">📸 点击上传图片 / 视频</span>
                 </div>
-                <div class="input-group">
-                    <input type="password" id="password" class="input-field" placeholder="设置密码">
+                <input type="file" id="p-file" style="display:none" accept="image/*,video/*" onchange="handleFileSelect(this)">
+                
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                    <label>💰 悬赏:</label>
+                    <input type="number" id="p-bounty" class="input" style="width:80px; margin:0;" value="0">
                 </div>
-                <button id="auth-submit" class="btn-submit" onclick="handleAuth()">提交</button>
-                <div style="text-align:center; margin-top:15px; color:#004499; cursor:pointer; font-size:12px;" id="auth-toggle" onclick="toggleAuth()">没有账号？去注册</div>
+                <button class="btn-full" onclick="submitPost()">立即发布</button>
             </div>
         </div>
     </div>
 
-    <div id="post-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header"><span>发布新帖</span><span onclick="closePost()" style="cursor:pointer; font-size:18px;">✕</span></div>
+    <div id="modal-auth" class="modal-mask">
+        <div class="modal">
+            <div class="modal-head"><span id="auth-title">登录</span> <span onclick="closeModal('modal-auth')">✕</span></div>
             <div class="modal-body">
-                <div class="input-group">
-                    <label class="input-label">选择版块</label>
-                    <select id="post-cat" class="input-field">
-                        <option value="gpt">ChatGPT 交流</option>
-                        <option value="deepseek">DeepSeek 开源</option>
-                        <option value="market">悬赏与变现</option>
-                        <option value="feedback">意见与建议</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label class="input-label">帖子标题</label>
-                    <input type="text" id="post-title" class="input-field" placeholder="一句话描述你的问题或分享">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">内容 (支持图片链接)</label>
-                    <textarea id="post-content" class="textarea-field" placeholder="详细描述..."></textarea>
-                </div>
-                <div class="input-group" style="display:flex; align-items:center; gap:10px;">
-                    <label class="input-label" style="margin:0;">💰 悬赏 Token:</label>
-                    <input type="number" id="post-bounty" class="input-field" style="width:100px;" value="0">
-                </div>
-                <button class="btn-submit" style="background:#cc0000;" onclick="submitPost()">立即发布</button>
+                <input id="email" class="input" placeholder="邮箱">
+                <input id="pwd" type="password" class="input" placeholder="密码">
+                <button class="btn-full" onclick="handleAuth()">提交</button>
+                <div style="text-align:center; margin-top:15px; color:#1890ff; font-size:12px;" onclick="toggleAuth()">切换注册/登录</div>
             </div>
         </div>
     </div>
 
     <script>
         // Supabase 配置
-        const supabaseUrl = 'https://dodvxzmzggxlztuhivvp.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
+        const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
-        let supabase = null;
-        let currentUser = null;
-        let isRegister = false;
+        let sb = null;
+        let user = null;
+        let isReg = false;
+        let uploadFile = null;
 
-        // 1. 动态加载 SDK (多线路重试)
-        async function loadSupabaseSDK() {
-            const sources = [
-                "https://npm.elemecdn.com/@supabase/supabase-js@2", // 阿里饿了么源 (国内极速)
-                "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", // 官方源
-                "https://unpkg.com/@supabase/supabase-js@2" // 备用源
-            ];
-
-            for (const src of sources) {
-                try {
-                    await new Promise((resolve, reject) => {
-                        const script = document.createElement('script');
-                        script.src = src;
-                        script.onload = resolve;
-                        script.onerror = reject;
-                        document.head.appendChild(script);
-                    });
-                    console.log("SDK 加载成功: " + src);
-                    return true;
-                } catch (e) {
-                    console.warn("线路失败: " + src);
-                }
-            }
-            return false;
-        }
-
-        // 2. 初始化应用
-        async function initApp() {
-            const loaded = await loadSupabaseSDK();
-            if (!loaded || !window.supabase) {
-                document.getElementById('system-msg').style.display = 'block';
-                document.getElementById('system-msg').innerText = "⚠️ 网络连接严重受阻，请尝试切换 WiFi/5G 或开启代理刷新。";
-                return;
-            }
-
+        // 初始化
+        async function init() {
             try {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                if (!window.supabase) throw new Error("SDK未加载");
+                sb = window.supabase.createClient(SB_URL, SB_KEY);
                 
-                // 检查登录状态
-                const { data: { user } } = await supabase.auth.getUser();
-                document.getElementById('loading-auth').style.display = 'none';
-                
-                if (user) {
-                    currentUser = user;
-                    setupUserUI();
-                } else {
-                    document.getElementById('guest-btns').style.display = 'flex';
+                // 检查用户
+                const { data } = await sb.auth.getUser();
+                if (data.user) {
+                    user = data.user;
+                    renderUser();
                 }
 
                 // 加载帖子
-                loadPosts();
+                loadFeed();
+                
+                // Token跳动
+                setInterval(() => {
+                    const el = document.getElementById('pool-count');
+                    let v = parseInt(el.innerText.replace(',',''));
+                    el.innerText = (v + Math.floor(Math.random()*3)).toLocaleString();
+                }, 3000);
 
             } catch (err) {
-                console.error(err);
-                alert("初始化失败: " + err.message);
+                document.getElementById('err-banner').style.display = 'block';
+                document.getElementById('feed').innerHTML = '<div style="text-align:center; padding:20px;">连接失败，请检查网络</div>';
             }
         }
 
         // 加载帖子
-        async function loadPosts() {
-            const feed = document.getElementById('post-feed');
+        async function loadFeed() {
+            const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
+            if (error) return;
             
-            // 查表
-            const { data, error } = await supabase
-                .from('posts')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                feed.innerHTML = '<div style="text-align:center; padding:20px; color:red;">读取失败: ' + error.message + '</div>';
-                return;
-            }
-
+            const feed = document.getElementById('feed');
             if (!data || data.length === 0) {
-                feed.innerHTML = `
-                    <div style="text-align:center; padding:40px; color:#666;">
-                        <h3>✨ 这里的黎明静悄悄</h3>
-                        <p>数据库已就绪，等待第一位开拓者。</p>
-                        <p>点击右下角红色按钮，发布全网第一帖！</p>
-                    </div>`;
+                feed.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">还没有帖子，来抢沙发！</div>';
                 return;
             }
 
-            feed.innerHTML = '';
-            data.forEach(post => {
-                const isBounty = post.bounty > 0;
-                const date = new Date(post.created_at);
-                const timeStr = (date.getMonth()+1) + '-' + date.getDate();
-                
-                // 简单的头像生成
-                const firstLetter = post.category ? post.category.substring(0,1).toUpperCase() : 'A';
-                
-                const html = `
-                    <div class="post-card">
-                        <div class="post-avatar">${firstLetter}</div>
-                        <div class="post-main">
-                            <div class="post-header">
-                                <a class="post-title">${post.title}</a>
-                                ${isBounty ? `<span class="tag-bounty">💰${post.bounty}</span>` : ''}
-                            </div>
-                            <div style="font-size:12px; color:#333; margin-bottom:5px;">${post.content.substring(0, 60)}${post.content.length>60?'...':''}</div>
-                            <div class="post-meta">
-                                <span class="tag-cat">${post.category}</span>
-                                <span>${timeStr}</span>
-                                <span>浏览 ${post.view_count || 1}</span>
-                            </div>
-                        </div>
+            feed.innerHTML = data.map(p => `
+                <div class="post-card">
+                    <div class="post-header">
+                        <span class="post-tag">${p.category}</span>
+                        ${p.bounty > 0 ? `<span class="post-bounty">💰${p.bounty}</span>` : ''}
                     </div>
-                `;
-                feed.innerHTML += html;
-            });
+                    <a class="post-title">${p.title}</a>
+                    <div style="font-size:13px; color:#666; margin-bottom:5px;">${p.content}</div>
+                    ${p.image_url ? `<img src="${p.image_url}" class="post-img" onclick="window.open(this.src)">` : ''}
+                    <div class="post-footer">
+                        <span>浏览 ${p.view_count || 1}</span>
+                        <span>${new Date(p.created_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // 发帖逻辑
+        // 文件选择处理
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                uploadFile = input.files[0];
+                document.getElementById('file-label').innerText = "✅ 已选择: " + uploadFile.name;
+            }
+        }
+
+        // 发帖逻辑 (含图片上传)
         async function submitPost() {
-            if (!currentUser) return alert("请先登录！");
+            if (!user) return alert("请先登录");
             
-            const title = document.getElementById('post-title').value;
-            const content = document.getElementById('post-content').value;
-            const category = document.getElementById('post-cat').value;
-            const bounty = parseInt(document.getElementById('post-bounty').value) || 0;
-
-            if (!title) return alert("标题不能为空");
-
-            const btn = document.querySelector('#post-modal .btn-submit');
-            const originalText = btn.innerText;
+            const btn = document.querySelector('#modal-post button');
+            const oldTxt = btn.innerText;
             btn.innerText = "发布中...";
             btn.disabled = true;
 
-            const { error } = await supabase.from('posts').insert({
-                author_id: currentUser.id,
-                title,
-                content,
-                category,
-                bounty
-            });
+            try {
+                let imgUrl = null;
 
-            if (error) {
-                alert("发布失败: " + error.message);
-                btn.innerText = originalText;
-                btn.disabled = false;
-            } else {
+                // 1. 如果有图，先传图
+                if (uploadFile) {
+                    const fileName = `${Date.now()}_${uploadFile.name}`;
+                    const { data, error } = await sb.storage.from('images').upload(fileName, uploadFile);
+                    if (error) throw error;
+                    // 获取公开链接
+                    const { data: { publicUrl } } = sb.storage.from('images').getPublicUrl(fileName);
+                    imgUrl = publicUrl;
+                }
+
+                // 2. 存帖子
+                const { error } = await sb.from('posts').insert({
+                    author_id: user.id,
+                    title: document.getElementById('p-title').value,
+                    content: document.getElementById('p-content').value,
+                    category: document.getElementById('p-cat').value,
+                    bounty: document.getElementById('p-bounty').value,
+                    image_url: imgUrl // 存入图片链接
+                });
+
+                if (error) throw error;
+                
                 alert("发布成功！");
-                closePost();
-                loadPosts(); // 刷新
-                // 清空输入
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-content').value = '';
-                btn.innerText = originalText;
+                closeModal('modal-post');
+                loadFeed();
+                // 重置表单
+                uploadFile = null;
+                document.getElementById('file-label').innerText = "📸 点击上传图片 / 视频";
+                document.getElementById('p-title').value = "";
+                document.getElementById('p-content').value = "";
+
+            } catch (err) {
+                alert("发布失败: " + err.message);
+            } finally {
+                btn.innerText = oldTxt;
                 btn.disabled = false;
             }
         }
@@ -308,66 +237,51 @@
         // 认证逻辑
         async function handleAuth() {
             const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            if (!email || !password) return alert("请填写完整");
-
-            const btn = document.getElementById('auth-submit');
-            btn.innerText = "处理中...";
-            btn.disabled = true;
-
+            const pwd = document.getElementById('pwd').value;
+            
             try {
-                if (isRegister) {
-                    const { error } = await supabase.auth.signUp({ email, password });
-                    if (error) throw error;
-                    alert("✅ 注册申请已提交！\n请务必前往邮箱 ["+email+"] 点击验证链接。\n验证后即可登录！");
-                    closeAuth();
+                const { error } = isReg 
+                    ? await sb.auth.signUp({ email, password: pwd })
+                    : await sb.auth.signInWithPassword({ email, password: pwd });
+                
+                if (error) throw error;
+                
+                if (isReg) {
+                    alert("验证邮件已发送！请去邮箱确认。");
+                    closeModal('modal-auth');
                 } else {
-                    const { error } = await supabase.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
                     location.reload();
                 }
             } catch (err) {
-                alert("操作失败: " + err.message);
-            } finally {
-                btn.innerText = "提交";
-                btn.disabled = false;
+                alert(err.message);
             }
         }
 
-        async function setupUserUI() {
-            document.getElementById('guest-btns').style.display = 'none';
-            document.getElementById('user-btns').style.display = 'flex';
-            // 查余额
-            const { data } = await supabase.from('profiles').select('token_balance').eq('id', currentUser.id).single();
-            if (data) document.getElementById('my-balance').innerText = data.token_balance;
+        // UI 辅助
+        function renderUser() {
+            const name = user.email.split('@')[0];
+            document.getElementById('auth-area').innerHTML = `
+                <span style="color:#666;">Hi, ${name}</span>
+                <span class="btn-s" onclick="sb.auth.signOut().then(()=>location.reload())">退出</span>
+            `;
+        }
+        function openAuth(type) {
+            isReg = type === 'register';
+            document.getElementById('auth-title').innerText = isReg ? '注册' : '登录';
+            document.getElementById('modal-auth').style.display = 'flex';
+        }
+        function openPost() {
+            if (!user) return openAuth('login');
+            document.getElementById('modal-post').style.display = 'flex';
+        }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function toggleAuth() {
+            isReg = !isReg;
+            document.getElementById('auth-title').innerText = isReg ? '注册' : '登录';
         }
 
-        async function logout() {
-            await supabase.auth.signOut();
-            location.reload();
-        }
-
-        // UI 控制
-        function openModal(type) {
-            document.getElementById('auth-modal').style.display = 'flex';
-            isRegister = (type === 'register');
-            document.getElementById('auth-title').innerText = isRegister ? '新用户注册' : '登录';
-            document.getElementById('auth-toggle').innerText = isRegister ? '已有账号？去登录' : '没有账号？去注册';
-        }
-        function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
-        function openPostModal() {
-            if (!currentUser) {
-                alert("请先登录才能发帖！");
-                openModal('login');
-            } else {
-                document.getElementById('post-modal').style.display = 'flex';
-            }
-        }
-        function closePost() { document.getElementById('post-modal').style.display = 'none'; }
-
-        // 启动
-        initApp();
-
+        // 启动 (延迟一点确保加载)
+        setTimeout(init, 200);
     </script>
 </body>
 </html>
