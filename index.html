@@ -6,9 +6,9 @@
     <title>AI 原点 | 实战社区</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= 核心风格：极速·实战 ================= */
+        /* ================= 核心风格：硬核·实战 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: #f2f3f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; margin: 0; padding-bottom: 80px; }
+        body { background: #f2f3f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 80px; }
         
         /* 导航 */
         .nav-bar { background: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -17,40 +17,47 @@
         .btn-s { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #ddd; }
         .btn-pri { background: #cc0000; color: #fff; border: none; }
         
-        /* 统计 */
-        .stat-banner { background: #fff7e6; color: #d48806; padding: 8px; text-align: center; font-size: 12px; border-bottom: 1px solid #ffe58f; }
+        /* 统计条 */
+        .stat-banner { background: #fff7e6; color: #d48806; padding: 8px; text-align: center; font-size: 12px; border-bottom: 1px solid #ffe58f; display: flex; justify-content: center; gap: 15px; }
+
+        /* ================= 板块导航区 (恢复硬核布局) ================= */
+        .section-container { max-width: 800px; margin: 0 auto; padding: 5px; }
+        .forum-box { background: #fff; border: 1px solid #e8e8e8; margin-bottom: 8px; border-radius: 4px; overflow: hidden; }
+        .box-head { background: #f9f9f9; padding: 8px 12px; font-weight: bold; color: #666; font-size: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
         
-        /* 帖子流 */
-        .container { max-width: 600px; margin: 0 auto; padding: 10px; }
-        .post-card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .post-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .post-tag { background: #e6f7ff; color: #1890ff; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+        .forum-row { display: flex; padding: 10px; border-bottom: 1px solid #f0f0f0; align-items: flex-start; cursor: pointer; transition: background 0.1s; }
+        .forum-row:active { background: #fafafa; }
+        .forum-row:last-child { border-bottom: none; }
+        
+        .f-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10px; margin-right: 10px; flex-shrink: 0; }
+        .f-info { flex: 1; }
+        .f-title { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 2px; }
+        .f-desc { font-size: 11px; color: #999; line-height: 1.3; }
+        .f-stat { font-size: 10px; color: #ccc; text-align: right; min-width: 40px; }
+
+        /* ================= 帖子流 ================= */
+        .feed-header { padding: 15px 10px 5px; font-weight: bold; color: #333; font-size: 16px; border-left: 4px solid #cc0000; margin: 10px 5px; }
+        .post-card { background: #fff; border-radius: 0; border-bottom: 1px solid #eee; padding: 15px; }
+        .post-tag { background: #e6f7ff; color: #1890ff; padding: 2px 6px; border-radius: 4px; font-size: 10px; display: inline-block; margin-bottom: 4px; }
         .post-bounty { background: #fffbe6; color: #faad14; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .post-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 6px; display: block; }
-        .post-img { width: 100%; height: 160px; object-fit: cover; border-radius: 4px; margin-top: 8px; background: #f5f5f5; }
-        .post-footer { margin-top: 10px; font-size: 12px; color: #999; display: flex; justify-content: space-between; }
-        
+        .post-title { font-size: 15px; font-weight: bold; color: #333; display: block; margin-bottom: 6px; }
+        .post-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px; margin-top: 5px; background: #f5f5f5; border: 1px solid #eee; }
+        .post-meta { margin-top: 8px; font-size: 11px; color: #999; display: flex; justify-content: space-between; }
+
         /* 悬浮按钮 */
         .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; background: #cc0000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 12px rgba(204,0,0,0.3); cursor: pointer; z-index: 900; }
-        
-        /* 弹窗 */
+
+        /* 弹窗通用 */
         .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: #fff; width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; animation: popUp 0.2s ease-out; }
-        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal { background: #fff; width: 90%; max-width: 400px; border-radius: 8px; overflow: hidden; }
         .modal-head { padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; display: flex; justify-content: space-between; }
         .modal-body { padding: 20px; }
-        .input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 12px; background: #f9f9f9; font-size: 14px; }
-        .textarea { height: 100px; resize: none; }
-        .btn-full { width: 100%; padding: 12px; background: #cc0000; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
-        .file-upload { border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 15px; color: #999; font-size: 12px; cursor: pointer; }
-        
-        /* 错误提示 */
-        #err-banner { background: #ff4d4f; color: #fff; padding: 10px; text-align: center; display: none; font-size: 12px; }
+        .input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 12px; background: #f9f9f9; font-size: 14px; }
+        .btn-full { width: 100%; padding: 12px; background: #cc0000; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; }
+        .file-box { border: 2px dashed #ddd; padding: 15px; text-align: center; border-radius: 6px; margin-bottom: 15px; color: #666; font-size: 12px; }
     </style>
 </head>
 <body>
-
-    <div id="err-banner">⚠️ 网络连接受阻，请尝试刷新或切换网络</div>
 
     <div class="nav-bar">
         <div class="logo">AI 原点</div>
@@ -61,11 +68,61 @@
     </div>
 
     <div class="stat-banner">
-        🔥 全站 Token 池: <span id="pool-count" style="font-weight:bold;">21,000</span> | 会员: 45,210
+        <span>🔥 Token: <b id="pool-count">21,013</b></span>
+        <span>👥 会员: 45,210</span>
     </div>
 
-    <div class="container" id="feed">
-        <div style="text-align:center; padding:40px; color:#999;">正在连接数据库...</div>
+    <div class="section-container">
+        
+        <div class="forum-box">
+            <div class="box-head">🌍 国际主流模型</div>
+            <div class="forum-row" onclick="filterFeed('gpt')">
+                <div class="f-icon" style="background:#e6f4ea; color:#10a37f;">GPT</div>
+                <div class="f-info">
+                    <div class="f-title">ChatGPT 综合交流</div>
+                    <div class="f-desc">账号注册 / Plus 拼车 / API 对接</div>
+                </div>
+                <div class="f-stat">Hot</div>
+            </div>
+            <div class="forum-row" onclick="filterFeed('claude')">
+                <div class="f-icon" style="background:#fff0e6; color:#d97757;">CL</div>
+                <div class="f-info">
+                    <div class="f-title">Claude 深度研讨</div>
+                    <div class="f-desc">长文本分析 / 代码生成 / 酒馆破限</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="forum-box">
+            <div class="box-head">🛠️ 国产与开源</div>
+            <div class="forum-row" onclick="filterFeed('deepseek')">
+                <div class="f-icon" style="background:#eef2ff; color:#4f46e5;">DS</div>
+                <div class="f-info">
+                    <div class="f-title" style="color:#004499;">DeepSeek 深度求索</div>
+                    <div class="f-desc" style="color:#cc0000;">[爆] 本地部署保姆级教程 / 显卡推荐</div>
+                </div>
+                <div class="f-stat">99+</div>
+            </div>
+        </div>
+
+        <div class="forum-box" style="border-color:#ffe58f;">
+            <div class="box-head" style="background:#fffbe6; color:#d48806;">💰 变现与悬赏</div>
+            <div class="forum-row" onclick="filterFeed('market')">
+                <div class="f-icon" style="background:#333; color:#fff;">$</div>
+                <div class="f-info">
+                    <div class="f-title">任务悬赏大厅</div>
+                    <div class="f-desc">求 Prompt / AI 代写 / 工作流定制</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="section-container">
+        <div class="feed-header" id="feed-title">📢 最新动态</div>
+        <div id="feed">
+            <div style="text-align:center; padding:30px; color:#999;">正在加载数据...</div>
+        </div>
     </div>
 
     <div class="fab" onclick="openPost()">+</div>
@@ -75,20 +132,20 @@
             <div class="modal-head">发布新帖 <span onclick="closeModal('modal-post')">✕</span></div>
             <div class="modal-body">
                 <select id="p-cat" class="input">
-                    <option value="GPT">ChatGPT 交流</option>
-                    <option value="DS">DeepSeek 开源</option>
-                    <option value="$$">悬赏与变现</option>
+                    <option value="gpt">ChatGPT 交流</option>
+                    <option value="deepseek">DeepSeek 开源</option>
+                    <option value="market">悬赏与变现</option>
                 </select>
-                <input id="p-title" class="input" placeholder="标题: 一句话描述核心内容">
-                <textarea id="p-content" class="input textarea" placeholder="正文内容..."></textarea>
+                <input id="p-title" class="input" placeholder="标题">
+                <textarea id="p-content" class="input" style="height:100px" placeholder="正文..."></textarea>
                 
-                <div class="file-upload" onclick="document.getElementById('p-file').click()">
-                    <span id="file-label">📸 点击上传图片 / 视频</span>
+                <div class="file-box" onclick="document.getElementById('p-file').click()">
+                    <span id="file-label">📸 点击上传图片 (支持截图)</span>
                 </div>
-                <input type="file" id="p-file" style="display:none" accept="image/*,video/*" onchange="handleFileSelect(this)">
+                <input type="file" id="p-file" style="display:none" accept="image/*" onchange="handleFile(this)">
                 
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
-                    <label>💰 悬赏:</label>
+                    <label>💰悬赏:</label>
                     <input type="number" id="p-bounty" class="input" style="width:80px; margin:0;" value="0">
                 </div>
                 <button class="btn-full" onclick="submitPost()">立即发布</button>
@@ -103,13 +160,12 @@
                 <input id="email" class="input" placeholder="邮箱">
                 <input id="pwd" type="password" class="input" placeholder="密码">
                 <button class="btn-full" onclick="handleAuth()">提交</button>
-                <div style="text-align:center; margin-top:15px; color:#1890ff; font-size:12px;" onclick="toggleAuth()">切换注册/登录</div>
+                <div style="text-align:center; margin-top:15px; color:#999; font-size:12px;" onclick="toggleAuth()">切换注册/登录</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase 配置
         const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
@@ -118,150 +174,124 @@
         let isReg = false;
         let uploadFile = null;
 
-        // 初始化
         async function init() {
-            try {
-                if (!window.supabase) throw new Error("SDK未加载");
-                sb = window.supabase.createClient(SB_URL, SB_KEY);
-                
-                // 检查用户
-                const { data } = await sb.auth.getUser();
-                if (data.user) {
-                    user = data.user;
-                    renderUser();
-                }
-
-                // 加载帖子
-                loadFeed();
-                
-                // Token跳动
-                setInterval(() => {
-                    const el = document.getElementById('pool-count');
-                    let v = parseInt(el.innerText.replace(',',''));
-                    el.innerText = (v + Math.floor(Math.random()*3)).toLocaleString();
-                }, 3000);
-
-            } catch (err) {
-                document.getElementById('err-banner').style.display = 'block';
-                document.getElementById('feed').innerHTML = '<div style="text-align:center; padding:20px;">连接失败，请检查网络</div>';
+            if(!window.supabase) return setTimeout(init, 500); // 等待加载
+            sb = window.supabase.createClient(SB_URL, SB_KEY);
+            
+            const { data } = await sb.auth.getUser();
+            if(data.user) {
+                user = data.user;
+                renderUser();
             }
+            
+            // 默认加载全部
+            loadFeed();
         }
 
-        // 加载帖子
-        async function loadFeed() {
-            const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-            if (error) return;
-            
+        // 加载帖子 (支持过滤)
+        async function loadFeed(filterCat = null) {
             const feed = document.getElementById('feed');
-            if (!data || data.length === 0) {
-                feed.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">还没有帖子，来抢沙发！</div>';
+            feed.innerHTML = '<div style="text-align:center; padding:20px; color:#ccc;">加载中...</div>';
+            
+            let query = sb.from('posts').select('*').order('created_at', { ascending: false });
+            if(filterCat) query = query.eq('category', filterCat);
+            
+            const { data, error } = await query;
+            
+            if(!data || data.length === 0) {
+                feed.innerHTML = '<div style="text-align:center; padding:30px; color:#999;">该板块暂无帖子，快来抢沙发！</div>';
                 return;
             }
 
             feed.innerHTML = data.map(p => `
                 <div class="post-card">
-                    <div class="post-header">
-                        <span class="post-tag">${p.category}</span>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span class="post-tag">${p.category.toUpperCase()}</span>
                         ${p.bounty > 0 ? `<span class="post-bounty">💰${p.bounty}</span>` : ''}
                     </div>
-                    <a class="post-title">${p.title}</a>
-                    <div style="font-size:13px; color:#666; margin-bottom:5px;">${p.content}</div>
+                    <div class="post-title">${p.title}</div>
+                    <div style="font-size:13px; color:#666;">${p.content}</div>
                     ${p.image_url ? `<img src="${p.image_url}" class="post-img" onclick="window.open(this.src)">` : ''}
-                    <div class="post-footer">
-                        <span>浏览 ${p.view_count || 1}</span>
+                    <div class="post-meta">
                         <span>${new Date(p.created_at).toLocaleDateString()}</span>
+                        <span>浏览 ${p.view_count || 1}</span>
                     </div>
                 </div>
             `).join('');
-        }
 
-        // 文件选择处理
-        function handleFileSelect(input) {
-            if (input.files && input.files[0]) {
-                uploadFile = input.files[0];
-                document.getElementById('file-label').innerText = "✅ 已选择: " + uploadFile.name;
+            // 更新标题
+            if(filterCat) {
+                document.getElementById('feed-title').innerText = "📂 " + filterCat.toUpperCase() + " 分区内容";
+                // 滚动到 Feed
+                document.getElementById('feed-title').scrollIntoView({behavior: "smooth"});
+            } else {
+                document.getElementById('feed-title').innerText = "📢 最新动态";
             }
         }
 
-        // 发帖逻辑 (含图片上传)
+        // 快捷过滤
+        function filterFeed(cat) { loadFeed(cat); }
+
+        // 发帖
+        function handleFile(input) {
+            if(input.files[0]) {
+                uploadFile = input.files[0];
+                document.getElementById('file-label').innerText = "✅ 已选: " + uploadFile.name;
+            }
+        }
+
         async function submitPost() {
-            if (!user) return alert("请先登录");
-            
+            if(!user) return alert("请先登录");
             const btn = document.querySelector('#modal-post button');
-            const oldTxt = btn.innerText;
-            btn.innerText = "发布中...";
-            btn.disabled = true;
+            btn.innerText = "发布中..."; btn.disabled = true;
 
             try {
                 let imgUrl = null;
-
-                // 1. 如果有图，先传图
-                if (uploadFile) {
-                    const fileName = `${Date.now()}_${uploadFile.name}`;
-                    const { data, error } = await sb.storage.from('images').upload(fileName, uploadFile);
-                    if (error) throw error;
-                    // 获取公开链接
-                    const { data: { publicUrl } } = sb.storage.from('images').getPublicUrl(fileName);
-                    imgUrl = publicUrl;
+                if(uploadFile) {
+                    const fname = `${Date.now()}_${uploadFile.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+                    await sb.storage.from('images').upload(fname, uploadFile);
+                    const { data } = sb.storage.from('images').getPublicUrl(fname);
+                    imgUrl = data.publicUrl;
                 }
 
-                // 2. 存帖子
-                const { error } = await sb.from('posts').insert({
+                await sb.from('posts').insert({
                     author_id: user.id,
                     title: document.getElementById('p-title').value,
                     content: document.getElementById('p-content').value,
                     category: document.getElementById('p-cat').value,
                     bounty: document.getElementById('p-bounty').value,
-                    image_url: imgUrl // 存入图片链接
+                    image_url: imgUrl
                 });
 
-                if (error) throw error;
-                
                 alert("发布成功！");
                 closeModal('modal-post');
                 loadFeed();
-                // 重置表单
-                uploadFile = null;
-                document.getElementById('file-label').innerText = "📸 点击上传图片 / 视频";
-                document.getElementById('p-title').value = "";
-                document.getElementById('p-content').value = "";
+                // 清理
+                uploadFile = null; document.getElementById('file-label').innerText = "📸 点击上传图片";
+                document.getElementById('p-title').value = ""; document.getElementById('p-content').value = "";
 
-            } catch (err) {
-                alert("发布失败: " + err.message);
-            } finally {
-                btn.innerText = oldTxt;
-                btn.disabled = false;
-            }
+            } catch(e) { alert("失败: " + e.message); }
+            finally { btn.innerText = "立即发布"; btn.disabled = false; }
         }
 
-        // 认证逻辑
+        // 认证
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const pwd = document.getElementById('pwd').value;
-            
             try {
                 const { error } = isReg 
                     ? await sb.auth.signUp({ email, password: pwd })
                     : await sb.auth.signInWithPassword({ email, password: pwd });
-                
-                if (error) throw error;
-                
-                if (isReg) {
-                    alert("验证邮件已发送！请去邮箱确认。");
-                    closeModal('modal-auth');
-                } else {
-                    location.reload();
-                }
-            } catch (err) {
-                alert(err.message);
-            }
+                if(error) throw error;
+                if(isReg) { alert("去邮箱验证！"); closeModal('modal-auth'); }
+                else location.reload();
+            } catch(e) { alert(e.message); }
         }
 
-        // UI 辅助
+        // UI
         function renderUser() {
-            const name = user.email.split('@')[0];
             document.getElementById('auth-area').innerHTML = `
-                <span style="color:#666;">Hi, ${name}</span>
+                <span style="color:#666;">Hi, ${user.email.split('@')[0]}</span>
                 <span class="btn-s" onclick="sb.auth.signOut().then(()=>location.reload())">退出</span>
             `;
         }
@@ -270,17 +300,10 @@
             document.getElementById('auth-title').innerText = isReg ? '注册' : '登录';
             document.getElementById('modal-auth').style.display = 'flex';
         }
-        function openPost() {
-            if (!user) return openAuth('login');
-            document.getElementById('modal-post').style.display = 'flex';
-        }
+        function openPost() { if(!user) return openAuth('login'); document.getElementById('modal-post').style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function toggleAuth() {
-            isReg = !isReg;
-            document.getElementById('auth-title').innerText = isReg ? '注册' : '登录';
-        }
+        function toggleAuth() { isReg = !isReg; document.getElementById('auth-title').innerText = isReg ? '注册' : '登录'; }
 
-        // 启动 (延迟一点确保加载)
         setTimeout(init, 200);
     </script>
 </body>
