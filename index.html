@@ -3,144 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI 原点 | 实战社区</title>
+    <title>AI 原点 | 深度学习与变现社区</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= 核心风格：硬核·实战 ================= */
+        /* ================= 硬核工业风：高密度·直角·信息流 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: #f2f3f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 80px; }
+        body { background: #e6e6e6; color: #333; font-family: "Verdana", "Arial", sans-serif; font-size: 12px; margin: 0; padding-bottom: 60px; line-height: 1.5; }
+        a { text-decoration: none; color: #333; cursor: pointer; }
+        a:hover { text-decoration: underline; color: #cc0000; }
         
-        /* 导航 */
-        .nav-bar { background: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .logo { font-weight: 900; color: #cc0000; font-size: 18px; letter-spacing: -0.5px; }
-        .user-area { font-size: 12px; font-weight: 500; display: flex; gap: 10px; align-items: center; }
-        .btn-s { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid #ddd; }
-        .btn-pri { background: #cc0000; color: #fff; border: none; }
+        /* 1. 顶部黑条 */
+        .top-bar { background: #333; color: #ccc; padding: 0 10px; height: 30px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+        .top-link { color: #ccc; margin-left: 10px; }
         
-        /* 统计条 */
-        .stat-banner { background: #fff7e6; color: #d48806; padding: 8px; text-align: center; font-size: 12px; border-bottom: 1px solid #ffe58f; display: flex; justify-content: center; gap: 15px; }
+        /* 2. 头部 Logo区 */
+        .header { background: #fff; padding: 15px 10px; border-bottom: 3px solid #cc0000; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 900; color: #cc0000; letter-spacing: -1px; font-family: "Georgia", serif; }
+        .slogan { font-size: 10px; color: #666; margin-top: 2px; text-transform: uppercase; }
+        .user-panel { text-align: right; font-size: 12px; }
+        .btn-login { background: #cc0000; color: #fff; padding: 3px 10px; font-weight: bold; font-size: 11px; display: inline-block; }
+        
+        /* 3. 统计通栏 */
+        .stats-row { background: #fffaf0; border-bottom: 1px solid #e0d0b0; padding: 6px 10px; font-size: 11px; color: #666; display: flex; gap: 15px; overflow-x: auto; white-space: nowrap; }
+        .hl-num { color: #cc0000; font-weight: bold; font-family: monospace; }
 
-        /* ================= 板块导航区 (恢复硬核布局) ================= */
-        .section-container { max-width: 800px; margin: 0 auto; padding: 5px; }
-        .forum-box { background: #fff; border: 1px solid #e8e8e8; margin-bottom: 8px; border-radius: 4px; overflow: hidden; }
-        .box-head { background: #f9f9f9; padding: 8px 12px; font-weight: bold; color: #666; font-size: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
-        
-        .forum-row { display: flex; padding: 10px; border-bottom: 1px solid #f0f0f0; align-items: flex-start; cursor: pointer; transition: background 0.1s; }
-        .forum-row:active { background: #fafafa; }
-        .forum-row:last-child { border-bottom: none; }
-        
-        .f-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10px; margin-right: 10px; flex-shrink: 0; }
-        .f-info { flex: 1; }
-        .f-title { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 2px; }
-        .f-desc { font-size: 11px; color: #999; line-height: 1.3; }
-        .f-stat { font-size: 10px; color: #ccc; text-align: right; min-width: 40px; }
+        /* 4. 核心布局容器 */
+        .container { max-width: 900px; margin: 0 auto; }
 
-        /* ================= 帖子流 ================= */
-        .feed-header { padding: 15px 10px 5px; font-weight: bold; color: #333; font-size: 16px; border-left: 4px solid #cc0000; margin: 10px 5px; }
-        .post-card { background: #fff; border-radius: 0; border-bottom: 1px solid #eee; padding: 15px; }
-        .post-tag { background: #e6f7ff; color: #1890ff; padding: 2px 6px; border-radius: 4px; font-size: 10px; display: inline-block; margin-bottom: 4px; }
-        .post-bounty { background: #fffbe6; color: #faad14; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .post-title { font-size: 15px; font-weight: bold; color: #333; display: block; margin-bottom: 6px; }
-        .post-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px; margin-top: 5px; background: #f5f5f5; border: 1px solid #eee; }
-        .post-meta { margin-top: 8px; font-size: 11px; color: #999; display: flex; justify-content: space-between; }
+        /* 5. 板块容器 (仿老论坛) */
+        .section-box { background: #fff; margin-top: 10px; border: 1px solid #ccc; }
+        .sec-header { 
+            background: linear-gradient(to bottom, #f7f7f7, #e0e0e0); 
+            padding: 8px 10px; border-bottom: 1px solid #ccc; border-top: 1px solid #fff;
+            font-weight: bold; color: #333; font-size: 13px; display: flex; justify-content: space-between;
+        }
+        
+        /* 密集网格 */
+        .grid-row { display: flex; border-bottom: 1px solid #eee; }
+        .grid-row:last-child { border-bottom: none; }
+        
+        .cat-item { flex: 1; padding: 10px; border-right: 1px solid #eee; min-width: 50%; }
+        .cat-item:last-child { border-right: none; }
+        
+        .cat-title { font-size: 14px; font-weight: bold; color: #004499; display: flex; align-items: center; margin-bottom: 4px; }
+        .cat-icon { width: 16px; height: 16px; background: #ddd; color: #fff; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; font-weight: normal; }
+        
+        /* 子链接群 (增加厚度的关键) */
+        .sub-links { font-size: 10px; color: #666; line-height: 1.6; margin-top: 5px; }
+        .sub-link { display: inline-block; color: #666; margin-right: 6px; border-bottom: 1px dotted #ccc; }
+
+        /* 6. 最新帖子 (列表模式) */
+        .thread-list { background: #fff; }
+        .thread-row { 
+            display: flex; padding: 8px 10px; border-bottom: 1px dotted #ccc; align-items: flex-start; 
+            font-size: 12px; transition: background 0.1s;
+        }
+        .thread-row:active { background: #ffffcc; }
+        
+        .t-cat { color: #666; width: 60px; flex-shrink: 0; font-size: 11px; padding-top: 2px; }
+        .t-main { flex: 1; }
+        .t-title { font-weight: bold; color: #333; font-size: 13px; display: block; margin-bottom: 2px; }
+        .t-meta { font-size: 10px; color: #999; }
+        .t-bounty { color: #d48806; font-weight: bold; margin-left: 5px; border: 1px solid #d48806; padding: 0 2px; font-size: 9px; }
+        .t-img-icon { color: #cc0000; margin-left: 3px; font-size: 10px; }
 
         /* 悬浮按钮 */
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; background: #cc0000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 12px rgba(204,0,0,0.3); cursor: pointer; z-index: 900; }
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #cc0000; color: #fff; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); cursor: pointer; z-index: 900; font-family: serif; }
 
         /* 弹窗通用 */
-        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: #fff; width: 90%; max-width: 400px; border-radius: 8px; overflow: hidden; }
-        .modal-head { padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; display: flex; justify-content: space-between; }
-        .modal-body { padding: 20px; }
-        .input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 12px; background: #f9f9f9; font-size: 14px; }
-        .btn-full { width: 100%; padding: 12px; background: #cc0000; color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; }
-        .file-box { border: 2px dashed #ddd; padding: 15px; text-align: center; border-radius: 6px; margin-bottom: 15px; color: #666; font-size: 12px; }
+        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: #fff; width: 90%; max-width: 400px; border: 1px solid #666; box-shadow: 5px 5px 0px rgba(0,0,0,0.2); }
+        .modal-head { background: #333; color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; }
+        .modal-body { padding: 15px; }
+        .input { width: 100%; padding: 8px; border: 1px solid #999; margin-bottom: 10px; font-family: inherit; font-size: 13px; }
+        .btn-full { width: 100%; padding: 10px; background: #cc0000; color: #fff; border: none; font-weight: bold; cursor: pointer; }
+        .file-zone { border: 1px dashed #999; padding: 10px; text-align: center; margin-bottom: 10px; cursor: pointer; background: #f9f9f9; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="nav-bar">
-        <div class="logo">AI 原点</div>
-        <div class="user-area" id="auth-area">
-            <span class="btn-s" onclick="openAuth('login')">登录</span>
-            <span class="btn-s btn-pri" onclick="openAuth('register')">注册</span>
+    <div class="top-bar">
+        <div>设为首页 | 收藏本站</div>
+        <div>
+            <span id="sys-status" style="color:#0f0;">● 数据金库已连接</span>
         </div>
     </div>
 
-    <div class="stat-banner">
-        <span>🔥 Token: <b id="pool-count">21,013</b></span>
-        <span>👥 会员: 45,210</span>
-    </div>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="logo">AI 原点</div>
+                <div class="slogan">硬核 · 实战 · 0到1</div>
+            </div>
+            <div class="user-panel" id="auth-area">
+                <span onclick="openAuth('login')" style="cursor:pointer; margin-right:10px;">登录</span>
+                <span class="btn-login" onclick="openAuth('register')" style="cursor:pointer;">注册账号</span>
+            </div>
+        </div>
 
-    <div class="section-container">
+        <div class="stats-row">
+            <span>🔥 Token池: <span class="hl-num" id="pool-count">21,013</span></span>
+            <span>👥 会员: <span class="hl-num">45,210</span></span>
+            <span>📝 今日发帖: <span class="hl-num">1,204</span></span>
+        </div>
+
+        <div class="section-box">
+            <div class="sec-header">
+                <span>🌍 国际主流模型 (Global)</span>
+                <span style="font-weight:normal; font-size:11px;">版主: Admin</span>
+            </div>
+            <div class="grid-row">
+                <div class="cat-item" onclick="filterFeed('gpt')">
+                    <div class="cat-title"><span class="cat-icon" style="background:#10a37f;">G</span> ChatGPT 综合区</div>
+                    <div class="sub-links">
+                        <span class="sub-link">Plus拼车</span>
+                        <span class="sub-link">封号申诉</span>
+                        <span class="sub-link">API对接</span>
+                        <span class="sub-link" style="color:red;">GPT-5爆料</span>
+                    </div>
+                </div>
+                <div class="cat-item" onclick="filterFeed('claude')">
+                    <div class="cat-title"><span class="cat-icon" style="background:#d97757;">C</span> Claude 研讨</div>
+                    <div class="sub-links">
+                        <span class="sub-link">长文本分析</span>
+                        <span class="sub-link">代码生成</span>
+                        <span class="sub-link">酒馆破限</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="sec-header"><span>🛠️ 国产与开源 (Open Source)</span></div>
+            <div class="grid-row">
+                <div class="cat-item" onclick="filterFeed('deepseek')">
+                    <div class="cat-title"><span class="cat-icon" style="background:#4f46e5;">D</span> DeepSeek 深度求索 <span style="color:red; font-size:10px; margin-left:5px;">[爆]</span></div>
+                    <div class="sub-links">
+                        <span class="sub-link" style="color:red; font-weight:bold;">本地部署教程</span>
+                        <span class="sub-link">显卡推荐</span>
+                        <span class="sub-link">Ollama配置</span>
+                        <span class="sub-link">蒸馏模型</span>
+                    </div>
+                </div>
+                <div class="cat-item" onclick="filterFeed('china')">
+                    <div class="cat-title"><span class="cat-icon" style="background:#333;">中</span> 国内大模型</div>
+                    <div class="sub-links">
+                        <span class="sub-link">Kimi</span>
+                        <span class="sub-link">通义千问</span>
+                        <span class="sub-link">豆包</span>
+                        <span class="sub-link">智谱GLM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box" style="border-top: 2px solid #d48806;">
+            <div class="sec-header"><span>💰 市场 & 📢 站务</span></div>
+            <div class="grid-row">
+                <div class="cat-item" onclick="filterFeed('market')">
+                    <div class="cat-title"><span class="cat-icon" style="background:#d48806;">$</span> 任务悬赏 & 变现</div>
+                    <div class="sub-links">
+                        <span class="sub-link">求Prompt</span>
+                        <span class="sub-link">AI代写</span>
+                        <span class="sub-link">工作流定制</span>
+                        <span class="sub-link">账号交易</span>
+                    </div>
+                </div>
+                <div class="cat-item" onclick="filterFeed('feedback')">
+                    <div class="cat-title"><span class="cat-icon" style="background:#666;">议</span> 站务与建议</div>
+                    <div class="sub-links">
+                        <span class="sub-link">功能申请</span>
+                        <span class="sub-link">Bug反馈</span>
+                        <span class="sub-link">版主申请</span>
+                        <span class="sub-link">投诉</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="sec-header" id="feed-title">
+                <span>📄 最新动态 / Thread List</span>
+                <span style="font-size:11px; font-weight:normal;">查看全部</span>
+            </div>
+            <div class="thread-list" id="feed">
+                <div style="text-align:center; padding:30px; color:#999;">正在读取数据...</div>
+            </div>
+        </div>
         
-        <div class="forum-box">
-            <div class="box-head">🌍 国际主流模型</div>
-            <div class="forum-row" onclick="filterFeed('gpt')">
-                <div class="f-icon" style="background:#e6f4ea; color:#10a37f;">GPT</div>
-                <div class="f-info">
-                    <div class="f-title">ChatGPT 综合交流</div>
-                    <div class="f-desc">账号注册 / Plus 拼车 / API 对接</div>
-                </div>
-                <div class="f-stat">Hot</div>
-            </div>
-            <div class="forum-row" onclick="filterFeed('claude')">
-                <div class="f-icon" style="background:#fff0e6; color:#d97757;">CL</div>
-                <div class="f-info">
-                    <div class="f-title">Claude 深度研讨</div>
-                    <div class="f-desc">长文本分析 / 代码生成 / 酒馆破限</div>
-                </div>
-            </div>
+        <div style="text-align:center; padding:20px; color:#999; font-size:10px;">
+            AI 原点 &copy; 2026 | Powered by Supabase
         </div>
 
-        <div class="forum-box">
-            <div class="box-head">🛠️ 国产与开源</div>
-            <div class="forum-row" onclick="filterFeed('deepseek')">
-                <div class="f-icon" style="background:#eef2ff; color:#4f46e5;">DS</div>
-                <div class="f-info">
-                    <div class="f-title" style="color:#004499;">DeepSeek 深度求索</div>
-                    <div class="f-desc" style="color:#cc0000;">[爆] 本地部署保姆级教程 / 显卡推荐</div>
-                </div>
-                <div class="f-stat">99+</div>
-            </div>
-        </div>
-
-        <div class="forum-box" style="border-color:#ffe58f;">
-            <div class="box-head" style="background:#fffbe6; color:#d48806;">💰 变现与悬赏</div>
-            <div class="forum-row" onclick="filterFeed('market')">
-                <div class="f-icon" style="background:#333; color:#fff;">$</div>
-                <div class="f-info">
-                    <div class="f-title">任务悬赏大厅</div>
-                    <div class="f-desc">求 Prompt / AI 代写 / 工作流定制</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="section-container">
-        <div class="feed-header" id="feed-title">📢 最新动态</div>
-        <div id="feed">
-            <div style="text-align:center; padding:30px; color:#999;">正在加载数据...</div>
-        </div>
     </div>
 
     <div class="fab" onclick="openPost()">+</div>
 
     <div id="modal-post" class="modal-mask">
         <div class="modal">
-            <div class="modal-head">发布新帖 <span onclick="closeModal('modal-post')">✕</span></div>
+            <div class="modal-head">发布新帖 <span onclick="closeModal('modal-post')" style="cursor:pointer;">✕</span></div>
             <div class="modal-body">
                 <select id="p-cat" class="input">
                     <option value="gpt">ChatGPT 交流</option>
                     <option value="deepseek">DeepSeek 开源</option>
                     <option value="market">悬赏与变现</option>
+                    <option value="feedback">站务与建议</option>
                 </select>
-                <input id="p-title" class="input" placeholder="标题">
-                <textarea id="p-content" class="input" style="height:100px" placeholder="正文..."></textarea>
+                <input id="p-title" class="input" placeholder="标题 (必填)">
+                <textarea id="p-content" class="input" style="height:100px; resize:none;" placeholder="正文内容..."></textarea>
                 
-                <div class="file-box" onclick="document.getElementById('p-file').click()">
-                    <span id="file-label">📸 点击上传图片 (支持截图)</span>
+                <div class="file-zone" onclick="document.getElementById('p-file').click()">
+                    <span id="file-label">📸 上传图片 (可选)</span>
                 </div>
                 <input type="file" id="p-file" style="display:none" accept="image/*" onchange="handleFile(this)">
                 
@@ -148,24 +221,25 @@
                     <label>💰悬赏:</label>
                     <input type="number" id="p-bounty" class="input" style="width:80px; margin:0;" value="0">
                 </div>
-                <button class="btn-full" onclick="submitPost()">立即发布</button>
+                <button class="btn-full" onclick="submitPost()">发布</button>
             </div>
         </div>
     </div>
 
     <div id="modal-auth" class="modal-mask">
         <div class="modal">
-            <div class="modal-head"><span id="auth-title">登录</span> <span onclick="closeModal('modal-auth')">✕</span></div>
+            <div class="modal-head"><span id="auth-title">用户登录</span> <span onclick="closeModal('modal-auth')" style="cursor:pointer;">✕</span></div>
             <div class="modal-body">
                 <input id="email" class="input" placeholder="邮箱">
                 <input id="pwd" type="password" class="input" placeholder="密码">
                 <button class="btn-full" onclick="handleAuth()">提交</button>
-                <div style="text-align:center; margin-top:15px; color:#999; font-size:12px;" onclick="toggleAuth()">切换注册/登录</div>
+                <div style="text-align:center; margin-top:15px; font-size:12px; color:#004499; cursor:pointer;" onclick="toggleAuth()">切换 注册 / 登录</div>
             </div>
         </div>
     </div>
 
     <script>
+        // Supabase 配置
         const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
@@ -175,7 +249,7 @@
         let uploadFile = null;
 
         async function init() {
-            if(!window.supabase) return setTimeout(init, 500); // 等待加载
+            if(!window.supabase) return setTimeout(init, 500);
             sb = window.supabase.createClient(SB_URL, SB_KEY);
             
             const { data } = await sb.auth.getUser();
@@ -183,56 +257,47 @@
                 user = data.user;
                 renderUser();
             }
-            
-            // 默认加载全部
             loadFeed();
         }
 
-        // 加载帖子 (支持过滤)
-        async function loadFeed(filterCat = null) {
+        async function loadFeed(cat = null) {
             const feed = document.getElementById('feed');
-            feed.innerHTML = '<div style="text-align:center; padding:20px; color:#ccc;">加载中...</div>';
+            feed.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Loading...</div>';
             
-            let query = sb.from('posts').select('*').order('created_at', { ascending: false });
-            if(filterCat) query = query.eq('category', filterCat);
+            let q = sb.from('posts').select('*').order('created_at', { ascending: false });
+            if(cat) q = q.eq('category', cat);
             
-            const { data, error } = await query;
-            
+            const { data, error } = await q;
             if(!data || data.length === 0) {
-                feed.innerHTML = '<div style="text-align:center; padding:30px; color:#999;">该板块暂无帖子，快来抢沙发！</div>';
+                feed.innerHTML = '<div style="text-align:center; padding:20px;">暂无内容</div>';
                 return;
             }
 
             feed.innerHTML = data.map(p => `
-                <div class="post-card">
-                    <div style="display:flex; justify-content:space-between;">
-                        <span class="post-tag">${p.category.toUpperCase()}</span>
-                        ${p.bounty > 0 ? `<span class="post-bounty">💰${p.bounty}</span>` : ''}
-                    </div>
-                    <div class="post-title">${p.title}</div>
-                    <div style="font-size:13px; color:#666;">${p.content}</div>
-                    ${p.image_url ? `<img src="${p.image_url}" class="post-img" onclick="window.open(this.src)">` : ''}
-                    <div class="post-meta">
-                        <span>${new Date(p.created_at).toLocaleDateString()}</span>
-                        <span>浏览 ${p.view_count || 1}</span>
+                <div class="thread-row" onclick="alert('帖子详情页功能开发中...')">
+                    <div class="t-cat">[${p.category.toUpperCase()}]</div>
+                    <div class="t-main">
+                        <span class="t-title">
+                            ${p.title} 
+                            ${p.image_url ? '<span class="t-img-icon">📷</span>' : ''}
+                            ${p.bounty > 0 ? `<span class="t-bounty">💰${p.bounty}</span>` : ''}
+                        </span>
+                        <div class="t-meta">
+                            <span>楼主: ${p.author_id.substring(0,6)}...</span> &nbsp;|&nbsp; 
+                            <span>${new Date(p.created_at).toLocaleDateString()}</span> &nbsp;|&nbsp; 
+                            <span>查看: ${p.view_count || 1}</span>
+                        </div>
                     </div>
                 </div>
             `).join('');
 
-            // 更新标题
-            if(filterCat) {
-                document.getElementById('feed-title').innerText = "📂 " + filterCat.toUpperCase() + " 分区内容";
-                // 滚动到 Feed
-                document.getElementById('feed-title').scrollIntoView({behavior: "smooth"});
-            } else {
-                document.getElementById('feed-title').innerText = "📢 最新动态";
+            if(cat) {
+                document.getElementById('feed-title').innerHTML = `<span>📂 ${cat.toUpperCase()} 区</span> <span style="font-weight:normal; font-size:11px; cursor:pointer;" onclick="loadFeed()">[返回全部]</span>`;
             }
         }
 
-        // 快捷过滤
         function filterFeed(cat) { loadFeed(cat); }
 
-        // 发帖
         function handleFile(input) {
             if(input.files[0]) {
                 uploadFile = input.files[0];
@@ -266,15 +331,15 @@
                 alert("发布成功！");
                 closeModal('modal-post');
                 loadFeed();
-                // 清理
-                uploadFile = null; document.getElementById('file-label').innerText = "📸 点击上传图片";
-                document.getElementById('p-title').value = ""; document.getElementById('p-content').value = "";
+                uploadFile = null; 
+                document.getElementById('file-label').innerText = "📸 上传图片";
+                document.getElementById('p-title').value = ""; 
+                document.getElementById('p-content').value = "";
 
-            } catch(e) { alert("失败: " + e.message); }
-            finally { btn.innerText = "立即发布"; btn.disabled = false; }
+            } catch(e) { alert("发布失败: " + e.message); }
+            finally { btn.innerText = "发布"; btn.disabled = false; }
         }
 
-        // 认证
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const pwd = document.getElementById('pwd').value;
@@ -288,13 +353,14 @@
             } catch(e) { alert(e.message); }
         }
 
-        // UI
         function renderUser() {
+            const name = user.email.split('@')[0];
             document.getElementById('auth-area').innerHTML = `
-                <span style="color:#666;">Hi, ${user.email.split('@')[0]}</span>
-                <span class="btn-s" onclick="sb.auth.signOut().then(()=>location.reload())">退出</span>
+                <span style="color:#666; margin-right:10px;">ID: ${name}</span>
+                <span onclick="sb.auth.signOut().then(()=>location.reload())" style="cursor:pointer; color:#cc0000;">[退出]</span>
             `;
         }
+
         function openAuth(type) {
             isReg = type === 'register';
             document.getElementById('auth-title').innerText = isReg ? '注册' : '登录';
