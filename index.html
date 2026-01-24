@@ -3,145 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>元点社区 | 硬核实战</title>
+    <title>元点社区 | 深度学习与变现</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= V2.1 沙漠黄·硬核回归 ================= */
+        /* ================= V3.1 修正版 (去金库化) ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
-        /* 经典沙漠黄护眼底色 */
         body { 
-            background-color: #f4f1ea; 
+            background-color: #f8f5ec; /* 经典米黄底色 */
             color: #333; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
-            font-size: 13px; 
+            font-family: "Verdana", "Microsoft YaHei", sans-serif; 
+            font-size: 12px; 
             margin: 0; 
             padding-bottom: 60px; 
-            line-height: 1.5; 
         }
         
         a { text-decoration: none; color: #333; cursor: pointer; }
         ::-webkit-scrollbar { width: 0; background: transparent; }
 
-        /* 视图控制器 (实现APP级页面切换) */
+        /* 视图容器 */
         .view { display: none; min-height: 100vh; padding-bottom: 80px; }
-        .view.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .view.active { display: block; }
 
-        /* --- 1. 顶部导航 (极简风) --- */
+        /* --- 1. 顶部导航 --- */
         .header { 
             background: #fff; 
-            height: 50px; 
-            border-bottom: 1px solid #dcd8c8; 
+            height: 45px; 
+            border-bottom: 2px solid #b83b3b; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 0 15px; 
+            padding: 0 10px; 
             position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
-        .logo { font-size: 18px; font-weight: 900; color: #b83b3b; font-family: serif; letter-spacing: -0.5px; }
-        .user-nav { font-size: 12px; color: #666; display: flex; align-items: center; gap: 8px; }
-        .avatar { width: 26px; height: 26px; background: #eee; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #999; border: 1px solid #ccc; }
+        .logo { font-size: 18px; font-weight: 900; color: #b83b3b; }
+        .user-nav { font-size: 12px; color: #666; font-weight: bold; }
 
-        /* 通用板块容器 */
-        .section { 
+        /* --- 2. 口号 --- */
+        .slogan { background: #b83b3b; color: #fff; text-align: center; padding: 5px; font-size: 11px; letter-spacing: 1px; }
+
+        /* --- 3. 滚动新闻 --- */
+        .ticker-wrap { background: #333; color: #0f0; padding: 6px 10px; overflow: hidden; white-space: nowrap; font-family: monospace; font-size: 11px; border-bottom: 1px solid #ccc; }
+
+        /* ================= 通用板块 (楼层式布局) ================= */
+        .forum-box { 
             background: #fff; 
-            margin: 10px; 
-            border: 1px solid #e0dec8; 
-            border-radius: 4px; 
-            overflow: hidden; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            margin: 8px 5px; 
+            border: 1px solid #dcdacb; 
         }
-        .sec-head { 
-            background: #faf9f5; 
-            padding: 10px 12px; 
-            border-bottom: 1px solid #eee; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
+        .box-head { 
+            background: #f0eedf; 
+            padding: 8px 10px; 
+            border-bottom: 1px solid #dcdacb; 
+            display: flex; justify-content: space-between; align-items: center;
+            color: #5d4037; font-weight: bold; font-size: 13px;
         }
-        .sec-title { font-weight: 800; font-size: 14px; color: #444; border-left: 3px solid #b83b3b; padding-left: 8px; }
-        .sec-more { font-size: 11px; color: #999; }
+        .box-more { font-size: 11px; color: #999; font-weight: normal; }
 
-        /* --- 2. 滚动新闻 --- */
-        .ticker-box { margin: 10px; background: #333; color: #ccc; padding: 6px 10px; border-radius: 2px; font-size: 11px; display: flex; align-items: center; }
-        .ticker-label { color: #b83b3b; font-weight: bold; margin-right: 10px; }
-        
-        /* --- 3. 宫格布局 (更加紧凑) --- */
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); }
-        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); }
-        
-        .grid-item { 
-            padding: 12px 5px; 
-            text-align: center; 
-            border-right: 1px solid #f0f0f0; 
-            border-bottom: 1px solid #f0f0f0; 
+        /* 列表行样式 */
+        .row-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 10px; 
+            border-bottom: 1px dotted #e0e0e0; 
             cursor: pointer;
         }
-        .grid-item:active { background: #fdfdfd; }
-        .gi-icon { font-size: 20px; display: block; margin-bottom: 4px; }
-        .gi-name { font-size: 12px; color: #555; font-weight: 500; }
-
-        /* --- 4. 列表布局 (垂直专区) --- */
-        .list-item { 
-            display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid #f5f5f5; cursor: pointer; 
-        }
-        .li-icon { 
-            width: 24px; height: 24px; background: #f4f4f4; color: #666; 
-            border-radius: 4px; display: flex; align-items: center; justify-content: center; 
-            margin-right: 10px; font-size: 12px; font-weight: bold;
-        }
-        .li-text { font-size: 13px; color: #333; flex: 1; }
-        .li-arrow { color: #ccc; font-size: 12px; }
-
-        /* --- 5. 变现/价值专区 (特殊样式) --- */
-        .money-box { border-color: #e6dcc8; }
-        .money-head { background: #fffdf0; color: #8a6d3b; }
-        .money-alert { padding: 8px 12px; background: #fffae6; color: #b45309; font-size: 11px; border-bottom: 1px solid #f0e6cc; }
-
-        /* --- 6. 底部白皮书 --- */
-        .footer { text-align: center; padding: 30px; color: #999; font-size: 11px; }
-        .wp-link { color: #b83b3b; text-decoration: underline; cursor: pointer; }
-
-        /* ================= 列表页视图 (新页面) ================= */
-        .sub-nav { 
-            background: #fff; height: 44px; display: flex; align-items: center; padding: 0 10px; 
-            position: sticky; top: 0; z-index: 101; border-bottom: 1px solid #ddd;
-        }
-        .back-icon { font-size: 20px; padding: 0 10px; color: #333; cursor: pointer; }
-        .page-title { font-weight: bold; font-size: 15px; flex: 1; text-align: center; margin-right: 40px; }
-
-        .thread-card { 
-            background: #fff; padding: 15px; border-bottom: 1px solid #e0e0e0; cursor: pointer; 
-        }
-        .th-title { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 6px; line-height: 1.4; }
-        .th-meta { font-size: 11px; color: #999; display: flex; justify-content: space-between; }
-        .th-tag { background: #f0f0f0; padding: 1px 6px; border-radius: 2px; color: #666; margin-right: 5px; }
-        .th-bounty { color: #d48806; font-weight: bold; }
-
-        /* ================= 详情页视图 (新页面) ================= */
-        .detail-body { background: #fff; padding: 20px; min-height: 300px; }
-        .d-h1 { font-size: 18px; font-weight: 900; color: #000; margin-bottom: 10px; line-height: 1.4; }
-        .d-info { font-size: 12px; color: #999; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .d-content { font-size: 15px; color: #333; line-height: 1.8; white-space: pre-wrap; }
-        .d-img { width: 100%; margin-top: 15px; border: 1px solid #eee; border-radius: 4px; }
+        .row-item:last-child { border-bottom: none; }
+        .row-item:active { background: #fafafa; }
         
-        .cmt-area { margin-top: 10px; background: #fff; padding: 15px; }
-        .cmt-item { border-bottom: 1px dashed #eee; padding: 10px 0; }
-        .cmt-u { font-size: 11px; color: #b83b3b; font-weight: bold; }
-        .cmt-c { font-size: 13px; margin-top: 4px; color: #444; }
+        .row-icon { 
+            width: 32px; height: 32px; background: #f5f5f5; color: #666; 
+            border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; 
+            margin-right: 10px; font-size: 16px; font-weight: bold; flex-shrink: 0;
+        }
+        .row-info { flex: 1; }
+        .row-title { font-size: 13px; font-weight: bold; color: #004499; margin-bottom: 2px; }
+        .row-desc { font-size: 11px; color: #888; }
+
+        /* --- 5. 省份 (密集标签) --- */
+        .prov-box { padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .prov-tag { 
+            border: 1px solid #ccc; background: #fff; 
+            padding: 2px 8px; font-size: 11px; color: #555; cursor: pointer;
+        }
+        
+        /* --- 7. 变现专区 (去金库化) --- */
+        .money-head { background: #fff8e1; color: #b45309; border-bottom-color: #ffe0b2; }
+        .money-alert { background: #fff3e0; color: #e65100; font-size: 11px; padding: 5px 10px; border-bottom: 1px solid #ffe0b2; }
+
+        /* --- 8. 作品集 (横排) --- */
+        .gallery-box { display: flex; overflow-x: auto; gap: 8px; padding: 10px; }
+        .gallery-item { 
+            min-width: 100px; height: 70px; background: #f9f9f9; border: 1px solid #ddd; 
+            display: flex; align-items: center; justify-content: center; color: #999; font-size: 10px;
+        }
+
+        /* --- 10. 英雄榜 --- */
+        .rank-row { display: flex; padding: 6px 10px; align-items: center; font-size: 11px; border-bottom: 1px dashed #eee; }
+        .rank-idx { width: 20px; font-weight: bold; color: #b83b3b; }
+        .rank-bar { flex: 1; height: 5px; background: #eee; margin: 0 10px; border-radius: 3px; overflow: hidden; }
+        .rank-fill { height: 100%; background: #b83b3b; }
+
+        /* --- 12. 白皮书 --- */
+        .whitepaper { 
+            background: #333; color: #ccc; padding: 30px 15px; margin-top: 20px; text-align: center;
+        }
+        .wp-title { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 10px; font-family: serif; }
+
+        /* --- 列表页 & 详情页 --- */
+        .sub-nav { 
+            background: #fff; height: 44px; border-bottom: 1px solid #ccc; 
+            display: flex; align-items: center; padding: 0 10px; position: sticky; top: 0; z-index: 101;
+        }
+        .page-title { font-weight: bold; font-size: 14px; margin-left: 10px; }
+        
+        .thread-item { background: #fff; padding: 12px; border-bottom: 1px solid #eee; }
+        .th-cat { font-size: 10px; background: #eee; padding: 1px 4px; color: #666; margin-right: 5px; }
+
+        .detail-body { padding: 15px; background: #fff; min-height: 400px; }
+        .d-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+        .d-content { line-height: 1.6; font-size: 14px; margin-top: 15px; color: #222; }
 
         /* 悬浮按钮 */
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #b83b3b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 200; }
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 48px; height: 48px; background: #b83b3b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 200; }
 
-        /* 弹窗通用 */
-        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: #fff; width: 85%; max-width: 350px; border-radius: 6px; overflow: hidden; }
-        .modal-head { background: #f5f5f5; padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #eee; }
-        .modal-body { padding: 20px; }
-        .input { width: 100%; padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; border-radius: 2px; }
-        .btn-full { width: 100%; padding: 10px; background: #b83b3b; color: #fff; border: none; font-weight: bold; cursor: pointer; border-radius: 2px; }
+        /* 弹窗 */
+        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: #fff; width: 85%; border-radius: 4px; border: 1px solid #999; padding: 15px; }
+        .input { width: 100%; padding: 8px; border: 1px solid #ccc; margin-bottom: 8px; }
+        .btn { width: 100%; padding: 8px; background: #b83b3b; color: #fff; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -149,103 +139,165 @@
     <div id="view-home" class="view active">
         <div class="header">
             <span class="logo">元点社区</span>
-            <div class="user-nav" id="auth-area">
-                <span onclick="openAuth('login')" style="cursor:pointer">登录</span>
+            <div class="user-nav" id="auth-area"><span onclick="openAuth('login')">[登录]</span></div>
+        </div>
+
+        <div class="slogan">科技向善 · 从 0 到 1 · 见证未来</div>
+
+        <div class="ticker-wrap" id="news-ticker">连接全球资讯...</div>
+
+        <div class="forum-box">
+            <div class="box-head"><span>📖 AI 百科与科普</span><span class="box-more" onclick="goList('wiki','百科')">更多 ></span></div>
+            <div class="row-item" onclick="goList('wiki_base','基础百科')">
+                <div class="row-icon">📚</div>
+                <div class="row-info"><div class="row-title">基础百科</div><div class="row-desc">新人必读，概念扫盲</div></div>
+            </div>
+            <div class="row-item" onclick="goList('wiki_prac','实战演练')">
+                <div class="row-icon">⚔️</div>
+                <div class="row-info"><div class="row-title">实战演练</div><div class="row-desc">手把手教学，落地操作</div></div>
+            </div>
+            <div class="row-item" onclick="goList('wiki_pro','大神指路')">
+                <div class="row-icon">🧙‍♂️</div>
+                <div class="row-info"><div class="row-title">大神指路</div><div class="row-desc">进阶技巧，思维提升</div></div>
             </div>
         </div>
 
-        <div class="ticker-box">
-            <span class="ticker-label">全球快讯</span>
-            <span id="news-ticker">正在连接资讯网络...</span>
+        <div class="forum-box">
+            <div class="box-head"><span>📍 全国组织 (省份)</span></div>
+            <div class="prov-box" id="prov-list">
+                </div>
         </div>
 
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">AI 百科与科普</span><span class="sec-more" onclick="goList('wiki', 'AI 百科')">全部 ></span></div>
-            <div class="grid-3">
-                <div class="grid-item" onclick="goList('wiki_base', '基础百科')"><span class="gi-icon">📚</span><span class="gi-name">基础百科</span></div>
-                <div class="grid-item" onclick="goList('wiki_prac', '实战演练')"><span class="gi-icon">⚔️</span><span class="gi-name">实战演练</span></div>
-                <div class="grid-item" onclick="goList('wiki_pro', '大神指路')"><span class="gi-icon">🧙‍♂️</span><span class="gi-name">大神指路</span></div>
+        <div class="forum-box">
+            <div class="box-head"><span>⚡ 垂直专区</span></div>
+            <div class="row-item" onclick="goList('art','AI 绘画/视频')">
+                <div class="row-icon">🎨</div>
+                <div class="row-info"><div class="row-title">AI 绘画 / 视频</div><div class="row-desc">Midjourney, SD, Sora</div></div>
+            </div>
+            <div class="row-item" onclick="goList('text','AI 写作/论文')">
+                <div class="row-icon">📝</div>
+                <div class="row-info"><div class="row-title">AI 写作 / 论文</div><div class="row-desc">提示词工程, 论文辅助</div></div>
+            </div>
+            <div class="row-item" onclick="goList('dev','训练/开发')">
+                <div class="row-icon">💻</div>
+                <div class="row-info"><div class="row-title">训练 / 开发</div><div class="row-desc">大模型微调, 本地部署</div></div>
+            </div>
+            <div class="row-item" onclick="goList('media','自媒体/办公')">
+                <div class="row-icon">📹</div>
+                <div class="row-info"><div class="row-title">自媒体 / 办公</div><div class="row-desc">效率工具, 流量变现</div></div>
             </div>
         </div>
 
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">全国组织入口</span></div>
-            <div style="padding:10px; display:flex; flex-wrap:wrap; gap:8px;">
-                <script>
-                    const provs = "京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新台港澳";
-                    provs.split('').forEach(p => {
-                        document.write(`<span onclick="goList('prov_${p}', '${p}分舵')" style="background:#f4f4f4;padding:4px 10px;border-radius:15px;font-size:11px;cursor:pointer;">${p}</span>`);
-                    });
-                </script>
+        <div class="forum-box" style="border-color:#e0c090;">
+            <div class="box-head money-head"><span>💰 价值与变现</span><span class="box-more" onclick="goList('money','变现')">进入专区 ></span></div>
+            <div class="money-alert">⚠️ 严禁售卖违禁内容，违者封号！</div>
+            <div class="row-item" onclick="goList('money_help','付费求助')">
+                <div class="row-icon" style="color:#b45309">🆘</div>
+                <div class="row-info"><div class="row-title">付费求助</div><div class="row-desc">重金悬赏，解决难题</div></div>
+            </div>
+            <div class="row-item" onclick="goList('money_sale','干货售卖')">
+                <div class="row-icon" style="color:#b45309">🛍️</div>
+                <div class="row-info"><div class="row-title">干货售卖</div><div class="row-desc">提示词, 课程, 账号</div></div>
+            </div>
+            <div class="row-item" onclick="goList('money_b2b','企业定制')">
+                <div class="row-icon" style="color:#b45309">🏢</div>
+                <div class="row-info"><div class="row-title">企业定制</div><div class="row-desc">B端需求对接</div></div>
             </div>
         </div>
 
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">垂直专区</span></div>
-            <div class="grid-2">
-                <div class="list-item" onclick="goList('art', 'AI 绘画/视频')"><span class="li-icon">🎨</span><span class="li-text">绘画/视频</span></div>
-                <div class="list-item" onclick="goList('text', 'AI 写作/论文')"><span class="li-icon">📝</span><span class="li-text">写作/论文</span></div>
-                <div class="list-item" onclick="goList('media', '自媒体/办公')"><span class="li-icon">📹</span><span class="li-text">自媒体/办公</span></div>
-                <div class="list-item" onclick="goList('dev', '训练/开发')"><span class="li-icon">💻</span><span class="li-text">训练/开发</span></div>
+        <div class="forum-box">
+            <div class="box-head"><span>✨ 成果展示</span><span class="box-more" onclick="goList('showcase','作品')">全部 ></span></div>
+            <div class="gallery-box">
+                <div class="gallery-item">暂无作品</div>
+                <div class="gallery-item">虚位以待</div>
+                <div class="gallery-item">点击发帖</div>
             </div>
         </div>
 
-        <div class="section money-box">
-            <div class="sec-head money-head"><span class="sec-title" style="border-color:#b8860b; color:#8a6d3b;">价值变现</span><span class="sec-more" onclick="goList('money', '价值变现')">进入 ></span></div>
-            <div class="money-alert">⚠️ 严禁售卖违禁内容，违者封号并配合公安调查。</div>
-            <div class="grid-2">
-                <div class="list-item" onclick="goList('money_help', '付费求助')"><span class="li-icon" style="color:#b83b3b;">🆘</span><span class="li-text">付费求助</span></div>
-                <div class="list-item" onclick="goList('money_sale', '干货售卖')"><span class="li-icon" style="color:#b8860b;">🛍️</span><span class="li-text">干货售卖</span></div>
-                <div class="list-item" onclick="goList('bounty', '任务悬赏')"><span class="li-icon" style="color:#2e7d32;">🎯</span><span class="li-text">任务悬赏</span></div>
-                <div class="list-item" onclick="goList('showcase', '作品展示')"><span class="li-icon" style="color:#1976d2;">✨</span><span class="li-text">作品展示</span></div>
+        <div class="forum-box">
+            <div class="box-head"><span>🎯 任务悬赏区</span><span class="box-more" onclick="goList('bounty','悬赏')">接单 ></span></div>
+            <div id="bounty-preview" style="padding:10px; color:#999; text-align:center;">暂无悬赏</div>
+        </div>
+
+        <div class="forum-box">
+            <div class="box-head"><span>🤝 平台共创</span></div>
+            <div class="row-item" onclick="goList('coop_team','组队参赛')">
+                <div class="row-icon">🚩</div>
+                <div class="row-info"><div class="row-title">组队参赛</div><div class="row-desc">Kaggle, 阿里天池</div></div>
+            </div>
+            <div class="row-item" onclick="goList('coop_dev','合作开发')">
+                <div class="row-icon">🔧</div>
+                <div class="row-info"><div class="row-title">合作开发</div><div class="row-desc">开源项目共建</div></div>
             </div>
         </div>
 
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">共创 & 站务</span></div>
-            <div class="grid-2">
-                <div class="list-item" onclick="goList('coop', '平台共创')"><span class="li-icon">🤝</span><span class="li-text">平台共创</span></div>
-                <div class="list-item" onclick="goList('gov', '站务建议')"><span class="li-icon">📢</span><span class="li-text">站务建议</span></div>
-            </div>
-            <div style="padding:10px; border-top:1px solid #eee; font-size:11px; color:#666;">
-                <div style="margin-bottom:5px;">📅 <b>大事记：</b></div>
-                <div id="milestone-box">加载中...</div>
+        <div class="forum-box">
+            <div class="box-head"><span>🏆 元点英雄榜</span></div>
+            <div id="rank-box">
+                <div style="padding:10px;">加载中...</div>
             </div>
         </div>
 
-        <div class="footer">
-            <p>科技向善 · 从 0 到 1</p>
-            <div class="wp-link" onclick="alert('白皮书 V1.0 正在修订中')">阅读《元点社区白皮书》</div>
+        <div class="forum-box">
+            <div class="box-head"><span>📢 站务与建议</span></div>
+            <div class="row-item" onclick="goList('gov','站务')">
+                <div class="row-icon">📬</div>
+                <div class="row-info"><div class="row-title">意见反馈</div><div class="row-desc">社区共治，听取心声</div></div>
+            </div>
+        </div>
+
+        <div class="forum-box">
+            <div class="box-head"><span>📅 平台大事记</span></div>
+            <div id="milestone-box" style="padding:10px; font-size:11px; line-height:1.8;">
+                加载中...
+            </div>
+        </div>
+
+        <div class="forum-box">
+            <div class="box-head"><span>📄 最新动态</span></div>
+            <div id="feed-list" style="min-height:200px;">
+                <div style="text-align:center; padding:30px;">加载中...</div>
+            </div>
+        </div>
+
+        <div class="whitepaper">
+            <div class="wp-title">元点社区白皮书</div>
+            <p style="opacity:0.8; line-height:1.8; margin-bottom:20px;">
+                我们不愿做时代的旁观者。<br>
+                我们要让每一个个体，在 AI 的浪潮中找到自己的坐标。<br>
+                连接 · 赋能 · 共生
+            </p>
+            <button style="border:1px solid #fff; background:none; color:#fff; padding:5px 15px; border-radius:20px; cursor:pointer;" onclick="alert('撰写中')">阅读全文</button>
         </div>
     </div>
 
     <div id="view-list" class="view">
         <div class="sub-nav">
-            <span class="back-icon" onclick="goBack('home')">‹</span>
-            <span class="page-title" id="list-title">板块名称</span>
+            <span onclick="goBack('home')" style="font-size:20px; padding:0 10px; cursor:pointer;">‹</span>
+            <span class="page-title" id="list-title">板块</span>
         </div>
-        <div id="thread-container" style="background:#fff; min-height:200px;">
-            <div style="text-align:center; padding:40px; color:#999;">加载中...</div>
-        </div>
+        <div id="thread-container"></div>
     </div>
 
-    <div id="view-detail" class="view" style="background:#fff;">
+    <div id="view-detail" class="view">
         <div class="sub-nav">
-            <span class="back-icon" onclick="goBack('list')">‹</span>
-            <span class="page-title">帖子详情</span>
+            <span onclick="goBack('list')" style="font-size:20px; padding:0 10px; cursor:pointer;">‹</span>
+            <span class="page-title">详情</span>
         </div>
         <div class="detail-body">
-            <div class="d-h1" id="d-title"></div>
-            <div class="d-info">楼主: <span id="d-author"></span> &nbsp; Date: <span id="d-date"></span></div>
+            <div class="d-title" id="d-title"></div>
+            <div style="font-size:11px; color:#999; border-bottom:1px solid #eee; padding-bottom:10px;">
+                楼主: <span id="d-author"></span> &nbsp; 时间: <span id="d-date"></span>
+            </div>
             <div class="d-content" id="d-body"></div>
-            <img id="d-img" class="d-img" style="display:none;" onclick="window.open(this.src)">
+            <img id="d-img" style="max-width:100%; margin-top:10px; display:none;">
         </div>
-        <div class="cmt-area">
-            <div style="font-weight:bold; margin-bottom:10px;">全部评论</div>
+        <div style="background:#fff; margin-top:10px; padding:10px;">
+            <div style="font-weight:bold; border-bottom:1px solid #eee; padding-bottom:5px;">评论</div>
             <div id="cmt-list"></div>
-            <div style="margin-top:15px; display:flex; gap:10px;">
-                <input id="cmt-input" class="input" style="margin:0; flex:1;" placeholder="发表评论...">
-                <button onclick="submitComment()" style="background:#b83b3b; color:#fff; border:none; padding:0 15px; border-radius:2px;">发</button>
+            <div style="margin-top:10px; display:flex;">
+                <input id="cmt-input" style="flex:1; border:1px solid #ccc; padding:5px;" placeholder="发表评论">
+                <button onclick="submitComment()" style="background:#b83b3b; color:#fff; border:none; padding:0 10px;">发</button>
             </div>
         </div>
     </div>
@@ -254,41 +306,30 @@
 
     <div id="modal-post" class="modal-mask">
         <div class="modal">
-            <div class="modal-head">发布内容 <span onclick="closeModal('modal-post')" style="float:right; cursor:pointer;">✕</span></div>
-            <div class="modal-body">
-                <select id="p-cat" class="input">
-                    <option value="wiki_base">📚 基础百科</option>
-                    <option value="money_help">🆘 付费求助</option>
-                    <option value="money_sale">🛍️ 干货售卖</option>
-                    <option value="bounty">🎯 任务悬赏</option>
-                    <option value="gov">📢 站务建议</option>
-                    <option value="other">📝 自由讨论</option>
-                </select>
-                <input id="p-title" class="input" placeholder="标题 (务必具体)">
-                <textarea id="p-content" class="input" style="height:100px" placeholder="正文"></textarea>
-                <div style="border:1px dashed #ccc; padding:10px; text-align:center; margin-bottom:10px;" onclick="document.getElementById('p-file').click()">
-                    <span id="file-label">📸 上传图片</span>
-                </div>
-                <input type="file" id="p-file" style="display:none" accept="image/*" onchange="gotFile(this)">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <label>💰悬赏:</label>
-                    <input type="number" id="p-bounty" class="input" style="width:80px; margin:0;" value="0">
-                </div>
-                <button class="btn-full" onclick="doPost()">立即发布</button>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold;">
+                发布内容 <span onclick="closeModal('modal-post')">✕</span>
             </div>
+            <select id="p-cat" class="input">
+                <option value="wiki_base">百科-基础</option>
+                <option value="money_help">变现-求助</option>
+                <option value="bounty">任务悬赏</option>
+                <option value="gov">站务建议</option>
+                <option value="other">综合讨论</option>
+            </select>
+            <input id="p-title" class="input" placeholder="标题">
+            <textarea id="p-content" class="input" style="height:80px" placeholder="正文"></textarea>
+            <button class="btn" onclick="doPost()">发布</button>
         </div>
     </div>
 
     <div id="modal-auth" class="modal-mask">
         <div class="modal">
-            <div class="modal-body" style="text-align:center;">
-                <h3 id="auth-title">用户登录</h3>
-                <input id="email" class="input" placeholder="邮箱">
-                <input id="pwd" type="password" class="input" placeholder="密码">
-                <button class="btn-full" onclick="doAuth()">提交</button>
-                <div style="margin-top:15px; font-size:12px; color:#666; cursor:pointer;" onclick="toggleAuth()">没有账号？点击注册</div>
-                <div style="margin-top:15px; color:#999; cursor:pointer;" onclick="closeModal('modal-auth')">关闭</div>
-            </div>
+            <h3 id="auth-title" style="text-align:center;">登录</h3>
+            <input id="email" class="input" placeholder="邮箱">
+            <input id="pwd" type="password" class="input" placeholder="密码">
+            <button class="btn" onclick="doAuth()">提交</button>
+            <div style="text-align:center; margin-top:10px; color:#004499; cursor:pointer;" onclick="toggleAuth()">切换注册</div>
+            <div style="text-align:center; margin-top:5px; color:#999; cursor:pointer;" onclick="closeModal('modal-auth')">关闭</div>
         </div>
     </div>
 
@@ -296,153 +337,117 @@
         const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
-        let sb = null, user = null, isReg = false, uploadFile = null, currentCat = null, currentPostId = null;
+        let sb=null, user=null, isReg=false, curCat=null, curPid=null;
+        const provs = "京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新台港澳";
 
         async function init() {
             if(!window.supabase) return setTimeout(init, 500);
             sb = window.supabase.createClient(SB_URL, SB_KEY);
-            const { data } = await sb.auth.getUser();
-            if(data.user) { user = data.user; renderUser(); }
-            loadHomeData();
-        }
-
-        // --- 核心路由逻辑 (模拟APP跳转) ---
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo(0, 0); // 每次跳转都回到顶部
-        }
-
-        function goList(cat, title) {
-            currentCat = cat;
-            document.getElementById('list-title').innerText = title;
-            loadThreadList(cat);
-            showView('view-list');
-        }
-
-        function goDetail(postId) {
-            currentPostId = postId;
-            loadDetail(postId);
-            showView('view-detail');
-        }
-
-        function goBack(target) {
-            if(target === 'home') showView('view-home');
-            if(target === 'list') showView('view-list');
-        }
-
-        // --- 数据加载 ---
-        async function loadHomeData() {
-            // 新闻
-            const { data: news } = await sb.from('news').select('*').eq('type','global').order('created_at',{ascending:false}).limit(1);
-            if(news && news.length) document.getElementById('news-ticker').innerText = news[0].content;
+            const {data} = await sb.auth.getUser();
+            if(data.user) { user=data.user; renderUser(); }
             
-            // 大事记
-            const { data: ms } = await sb.from('news').select('*').eq('type','milestone').order('created_at',{ascending:false}).limit(3);
-            if(ms) document.getElementById('milestone-box').innerHTML = ms.map(m => `<div>• ${new Date(m.created_at).toLocaleDateString()} ${m.content}</div>`).join('');
+            // UI Init
+            const pBox = document.getElementById('prov-list');
+            provs.split('').forEach(p => pBox.innerHTML+=`<div class="prov-tag" onclick="goList('prov_${p}','${p}分舵')">${p}</div>`);
+
+            loadData();
         }
 
-        async function loadThreadList(cat) {
-            const box = document.getElementById('thread-container');
-            box.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">加载中...</div>';
-            
-            let q = sb.from('posts').select('*').order('created_at', {ascending:false}).limit(50);
-            if(cat && !cat.startsWith('prov_')) q = q.eq('category', cat); // 省份逻辑暂略，先显示全部方便测试
-            
-            const { data } = await q;
-            if(!data || !data.length) { box.innerHTML = '<div style="text-align:center; padding:40px; color:#ccc;">暂无帖子，点击右下角发布</div>'; return; }
+        async function loadData() {
+            // News
+            const {data:n} = await sb.from('news').select('*').eq('type','global').limit(1);
+            if(n && n.length) document.getElementById('news-ticker').innerText = n[0].content;
 
+            // Milestones
+            const {data:m} = await sb.from('news').select('*').eq('type','milestone').limit(3);
+            if(m) document.getElementById('milestone-box').innerHTML = m.map(x=>`<div>• ${new Date(x.created_at).toLocaleDateString()} ${x.content}</div>`).join('');
+
+            // Rank
+            const {data:r} = await sb.from('profiles').select('*').order('token_balance',{ascending:false}).limit(3);
+            if(r) document.getElementById('rank-box').innerHTML = r.map((u,i)=>`<div class="rank-row"><div class="rank-idx">${i+1}</div><div>${u.id.substring(0,4)}...</div><div class="rank-bar"><div class="rank-fill" style="width:${Math.max(10,u.token_balance/100)}%"></div></div><div>${u.token_balance}</div></div>`).join('');
+
+            // Feed
+            loadThreadList(null, 'feed-list');
+        }
+
+        async function loadThreadList(cat, targetId='thread-container') {
+            const box = document.getElementById(targetId);
+            box.innerHTML = '<div style="padding:20px; text-align:center;">加载中...</div>';
+            let q = sb.from('posts').select('*').order('created_at',{ascending:false}).limit(20);
+            if(cat && !cat.startsWith('prov_')) q = q.eq('category',cat);
+            
+            const {data} = await q;
+            if(!data||!data.length) { box.innerHTML='<div style="padding:20px;text-align:center;">暂无内容</div>'; return; }
+            
             box.innerHTML = data.map(p => `
-                <div class="thread-card" onclick="goDetail('${p.id}')">
-                    <div class="th-title">${p.title}</div>
-                    <div class="th-meta">
-                        <div>
-                            <span class="th-tag">${p.category || '综合'}</span>
-                            ${p.bounty>0 ? `<span class="th-bounty">💰${p.bounty}</span>` : ''}
-                        </div>
-                        <span>${new Date(p.created_at).toLocaleDateString()}</span>
+                <div class="thread-item" onclick="goDetail('${p.id}')">
+                    <div class="row-title">${p.title}</div>
+                    <div style="font-size:11px; color:#999;">
+                        <span class="th-cat">${p.category||'综合'}</span> ${new Date(p.created_at).toLocaleDateString()}
                     </div>
                 </div>
             `).join('');
         }
 
-        async function loadDetail(id) {
-            const { data: p } = await sb.from('posts').select('*').eq('id', id).single();
+        async function goDetail(id) {
+            curPid = id;
+            const {data:p} = await sb.from('posts').select('*').eq('id',id).single();
             if(p) {
-                document.getElementById('d-title').innerText = p.title;
-                document.getElementById('d-author').innerText = p.author_id.substring(0,6)+'...';
-                document.getElementById('d-date').innerText = new Date(p.created_at).toLocaleString();
-                document.getElementById('d-body').innerText = p.content;
+                document.getElementById('d-title').innerText=p.title;
+                document.getElementById('d-author').innerText=p.author_id.substring(0,6);
+                document.getElementById('d-date').innerText=new Date(p.created_at).toLocaleDateString();
+                document.getElementById('d-body').innerText=p.content;
                 const img = document.getElementById('d-img');
-                if(p.image_url) { img.src=p.image_url; img.style.display='block'; } else { img.style.display='none'; }
+                if(p.image_url){ img.src=p.image_url; img.style.display='block'; } else { img.style.display='none'; }
             }
             loadComments(id);
+            showView('view-detail');
         }
 
-        async function loadComments(postId) {
-            const list = document.getElementById('cmt-list');
-            list.innerHTML = '加载评论...';
-            const { data } = await sb.from('comments').select('*').eq('post_id', postId).order('created_at', {ascending:true});
-            if(!data || !data.length) { list.innerHTML = '<div style="color:#ccc; font-size:12px;">暂无评论</div>'; return; }
-            list.innerHTML = data.map(c => `
-                <div class="cmt-item">
-                    <div class="cmt-u">用户 ${c.user_id.substring(0,4)}...</div>
-                    <div class="cmt-c">${c.content}</div>
-                </div>
-            `).join('');
-        }
-
-        // --- 交互 (发帖/评论/认证) ---
-        function gotFile(i) { if(i.files[0]) { uploadFile=i.files[0]; document.getElementById('file-label').innerText="✅ 已选图"; } }
-
-        async function doPost() {
-            if(!user) return openAuth('login');
-            const btn = document.querySelector('#modal-post .btn-full'); btn.innerText="发布中..."; btn.disabled=true;
-            try {
-                let url=null;
-                if(uploadFile) {
-                    const fname=`${Date.now()}_${uploadFile.name.replace(/\W/g,'')}`;
-                    await sb.storage.from('images').upload(fname,uploadFile);
-                    url=sb.storage.from('images').getPublicUrl(fname).data.publicUrl;
-                }
-                await sb.from('posts').insert({
-                    author_id:user.id, title:document.getElementById('p-title').value,
-                    content:document.getElementById('p-content').value, category:document.getElementById('p-cat').value,
-                    bounty:document.getElementById('p-bounty').value, image_url:url
-                });
-                alert("发布成功"); closeModal('modal-post'); 
-                if(currentCat) loadThreadList(currentCat); // 如果在列表页，刷新列表
-            } catch(e){alert("失败:"+e.message);} finally{btn.innerText="发布"; btn.disabled=false;}
+        async function loadComments(pid) {
+            const {data} = await sb.from('comments').select('*').eq('post_id',pid);
+            const box = document.getElementById('cmt-list');
+            if(!data||!data.length) { box.innerHTML='暂无评论'; return; }
+            box.innerHTML = data.map(c=>`<div style="font-size:12px; border-bottom:1px dashed #eee; padding:5px 0;"><div>${c.user_id.substring(0,4)}: ${c.content}</div></div>`).join('');
         }
 
         async function submitComment() {
             if(!user) return alert("请登录");
             const txt = document.getElementById('cmt-input').value;
-            if(!txt) return;
-            await sb.from('comments').insert({ post_id:currentPostId, user_id:user.id, content:txt });
-            document.getElementById('cmt-input').value=''; loadComments(currentPostId);
+            await sb.from('comments').insert({post_id:curPid, user_id:user.id, content:txt});
+            document.getElementById('cmt-input').value=''; loadComments(curPid);
         }
 
+        // 路由 & Auth
+        function showView(id) { document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+        function goList(cat, title) { document.getElementById('list-title').innerText=title; curCat=cat; loadThreadList(cat); showView('view-list'); }
+        function goBack(t) { showView(t==='home'?'view-home':'view-list'); }
+        
+        async function doPost() {
+            if(!user) return openAuth('login');
+            try {
+                await sb.from('posts').insert({
+                    author_id:user.id, title:document.getElementById('p-title').value,
+                    content:document.getElementById('p-content').value, category:document.getElementById('p-cat').value
+                });
+                alert("成功"); closeModal('modal-post'); if(curCat) loadThreadList(curCat); else loadData();
+            } catch(e){alert(e.message);}
+        }
+        
         async function doAuth() {
             const e=document.getElementById('email').value, p=document.getElementById('pwd').value;
             try {
                 const {error} = isReg ? await sb.auth.signUp({email:e,password:p}) : await sb.auth.signInWithPassword({email:e,password:p});
                 if(error) throw error;
-                if(isReg) { alert("请验证邮箱!"); closeModal('modal-auth'); } else location.reload();
-            } catch(e){ alert(e.message); }
+                if(isReg) alert("去验证邮箱"); else location.reload();
+            } catch(e){alert(e.message);}
         }
 
-        function renderUser() {
-            document.getElementById('auth-area').innerHTML = `
-                <div class="avatar">${user.email[0].toUpperCase()}</div>
-                <div onclick="sb.auth.signOut().then(()=>location.reload())" style="cursor:pointer; font-size:10px;">[退出]</div>
-            `;
-        }
-
-        function openAuth(t) { isReg = (t==='register'); document.getElementById('auth-title').innerText=isReg?"注册":"登录"; document.getElementById('modal-auth').style.display='flex'; }
+        function renderUser() { document.getElementById('auth-area').innerHTML = `${user.email.split('@')[0]} <span onclick="sb.auth.signOut().then(()=>location.reload())" style="cursor:pointer">[退]</span>`; }
+        function openAuth(t) { isReg=(t==='register'); document.getElementById('auth-title').innerText=isReg?"注册":"登录"; document.getElementById('modal-auth').style.display='flex'; }
+        function toggleAuth() { isReg=!isReg; document.getElementById('auth-title').innerText=isReg?"注册":"登录"; }
         function openPostModal() { if(!user) return openAuth('login'); document.getElementById('modal-post').style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function toggleAuth() { isReg=!isReg; document.getElementById('auth-title').innerText=isReg?"注册":"登录"; }
 
         setTimeout(init, 200);
     </script>
