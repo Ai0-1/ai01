@@ -6,12 +6,11 @@
     <title>元点社区 | 硬核实战</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= V4.9 最终定稿：20+SVG工具 | 大神指路 | 智能FAB | 完整逻辑 ================= */
+        /* ================= V5.2 破局版：Clearbit API 真Logo + 布局修正 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background-color: #f7f5f0; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 80px; line-height: 1.5; }
+        body { background-color: #f7f5f0; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 40px; line-height: 1.5; }
         
-        /* 视图系统 */
-        .view { display: none; min-height: 100vh; padding-bottom: 80px; animation: fadeIn 0.2s ease-out; }
+        .view { display: none; min-height: 100vh; padding-bottom: 60px; animation: fadeIn 0.2s ease-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -33,55 +32,80 @@
         .section { background: #fff; margin: 12px 10px; border: 1px solid #dcdacb; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .sec-head { background: #fcfbf9; padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .sec-title { font-weight: 800; font-size: 14px; color: #444; border-left: 4px solid #8b0000; padding-left: 8px; }
-        .sec-more { font-size: 11px; color: #999; cursor: pointer; }
+        /* 分布式发布按钮 */
+        .sec-btn { font-size: 11px; color: #fff; background: #8b0000; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(139,0,0,0.2); }
+        .sec-btn:active { transform: scale(0.95); opacity: 0.8; }
+
         .row-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f5f5f5; cursor: pointer; }
         .row-icon { width: 36px; height: 36px; background: #f4f4f4; color: #555; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 18px; flex-shrink: 0; }
         .row-info { flex: 1; }
         .row-t { font-weight: bold; font-size: 13px; color: #2c3e50; }
         .row-d { font-size: 11px; color: #888; margin-top: 2px; }
 
-        /* Wiki 矩阵 (Level 2 核心) */
-        .wiki-tools-container { padding: 10px 15px 20px 15px; background: #fff; border-bottom: 1px solid #eee; }
-        .wiki-cat-label { font-size: 11px; color: #8b0000; font-weight: bold; margin: 15px 0 8px 0; background: #fff0f0; display: inline-block; padding: 2px 8px; border-radius: 4px; }
-        .tool-scroll-row { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 5px; scrollbar-width: none; }
+        /* Wiki 矩阵 (V5.2 API版) */
+        .wiki-tools-container { padding: 15px 15px 25px 15px; background: #fff; border-bottom: 1px solid #eee; }
+        .wiki-cat-label { font-size: 11px; color: #8b0000; font-weight: bold; margin: 15px 0 10px 0; background: #fff0f0; display: inline-block; padding: 3px 8px; border-radius: 4px; }
+        .tool-scroll-row { display: flex; overflow-x: auto; gap: 18px; padding-bottom: 5px; scrollbar-width: none; }
         .tool-btn { min-width: 55px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .tool-btn:active { transform: scale(0.95); opacity: 0.7; }
-        /* SVG 容器 */
-        .tool-svg-box { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; background: #fff; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-        .tool-svg-box svg { width: 28px; height: 28px; }
+        /* Logo 容器：改为圆形或圆角矩形，更像APP */
+        .tool-img-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; background: #fff; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; padding: 8px; }
+        .tool-img-box img { width: 100%; height: 100%; object-fit: contain; }
         .tool-name { font-size: 10px; color: #333; font-weight: bold; white-space: nowrap; }
 
-        /* 特殊板块 */
+        /* 省份横排 (强制修复) */
         .prov-box { padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .prov-tag { border: 1px solid #e0e0e0; background: #fff; border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #555; cursor: pointer; }
+        .prov-tag { display: inline-block; border: 1px solid #e0e0e0; background: #fff; border-radius: 12px; padding: 4px 12px; font-size: 11px; color: #555; cursor: pointer; white-space: nowrap; }
+
+        /* 个人中心 (UI 补全) */
+        .uc-card { background: #fff; margin: 15px 10px; border-radius: 8px; border: 1px solid #ddd; overflow: hidden; }
+        .uc-bg { height: 80px; background: linear-gradient(135deg, #2c3e50, #1a1a1a); }
+        .uc-main { padding: 0 15px 15px 15px; position: relative; margin-top: -35px; }
+        .uc-flex-top { display: flex; justify-content: space-between; align-items: flex-end; }
+        .uc-avatar-lg { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; background: #fff; object-fit: cover; }
+        .uc-edit-btn { font-size: 11px; color: #666; border: 1px solid #ccc; padding: 4px 12px; border-radius: 20px; background: #fff; cursor: pointer; }
+        
+        .uc-names { margin-top: 10px; }
+        .uc-nick { font-size: 18px; font-weight: 900; color: #333; }
+        .uc-meta-row { display: flex; gap: 15px; font-size: 11px; color: #999; margin-top: 4px; }
+        .uc-sign { font-size: 12px; color: #555; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 4px; border-left: 3px solid #8b0000; line-height: 1.4; }
+
+        .uc-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; text-align: center; }
+        .uc-stat-n { font-weight: bold; font-size: 14px; color: #2c3e50; }
+        .uc-stat-l { font-size: 10px; color: #999; }
+        
+        .uc-badges { margin-top: 10px; display: flex; gap: 5px; }
+        .uc-badge-item { font-size: 10px; padding: 2px 6px; background: #fff7e6; color: #d46b08; border: 1px solid #ffd591; border-radius: 3px; }
+
+        /* 内容 & 弹窗 */
         .gallery-wrap { display: flex; overflow-x: auto; gap: 10px; padding: 15px; }
         .gallery-card { min-width: 120px; height: 80px; border: 1px dashed #ccc; background: #fafafa; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; font-size: 11px; cursor: pointer; flex-shrink: 0; }
-        .footer { text-align: center; padding: 40px 20px; color: #999; font-size: 11px; }
-
-        /* 个人中心 (修复) */
-        .uc-header { background: linear-gradient(135deg, #2c3e50, #000); color: #f1c40f; padding: 30px 20px; display: flex; align-items: center; gap: 15px; }
-        .uc-big-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #f1c40f; object-fit: cover; background: #fff; }
-        .uc-tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; }
-        .uc-tab { flex: 1; text-align: center; padding: 12px; font-size: 13px; font-weight: bold; color: #666; cursor: pointer; border-bottom: 2px solid transparent; }
-        .uc-tab.active { color: #8b0000; border-bottom-color: #8b0000; }
-
-        /* 智能弹窗 (玻璃拟态) */
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 54px; height: 54px; background: #8b0000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 4px 20px rgba(139,0,0,0.4); z-index: 200; cursor: pointer; transition: transform 0.1s; }
-        .fab:active { transform: scale(0.9); }
-        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: #fff; width: 85%; max-width: 360px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .input { width: 100%; padding: 12px; border: 1px solid #ccc; margin-bottom: 15px; border-radius: 6px; background: #f9f9f9; font-size: 14px; }
-        .btn { width: 100%; padding: 12px; background: #8b0000; color: #fff; border: none; font-weight: bold; border-radius: 6px; font-size: 15px; }
-
-        /* 内容渲染 */
+        
         .d-content { font-size: 15px; line-height: 1.8; color: #333; padding: 15px 0; }
         .d-content h2 { font-size: 16px; border-left: 4px solid #8b0000; padding-left: 10px; margin: 20px 0 10px 0; background: #fff5f5; padding: 5px 10px; }
-        .d-content h3 { font-size: 15px; font-weight: bold; margin: 15px 0 5px 0; color: #444; }
         .d-content b { color: #8b0000; background: #fff0f0; padding: 0 2px; }
+
+        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal { background: #fff; width: 85%; max-width: 360px; border-radius: 10px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .input { width: 100%; padding: 12px; border: 1px solid #ccc; margin-bottom: 12px; border-radius: 4px; font-size: 14px; background: #f9f9f9; }
+        .btn { width: 100%; padding: 12px; background: #8b0000; color: #fff; border: none; font-weight: bold; border-radius: 6px; font-size: 15px; }
+
+        /* 白皮书 (沙漠黄) */
+        .wp-modal { background: #f7f5f0; color: #2c3e50; }
+        .wp-container { padding: 30px 20px; min-height: 100vh; font-family: "Georgia", serif; }
+        .wp-h1 { font-size: 24px; color: #8b0000; border-bottom: 2px solid #dcdacb; padding-bottom: 15px; margin-bottom: 20px; text-align: center; font-weight: 900; }
+        .wp-p { font-size: 14px; line-height: 1.8; margin-bottom: 15px; text-align: justify; }
+        .wp-close { position: fixed; top: 20px; right: 20px; color: #8b0000; font-size: 24px; cursor: pointer; z-index: 201; background: #fff; border-radius: 50%; width: 36px; height: 36px; text-align: center; line-height: 36px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .footer { text-align: center; padding: 40px 20px; color: #999; font-size: 11px; }
+        .wp-link { color: #8b0000; text-decoration: underline; cursor: pointer; font-weight: bold; margin-top: 5px; display: inline-block; }
         
         .sub-nav { background: #fff; height: 44px; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 10px; position: sticky; top: 0; z-index: 101; }
         .back-icon { font-size: 20px; padding: 0 10px; color: #555; cursor: pointer; }
         .page-title { font-weight: bold; font-size: 14px; margin-left: 5px; flex: 1; }
+        
+        .uc-tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; margin-bottom: 10px; }
+        .uc-tab { flex: 1; text-align: center; padding: 12px; font-size: 13px; font-weight: bold; color: #666; cursor: pointer; border-bottom: 2px solid transparent; }
+        .uc-tab.active { color: #8b0000; border-bottom-color: #8b0000; }
     </style>
 </head>
 <body>
@@ -94,10 +118,13 @@
         <div class="slogan-bar">科技向善 · 从 0 到 1 · 见证未来</div>
         <div class="token-dash"><div>🔥 算力池总量</div><div class="tk-num">21,045,992</div></div>
         <div class="token-dash" style="border-top:none; padding-top:0;"><div>⛏️ 今日已产出</div><div class="tk-num" style="color:#27ae60">+1,204</div></div>
-        <div class="news-bar"><span class="news-tag">快讯</span><span class="news-content" id="news-text">DeepSeek R1 开源引发全球关注，本地部署教程已上线...</span></div>
+        <div class="news-bar"><span class="news-tag">快讯</span><span class="news-content" id="news-text">DeepSeek R1 正式开源，性能超越 GPT-4...</span></div>
 
         <div class="section">
-            <div class="sec-head"><span class="sec-title">📖 AI 百科与工具库</span><span class="sec-more" onclick="goWiki('all')">进入库 ></span></div>
+            <div class="sec-head">
+                <span class="sec-title">📖 AI 百科与工具库</span>
+                <span class="sec-btn" onclick="openPostModal('wiki_user')">＋ 投稿</span>
+            </div>
             <div class="row-item" onclick="goWiki('all')"><div class="row-icon">🧰</div><div class="row-info"><div class="row-t">进入完整工具库 (20+)</div><div class="row-d">ChatGPT, DeepSeek, MJ, Sora, Suno...</div></div></div>
             <div class="row-item" onclick="goWiki('wiki_base')"><div class="row-icon">📚</div><div class="row-info"><div class="row-t">基础科普 (新人必读)</div><div class="row-d">从 0 到 1 建立 AI 认知</div></div></div>
             <div class="row-item" onclick="goWiki('wiki_prac')"><div class="row-icon">⚔️</div><div class="row-info"><div class="row-t">实战演练手册</div><div class="row-d">手把手教你解决具体痛点</div></div></div>
@@ -107,7 +134,10 @@
         <div class="section"><div class="sec-head"><span class="sec-title">📍 全国组织</span></div><div class="prov-box" id="prov-list"></div></div>
 
         <div class="section">
-            <div class="sec-head"><span class="sec-title">⚡ 垂直专区</span></div>
+            <div class="sec-head">
+                <span class="sec-title">⚡ 垂直专区</span>
+                <span class="sec-btn" onclick="openPostModal('showcase')">＋ 发布作品</span>
+            </div>
             <div class="row-item" onclick="goList('art','AI 绘画 / 音乐')"><div class="row-icon">🎨</div><div class="row-info"><div class="row-t">AI 绘画 / 音乐</div><div class="row-d">Midjourney, Stable Diffusion, Suno</div></div></div>
             <div class="row-item" onclick="goList('video','AI 视频 / 动画')"><div class="row-icon">🎬</div><div class="row-info"><div class="row-t">AI 视频 / 动画</div><div class="row-d">Sora, Runway, Pika</div></div></div>
             <div class="row-item" onclick="goList('text','AI 写作 / 论文')"><div class="row-icon">📝</div><div class="row-info"><div class="row-t">AI 写作 / 论文</div></div></div>
@@ -115,18 +145,31 @@
         </div>
 
         <div class="section" style="border-color:#d4a373;">
-            <div class="sec-head" style="background:#fffaf0;"><span class="sec-title" style="color:#d35400;">💰 价值与变现</span><span class="sec-more" onclick="goList('money','变现专区')">进入 ></span></div>
+            <div class="sec-head" style="background:#fffaf0;">
+                <span class="sec-title" style="color:#d35400;">💰 价值与变现</span>
+                <span class="sec-btn" style="background:#d35400;" onclick="openPostModal('money_help')">＋ 求助/售卖</span>
+            </div>
             <div class="row-item" onclick="goList('money_help','付费求助')"><div class="row-icon" style="color:#d35400">🆘</div><div class="row-info"><div class="row-t">付费求助</div></div></div>
             <div class="row-item" onclick="goList('money_sale','干货售卖')"><div class="row-icon" style="color:#d35400">🛍️</div><div class="row-info"><div class="row-t">干货售卖</div></div></div>
         </div>
 
-        <div class="section"><div class="sec-head"><span class="sec-title">✨ 作品集</span></div><div class="gallery-wrap"><div class="gallery-card" onclick="openSmartPost()">➕<br>发布</div><div class="gallery-card">🚀<br>应用</div><div class="gallery-card">🎨<br>画廊</div></div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">🎯 悬赏区</span></div><div id="bounty-preview" class="row-item" style="color:#999;justify-content:center;">暂无悬赏</div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">🤝 共创</span></div><div class="row-item" onclick="goList('coop','共创')"><div class="row-icon">🚩</div><div class="row-info"><div class="row-t">组队参赛</div></div></div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">✨ 作品集</span></div><div class="gallery-wrap"><div class="gallery-card" onclick="openPostModal('showcase')">➕<br>发布</div><div class="gallery-card">🚀<br>应用</div><div class="gallery-card">🎨<br>画廊</div></div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">🎯 悬赏区</span><span class="sec-btn" onclick="openPostModal('bounty')">＋ 发布</span></div><div id="bounty-preview" class="row-item" style="color:#999;justify-content:center;">暂无悬赏</div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">🤝 共创</span><span class="sec-btn" onclick="openPostModal('coop')">＋ 组队</span></div><div class="row-item" onclick="goList('coop','共创')"><div class="row-icon">🚩</div><div class="row-info"><div class="row-t">组队参赛</div></div></div></div>
         <div class="section"><div class="sec-head"><span class="sec-title">🏆 英雄榜</span></div><div id="rank-box" style="padding:10px;">加载中...</div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">📢 站务</span></div><div class="row-item" onclick="goList('gov','站务')"><div class="row-icon">📬</div><div class="row-info"><div class="row-t">意见反馈</div></div></div></div>
+        
+        <div class="section">
+            <div class="sec-head"><span class="sec-title">📢 站务</span><span class="sec-btn" onclick="openPostModal('gov')">＋ 反馈</span></div>
+            <div class="row-item" style="background:#fffbe6;" onclick="alert('社区公约：文明交流，禁止违规，资源共享。')"><div class="row-icon">⚖️</div><div class="row-info"><div class="row-t">元点社区自律公约 (置顶)</div></div></div>
+            <div class="row-item" onclick="goList('gov','站务')"><div class="row-icon">📬</div><div class="row-info"><div class="row-t">意见反馈</div></div></div>
+        </div>
+        
         <div class="section"><div class="sec-head"><span class="sec-title">📅 大事记</span></div><div id="milestone-box" style="padding:15px;font-size:12px;color:#555;">加载中...</div></div>
-        <div class="footer"><p>AI 元点 &copy; 2026</p></div>
+
+        <div class="footer">
+            <p>AI 元点 &copy; 2026</p>
+            <div class="wp-link" onclick="showWhitepaper()">阅读《元点社区白皮书》</div>
+        </div>
     </div>
 
     <div id="view-list" class="view">
@@ -134,55 +177,64 @@
         
         <div id="wiki-tools" style="display:none;">
             <div class="wiki-tools-container">
-                
-                <div class="wiki-cat-label">💬 文本与逻辑 (LLM)</div>
+                <div class="wiki-cat-label">💬 文本 (LLM)</div>
                 <div class="tool-scroll-row">
-                    <div class="tool-btn" onclick="filterWiki('gpt')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#74aa9c"><path d="M22.28 9.73a5.95 5.95 0 0 0-1.29-3.24 5.86 5.86 0 0 0-4.38-2.18 5.93 5.93 0 0 0-2.3.47A5.94 5.94 0 0 0 10.3 3.6a6 6 0 0 0-4.4 2.15 5.94 5.94 0 0 0-2.3-.47A5.94 5.94 0 0 0 .5 9.17a6 6 0 0 0 2.13 4.4 5.8 5.8 0 0 0-1.29 3.23 5.94 5.94 0 0 0 4.4 5.46 5.8 5.8 0 0 0 2.3.47A5.94 5.94 0 0 0 12.1 24a5.9 5.9 0 0 0 1.29-3.22 6 6 0 0 0 4.4-2.17 5.9 5.9 0 0 0 2.3.47 5.9 5.9 0 0 0 3.1-1.18 5.93 5.93 0 0 0-2.1-10.63 5.8 5.8 0 0 0 1.19-3.22z"/></svg></div><div class="tool-name">GPT</div></div>
-                    <div class="tool-btn" onclick="filterWiki('deepseek')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#4f46e5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><div class="tool-name">DeepSeek</div></div>
-                    <div class="tool-btn" onclick="filterWiki('claude')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#d97757"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></div><div class="tool-name">Claude</div></div>
-                    <div class="tool-btn" onclick="filterWiki('gemini')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="url(#grad1)"><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4285f4;stop-opacity:1" /><stop offset="100%" style="stop-color:#9c27b0;stop-opacity:1" /></linearGradient></defs><path d="M12 2l2.5 8.5L23 13l-8.5 2.5L12 24l-2.5-8.5L1 13l8.5-2.5z"/></svg></div><div class="tool-name">Gemini</div></div>
-                    <div class="tool-btn" onclick="filterWiki('kimi')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#333"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div><div class="tool-name">Kimi</div></div>
-                    <div class="tool-btn" onclick="filterWiki('doubao')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#00b894"><circle cx="12" cy="12" r="9"/></svg></div><div class="tool-name">豆包</div></div>
+                    <div class="tool-btn" onclick="filterWiki('gpt')"><div class="tool-img-box"><img src="https://logo.clearbit.com/openai.com"></div><div class="tool-name">GPT</div></div>
+                    <div class="tool-btn" onclick="filterWiki('deepseek')"><div class="tool-img-box"><img src="https://logo.clearbit.com/deepseek.com"></div><div class="tool-name">DeepSeek</div></div>
+                    <div class="tool-btn" onclick="filterWiki('claude')"><div class="tool-img-box"><img src="https://logo.clearbit.com/anthropic.com"></div><div class="tool-name">Claude</div></div>
+                    <div class="tool-btn" onclick="filterWiki('gemini')"><div class="tool-img-box"><img src="https://logo.clearbit.com/google.com"></div><div class="tool-name">Gemini</div></div>
+                    <div class="tool-btn" onclick="filterWiki('kimi')"><div class="tool-img-box"><img src="https://logo.clearbit.com/moonshot.cn"></div><div class="tool-name">Kimi</div></div>
                 </div>
 
-                <div class="wiki-cat-label">🎨 视觉创作 (Image)</div>
+                <div class="wiki-cat-label">🎨 视觉 (Image)</div>
                 <div class="tool-scroll-row">
-                    <div class="tool-btn" onclick="filterWiki('mj')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#333"><path d="M12 2L2 22h20L12 2zm0 4l6 12H6l6-12z"/></svg></div><div class="tool-name">MJ</div></div>
-                    <div class="tool-btn" onclick="filterWiki('sd')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#2d3436"><path d="M2 12h20v2H2z"/></svg></div><div class="tool-name">SD</div></div>
-                    <div class="tool-btn" onclick="filterWiki('flux')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#0984e3"><rect x="4" y="4" width="16" height="16"/></svg></div><div class="tool-name">Flux</div></div>
-                    <div class="tool-btn" onclick="filterWiki('liblib')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#fdcb6e"><circle cx="12" cy="12" r="8"/></svg></div><div class="tool-name">Liblib</div></div>
+                    <div class="tool-btn" onclick="filterWiki('mj')"><div class="tool-img-box"><img src="https://logo.clearbit.com/midjourney.com"></div><div class="tool-name">MJ</div></div>
+                    <div class="tool-btn" onclick="filterWiki('sd')"><div class="tool-img-box"><img src="https://logo.clearbit.com/stability.ai"></div><div class="tool-name">SD</div></div>
+                    <div class="tool-btn" onclick="filterWiki('flux')"><div class="tool-img-box"><img src="https://logo.clearbit.com/blackforestlabs.ai"></div><div class="tool-name">Flux</div></div>
+                    <div class="tool-btn" onclick="filterWiki('liblib')"><div class="tool-img-box"><img src="https://logo.clearbit.com/liblib.art"></div><div class="tool-name">Liblib</div></div>
                 </div>
 
-                <div class="wiki-cat-label">🎬 视频与3D (Video)</div>
+                <div class="wiki-cat-label">🎬 视频/音乐</div>
                 <div class="tool-scroll-row">
-                    <div class="tool-btn" onclick="filterWiki('sora')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#000"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></div><div class="tool-name">Sora</div></div>
-                    <div class="tool-btn" onclick="filterWiki('runway')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#e84393"><path d="M5 3l14 9-14 9V3z"/></svg></div><div class="tool-name">Runway</div></div>
-                    <div class="tool-btn" onclick="filterWiki('pika')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#6c5ce7"><path d="M12 2L2 22h20L12 2z"/></svg></div><div class="tool-name">Pika</div></div>
-                    <div class="tool-btn" onclick="filterWiki('luma')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#00cec9"><path d="M2 12h20v2H2z"/></svg></div><div class="tool-name">Luma</div></div>
-                    <div class="tool-btn" onclick="filterWiki('kling')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#ff7675"><circle cx="12" cy="12" r="8"/></svg></div><div class="tool-name">Kling</div></div>
-                </div>
-
-                <div class="wiki-cat-label">🎵 音乐与提效</div>
-                <div class="tool-scroll-row">
-                    <div class="tool-btn" onclick="filterWiki('suno')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#000"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div><div class="tool-name">Suno</div></div>
-                    <div class="tool-btn" onclick="filterWiki('udio')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#fd79a8"><rect x="6" y="6" width="12" height="12"/></svg></div><div class="tool-name">Udio</div></div>
-                    <div class="tool-btn" onclick="filterWiki('cursor')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#6c5ce7"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg></div><div class="tool-name">Cursor</div></div>
-                    <div class="tool-btn" onclick="filterWiki('notion')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#000"><path d="M4 4h16v16H4z"/></svg></div><div class="tool-name">Notion</div></div>
-                    <div class="tool-btn" onclick="filterWiki('perplexity')"><div class="tool-svg-box"><svg viewBox="0 0 24 24" fill="#00b894"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div><div class="tool-name">Perplex</div></div>
+                    <div class="tool-btn" onclick="filterWiki('sora')"><div class="tool-img-box"><img src="https://logo.clearbit.com/openai.com"></div><div class="tool-name">Sora</div></div>
+                    <div class="tool-btn" onclick="filterWiki('runway')"><div class="tool-img-box"><img src="https://logo.clearbit.com/runwayml.com"></div><div class="tool-name">Runway</div></div>
+                    <div class="tool-btn" onclick="filterWiki('suno')"><div class="tool-img-box"><img src="https://logo.clearbit.com/suno.com"></div><div class="tool-name">Suno</div></div>
+                    <div class="tool-btn" onclick="filterWiki('pika')"><div class="tool-img-box"><img src="https://logo.clearbit.com/pika.art"></div><div class="tool-name">Pika</div></div>
                 </div>
             </div>
         </div>
-
         <div id="thread-container"></div>
     </div>
 
     <div id="view-uc" class="view">
         <div class="sub-nav"><span class="back-icon" onclick="goBack('home')">‹</span><span class="page-title">个人中心</span></div>
-        <div class="uc-header">
-            <img id="uc-avatar" class="uc-big-avatar" src="">
-            <div>
-                <div id="uc-nick" style="font-size:18px; font-weight:bold; color:#fff;"></div>
-                <div id="uc-token" style="color:#f1c40f; margin-top:5px;">Token: --</div>
+        <div class="uc-card">
+            <div class="uc-bg"></div>
+            <div class="uc-main">
+                <div class="uc-flex-top">
+                    <img id="uc-avatar" class="uc-avatar-lg" src="">
+                    <button class="uc-edit-btn" onclick="alert('编辑功能开发中')">编辑资料</button>
+                </div>
+                <div class="uc-names">
+                    <div class="uc-nick"><span id="uc-nick">Loading...</span> <span id="uc-lv" style="background:#8b0000;color:#fff;font-size:10px;padding:1px 4px;border-radius:3px;">LV.1</span></div>
+                    <div class="uc-meta-row">
+                        <span>编号: <span id="uc-id">--</span></span>
+                        <span>加入: <span id="uc-join">--</span></span>
+                    </div>
+                </div>
+                <div class="uc-sign" id="uc-sign">科技向善，从 0 到 1。</div>
+                
+                <div class="uc-badges">
+                    <div class="uc-badge-item">💎 创世居民</div>
+                    <div class="uc-badge-item">⚡ 活跃先锋</div>
+                </div>
+
+                <div class="uc-stats-grid">
+                    <div><div class="uc-stat-n" id="uc-token">--</div><div class="uc-stat-l">Token</div></div>
+                    <div><div class="uc-stat-n">0</div><div class="uc-stat-l">成就</div></div>
+                    <div><div class="uc-stat-n">2h</div><div class="uc-stat-l">在线</div></div>
+                    <div><div class="uc-stat-n">5</div><div class="uc-stat-l">发布</div></div>
+                </div>
             </div>
         </div>
         <div class="uc-tabs">
@@ -190,21 +242,33 @@
             <div class="uc-tab" onclick="switchTab('replies')" id="tab-replies">我的回复</div>
         </div>
         <div id="uc-content" style="background:#fff; min-height:300px;"></div>
-        <div style="padding:20px;"><button onclick="logout()" style="width:100%; padding:10px; border:1px solid #ccc; background:#fff;">退出登录</button></div>
+        <div style="padding:20px;"><button class="btn" style="background:#fff; border:1px solid #ccc; color:#666;" onclick="logout()">退出登录</button></div>
     </div>
 
-    <div class="fab" onclick="openSmartPost()">+</div>
+    <div id="view-wp" class="view wp-modal" style="z-index:2000;">
+        <div class="wp-container">
+            <div class="wp-close" onclick="closeWhitepaper()">✕</div>
+            <div class="wp-h1">元点社区白皮书</div>
+            <div class="wp-p"><b>1. 序言：</b> 我们正处于人类历史上最剧烈的技术变革前夜。AI 不再是遥远的科幻，它是正在重塑每一行代码、每一张图像、每一个行业的巨浪。</div>
+            <div class="wp-p"><b>2. 使命：</b> “元点”意味着一切的开始。我们的使命只有一个：连接、赋能、实战。从 0 到 1，拒绝做时代的旁观者。</div>
+            <div class="wp-p"><b>3. 价值观：</b> 硬核实战，极致利他，共生共治。</div>
+            <div class="wp-p" style="text-align:center; margin-top:40px; font-weight:bold; color:#8b0000;">加入我们，点燃属于你的火炬。</div>
+        </div>
+    </div>
+
     <div id="modal-post" class="modal-mask">
         <div class="modal">
             <div style="font-weight:bold; margin-bottom:15px; font-size:16px;">发布新帖 <span onclick="closeModal('modal-post')" style="float:right; color:#999; cursor:pointer;">✕</span></div>
             <select id="p-cat" class="input">
                 <option value="other">日常讨论</option>
-                <option value="wiki_gpt">Wiki 投稿</option>
+                <option value="wiki_user">Wiki 投稿</option>
                 <option value="money_help">付费求助</option>
                 <option value="showcase">作品发布</option>
+                <option value="bounty">悬赏发布</option>
+                <option value="gov">反馈建议</option>
             </select>
             <input id="p-title" class="input" placeholder="标题">
-            <textarea id="p-content" class="input" style="height:120px" placeholder="内容... (支持 **加粗** 等Markdown语法)"></textarea>
+            <textarea id="p-content" class="input" style="height:120px" placeholder="内容... (支持 Markdown)"></textarea>
             <button class="btn" onclick="doPost()">立即发布 (+10 Token)</button>
         </div>
     </div>
@@ -235,7 +299,7 @@
             <input id="email" class="input" placeholder="邮箱">
             <input id="pwd" type="password" class="input" placeholder="密码">
             <button class="btn" onclick="doAuth()">提交</button>
-            <div style="text-align:center; margin-top:15px; font-size:12px; cursor:pointer;" onclick="closeModal('modal-auth')">关闭</div>
+            <div style="text-align:center; margin-top:15px; font-size:12px; cursor:pointer; color:#8b0000;" onclick="closeModal('modal-auth')">暂不登录</div>
         </div>
     </div>
 
@@ -243,12 +307,12 @@
         const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
-        let sb = null, user = null, curCat = null, curPid = null;
+        let sb = null, user = null, curCat = null, homeScroll = 0;
         const provs = "京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新台港澳";
 
-        function formatContent(text) {
-            if(!text) return '';
-            let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        function formatContent(t) {
+            if(!t) return '';
+            let safe = t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             safe = safe.replace(/^# (.*$)/gm, '<h2>$1</h2>')
                        .replace(/^## (.*$)/gm, '<h3>$1</h3>')
                        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
@@ -272,147 +336,131 @@
             sb.from('profiles').select('*').eq('id', user.id).single().then(({data}) => {
                 const nick = data?.nickname || user.email.split('@')[0];
                 const avt = data?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}`;
-                document.getElementById('auth-area').innerHTML = `<img src="${avt}" class="u-avatar"> <span style="font-weight:bold;color:#333;">${nick}</span>`;
+                document.getElementById('auth-area').innerHTML = `<img src="${avt}" class="u-avatar"> <b>${nick}</b>`;
+                
+                // 个人中心9要素
                 document.getElementById('uc-avatar').src = avt;
                 document.getElementById('uc-nick').innerText = nick;
-                document.getElementById('uc-token').innerText = `Token: ${data?.token_balance || 0}`;
+                document.getElementById('uc-id').innerText = user.id.substring(0,8);
+                document.getElementById('uc-sign').innerText = data?.signature || "科技向善，从 0 到 1。";
+                document.getElementById('uc-token').innerText = data?.token_balance || 0;
+                document.getElementById('uc-join').innerText = new Date(user.created_at).toLocaleDateString();
+                document.getElementById('uc-lv').innerText = `LV.${Math.floor((data?.token_balance||0)/100)+1}`;
             });
         }
 
         async function loadHomeData() {
             const {data:n} = await sb.from('news').select('*').eq('type','global').limit(1);
             if(n&&n.length) document.getElementById('news-text').innerText = n[0].content;
-            
             const {data:m} = await sb.from('news').select('*').eq('type','milestone').limit(3);
             if(m) document.getElementById('milestone-box').innerHTML = m.map(x=>`<div>• ${new Date(x.created_at).toLocaleDateString()} ${x.content}</div>`).join('');
-            
             const {data:r} = await sb.from('profiles').select('*').order('token_balance',{ascending:false}).limit(3);
             if(r) document.getElementById('rank-box').innerHTML = r.map((u,i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #eee;"><span>${i+1}. ${(u.nickname||u.id).substring(0,6)}</span><span style="color:#d35400;font-weight:bold;">${u.token_balance}</span></div>`).join('');
         }
 
-        // 路由逻辑
+        // 路由与记忆滚动
         function showView(id) {
+            if(document.querySelector('.view.active').id === 'view-home') homeScroll = window.scrollY; 
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            window.scrollTo(0,0);
+            if(id === 'view-home') window.scrollTo(0, homeScroll); 
+            else window.scrollTo(0,0);
         }
         function goBack(t) { showView(t==='home'?'view-home':'view-list'); }
         
         function goList(cat, title) {
             document.getElementById('list-title').innerText = title;
-            document.getElementById('wiki-tools').style.display = 'none'; // 隐藏Wiki矩阵
+            document.getElementById('wiki-tools').style.display = 'none';
             curCat = cat; loadThreadList(cat); showView('view-list');
         }
-        
         function goWiki(subCat) {
             document.getElementById('list-title').innerText = 'AI 百科与工具库';
-            document.getElementById('wiki-tools').style.display = 'block'; // 显示Wiki矩阵
+            document.getElementById('wiki-tools').style.display = 'block';
             curCat = subCat === 'all' ? 'wiki_base' : subCat; 
             filterWiki(subCat === 'all' ? null : subCat); 
             showView('view-list');
         }
 
-        // 智能发布
-        function openSmartPost() {
+        // 分布式发布
+        function openPostModal(cat) {
             if(!user) return openAuth();
             document.getElementById('modal-post').style.display='flex';
             const sel = document.getElementById('p-cat');
-            if(document.getElementById('wiki-tools').style.display === 'block') sel.value = 'wiki_gpt'; 
-            else if(curCat && curCat.startsWith('money')) sel.value = 'money_help'; 
-            else sel.value = 'other';
+            sel.value = cat; 
         }
 
-        // Wiki 筛选逻辑
         function filterWiki(toolTag) {
             const box = document.getElementById('thread-container');
             box.innerHTML = '<div style="padding:30px;text-align:center;color:#999;">筛选中...</div>';
             let q = sb.from('posts').select('*, profiles(nickname)').order('created_at',{ascending:false}).limit(30);
-            
             if(toolTag) q = q.ilike('category', `%${toolTag}%`);
             else q = q.ilike('category', 'wiki%');
-            
-            q.then(({data}) => {
-                if(!data||!data.length) box.innerHTML='<div style="padding:30px;text-align:center;color:#ccc;">暂无内容</div>';
-                else box.innerHTML = data.map(p => `
-                    <div class="row-item" onclick="goDetail('${p.id}')">
-                        <div class="row-info">
-                            <div class="row-t">${p.title}</div>
-                            <div class="row-d">${p.profiles?.nickname||'匿名'} · ${new Date(p.created_at).toLocaleDateString()}</div>
-                        </div>
-                    </div>
-                `).join('');
-            });
+            q.then(({data}) => renderList(box, data));
         }
 
-        // 通用加载
         async function loadThreadList(cat) {
             const box = document.getElementById('thread-container');
             box.innerHTML = '<div style="padding:30px;text-align:center;color:#999;">加载中...</div>';
             let q = sb.from('posts').select('*, profiles(nickname)').order('created_at', {ascending: false});
-            if (cat === 'wiki') q = q.ilike('category', 'wiki%');
-            else if (cat) q = q.eq('category', cat);
-            
-            const {data} = await q;
-            if(!data || !data.length) { box.innerHTML = '<div style="padding:30px;text-align:center;color:#ccc;">暂无内容</div>'; return; }
-            
-            box.innerHTML = data.map(p => `
+            if (cat === 'wiki') q = q.ilike('category', 'wiki%'); else if (cat) q = q.eq('category', cat);
+            const {data} = await q; renderList(box, data);
+        }
+
+        function renderList(box, data) {
+            if(!data || !data.length) box.innerHTML='<div style="padding:40px;text-align:center;color:#ccc;">暂无内容</div>';
+            else box.innerHTML = data.map(p => `
                 <div class="row-item" onclick="goDetail('${p.id}')">
                     <div class="row-info">
                         <div class="row-t">${p.title}</div>
                         <div class="row-d">${p.profiles?.nickname||'匿名'} · ${new Date(p.created_at).toLocaleDateString()}</div>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        // 详情页逻辑
         async function goDetail(id) {
-            curPid = id;
             const {data:p} = await sb.from('posts').select('*, profiles(nickname)').eq('id', id).single();
             if(p) {
                 document.getElementById('d-title').innerText = p.title;
                 document.getElementById('d-author').innerText = p.profiles?.nickname || '匿名';
                 document.getElementById('d-date').innerText = new Date(p.created_at).toLocaleString();
                 document.getElementById('d-body').innerHTML = formatContent(p.content);
-                
-                if(p.image_url) { 
-                    document.getElementById('d-img').src = p.image_url; 
-                    document.getElementById('d-img').style.display = 'block'; 
-                } else {
-                    document.getElementById('d-img').style.display = 'none';
-                }
             }
-            loadComments(id);
-            showView('view-detail');
+            loadComments(id); showView('view-detail');
         }
 
         async function loadComments(pid) {
+            curPid = pid;
             const {data} = await sb.from('comments').select('*, profiles(nickname)').eq('post_id', pid).order('created_at',{ascending:true});
-            const box = document.getElementById('cmt-list');
-            if(!data||!data.length) box.innerHTML='<div style="color:#ccc; padding:10px 0;">暂无评论</div>';
-            else box.innerHTML = data.map(c => `<div style="padding:10px 0; border-bottom:1px dashed #eee;"><b>${c.profiles?.nickname||'匿名'}</b>: ${c.content}</div>`).join('');
+            document.getElementById('cmt-list').innerHTML = data?.map(c => `<div style="padding:10px 0; border-bottom:1px dashed #eee;"><b>${c.profiles?.nickname||'匿名'}</b>: ${c.content}</div>`).join('') || '<div style="color:#ccc">暂无评论</div>';
         }
 
-        // 交互：发帖、评论、Auth
+        function handleUserClick() { 
+            if(!user) openAuth(); 
+            else { showView('view-uc'); loadUserPosts(); } 
+        }
+        async function loadUserPosts() {
+            const box = document.getElementById('uc-content');
+            box.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">加载中...</div>';
+            const {data} = await sb.from('posts').select('*').eq('author_id', user.id).order('created_at',{ascending:false});
+            if(!data || !data.length) box.innerHTML = '<div style="padding:40px;text-align:center;color:#ccc;"><div>📭</div><div>暂无记录</div></div>';
+            else box.innerHTML = data.map(p => `<div class="row-item"><div class="row-info"><div class="row-t">${p.title}</div><div class="row-d">${new Date(p.created_at).toLocaleDateString()}</div></div></div>`).join('');
+        }
+
         async function doPost() {
             if(!user) return openAuth();
-            const btn = document.querySelector('#modal-post .btn'); btn.innerText="发布中..."; btn.disabled=true;
             const {error} = await sb.from('posts').insert({
                 title: document.getElementById('p-title').value,
                 content: document.getElementById('p-content').value,
                 category: document.getElementById('p-cat').value,
                 author_id: user.id
             });
-            btn.innerText="立即发布"; btn.disabled=false;
-            if(error) alert('发布失败: ' + error.message);
+            if(error) alert(error.message);
             else { alert('发布成功！Token +10'); closeModal('modal-post'); if(curCat) loadThreadList(curCat); }
         }
 
         async function submitComment() {
             if(!user) return openAuth();
-            const txt = document.getElementById('cmt-input').value;
-            if(!txt) return;
-            await sb.from('comments').insert({ post_id: curPid, user_id: user.id, content: txt });
+            await sb.from('comments').insert({ post_id: curPid, user_id: user.id, content: document.getElementById('cmt-input').value });
             document.getElementById('cmt-input').value = ''; loadComments(curPid);
         }
 
@@ -422,65 +470,18 @@
             const {error} = await sb.auth.signInWithPassword({email: e, password: p});
             if(error) { 
                 const {error: regErr} = await sb.auth.signUp({email: e, password: p});
-                if(regErr) alert("登录/注册失败: " + regErr.message);
-                else alert("注册成功！请去邮箱查收验证邮件。");
+                if(regErr) alert(regErr.message); else alert("注册成功，请去邮箱查收验证邮件。");
             } else {
                 location.reload();
-            }
-        }
-
-        // 个人中心完整逻辑
-        function handleUserClick() { 
-            if(!user) openAuth(); 
-            else { showView('view-uc'); switchTab('posts'); } 
-        }
-
-        async function switchTab(tab) {
-            document.querySelectorAll('.uc-tab').forEach(t=>t.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
-            
-            const box = document.getElementById('uc-content');
-            box.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">加载中...</div>';
-            
-            let result;
-            if(tab === 'posts') {
-                result = await sb.from('posts').select('*').eq('author_id', user.id).order('created_at',{ascending:false});
-            } else {
-                result = await sb.from('comments').select('*, posts(title)').eq('user_id', user.id).order('created_at',{ascending:false});
-            }
-            
-            const data = result.data;
-            if(!data || !data.length) {
-                // 空状态插图
-                box.innerHTML = `
-                    <div style="padding:40px; text-align:center; color:#ccc;">
-                        <div style="font-size:40px; margin-bottom:10px;">📭</div>
-                        <div>暂无记录</div>
-                    </div>`;
-            } else {
-                if(tab === 'posts') {
-                    box.innerHTML = data.map(p => `
-                        <div class="row-item" onclick="goDetail('${p.id}')">
-                            <div class="row-info">
-                                <div class="row-t">${p.title}</div>
-                                <div class="row-d">${new Date(p.created_at).toLocaleDateString()}</div>
-                            </div>
-                        </div>`).join('');
-                } else {
-                    box.innerHTML = data.map(c => `
-                        <div class="row-item" onclick="goDetail('${c.post_id}')">
-                            <div class="row-info">
-                                <div class="row-t">回复: ${c.content}</div>
-                                <div class="row-d">原帖: ${c.posts?.title || '未知帖子'}</div>
-                            </div>
-                        </div>`).join('');
-                }
             }
         }
 
         function openAuth() { document.getElementById('modal-auth').style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         async function logout() { await sb.auth.signOut(); location.reload(); }
+        
+        function showWhitepaper() { document.getElementById('view-wp').style.display='block'; }
+        function closeWhitepaper() { document.getElementById('view-wp').style.display='none'; }
 
         setTimeout(init, 200);
     </script>
