@@ -6,94 +6,51 @@
     <title>元点社区 | 硬核实战</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= V3.5 工具矩阵 & 白皮书实装版 ================= */
+        /* ================= V4.5 终极修复版：排版引擎 & 权限修复 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background-color: #f7f5f0; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 80px; line-height: 1.5; }
-        a { text-decoration: none; color: #333; cursor: pointer; }
-        ::-webkit-scrollbar { width: 0; background: transparent; }
-
+        
+        /* 视图系统 */
         .view { display: none; min-height: 100vh; padding-bottom: 80px; animation: fadeIn 0.2s ease-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 顶部 */
+        /* 顶部导航 */
         .header { background: #fff; height: 50px; border-bottom: 2px solid #8b0000; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .logo { font-size: 20px; font-weight: 900; color: #8b0000; font-family: "Georgia", serif; }
         .user-nav { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #666; cursor: pointer; }
         .u-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; object-fit: cover; background: #eee; }
-        .u-nick { font-weight: bold; color: #333; }
-        .u-lv { font-size: 10px; color: #8b0000; background: #fff0f0; padding: 0 4px; border-radius: 2px; }
-
-        .slogan-bar { background: #8b0000; color: #fff; text-align: center; padding: 6px; font-size: 11px; letter-spacing: 1px; }
         
-        /* Token 仪表盘 */
-        .token-dash { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666; }
-        .tk-num { font-family: monospace; font-weight: bold; color: #d35400; font-size: 13px; }
-
-        /* 新闻 */
-        .news-bar { background: #fff8e1; color: #5d4037; border-bottom: 1px solid #e0e0e0; padding: 8px 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; }
-        .news-tag { background: #d35400; color: #fff; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; flex-shrink: 0; }
-        .news-content { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
-
-        /* 通用板块 */
-        .section { background: #fff; margin: 12px 10px; border: 1px solid #dcdacb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; }
+        /* 核心样式 */
+        .section { background: #fff; margin: 12px 10px; border: 1px solid #dcdacb; border-radius: 4px; overflow: hidden; }
         .sec-head { background: #fcfbf9; padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .sec-title { font-weight: 800; font-size: 14px; color: #444; border-left: 4px solid #8b0000; padding-left: 8px; }
         .sec-more { font-size: 11px; color: #999; cursor: pointer; }
-
-        /* 列表行 */
         .row-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f5f5f5; cursor: pointer; }
-        .row-item:active { background: #fafafa; }
         .row-icon { width: 36px; height: 36px; background: #f4f4f4; color: #555; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 18px; flex-shrink: 0; }
         .row-info { flex: 1; }
-        .row-t { font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 2px; }
-        .row-d { font-size: 11px; color: #888; }
+        .row-t { font-weight: bold; font-size: 13px; color: #2c3e50; }
+        .row-d { font-size: 11px; color: #888; margin-top: 2px; }
 
-        /* Wiki 工具矩阵 (核心升级) */
-        .wiki-tools-container { padding: 10px; background: #fff; border-bottom: 1px solid #eee; }
-        .wiki-cat-title { font-size: 11px; font-weight: bold; color: #8b0000; margin: 10px 0 5px 5px; background: #fff0f0; display: inline-block; padding: 2px 6px; border-radius: 4px; }
-        .tool-scroll-row { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 5px; }
-        .tool-btn { min-width: 70px; height: 60px; background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-        .tool-btn:active, .tool-btn.active { border-color: #8b0000; background: #fff5f5; }
-        .tb-icon { font-size: 18px; margin-bottom: 4px; }
-        .tb-name { font-size: 10px; font-weight: bold; color: #333; }
+        /* Wiki 矩阵 */
+        .wiki-tools-container { padding: 15px; background: #fff; border-bottom: 1px solid #eee; }
+        .tool-scroll-row { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
+        .tool-btn { min-width: 60px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .tool-icon { width: 45px; height: 45px; border-radius: 12px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 5px; border: 1px solid #eee; }
+        .tool-name { font-size: 10px; color: #333; font-weight: bold; }
 
-        /* 白皮书视图 */
-        .wp-container { background: #1a1a1a; color: #e0e0e0; min-height: 100vh; padding: 30px 20px; font-family: "Georgia", serif; }
-        .wp-h1 { font-size: 24px; color: #fff; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
-        .wp-h2 { font-size: 16px; color: #8b0000; margin-top: 25px; margin-bottom: 10px; font-weight: bold; }
-        .wp-p { font-size: 14px; line-height: 1.8; margin-bottom: 15px; opacity: 0.9; text-align: justify; }
-        .wp-close { position: fixed; top: 20px; right: 20px; color: #fff; font-size: 24px; cursor: pointer; z-index: 200; }
+        /* 文章排版引擎 (核心修复) */
+        .d-content { font-size: 15px; line-height: 1.8; color: #333; padding: 15px 0; }
+        .d-content h2 { font-size: 16px; border-left: 4px solid #8b0000; padding-left: 10px; margin: 20px 0 10px 0; background: #fff5f5; padding: 5px 10px; }
+        .d-content h3 { font-size: 15px; font-weight: bold; margin: 15px 0 5px 0; color: #444; }
+        .d-content p { margin-bottom: 10px; }
+        .d-content b { color: #8b0000; background: #fff0f0; padding: 0 2px; }
 
-        /* 特殊布局 */
-        .prov-box { padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .prov-tag { border: 1px solid #e0e0e0; background: #fff; border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #555; cursor: pointer; }
-        .gallery-wrap { display: flex; overflow-x: auto; gap: 10px; padding: 15px; }
-        .gallery-card { min-width: 120px; height: 80px; border: 1px dashed #ccc; background: #fafafa; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; font-size: 11px; cursor: pointer; flex-shrink: 0; }
-        .footer { text-align: center; padding: 40px 20px; color: #999; font-size: 11px; }
-        .wp-link-btn { color: #8b0000; text-decoration: underline; font-weight: bold; margin-top: 5px; display: inline-block; cursor: pointer; }
-
-        /* 二级页面通用 */
+        /* 其他通用 */
         .sub-nav { background: #fff; height: 44px; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 10px; position: sticky; top: 0; z-index: 101; }
         .back-icon { font-size: 20px; padding: 0 10px; color: #555; cursor: pointer; }
         .page-title { font-weight: bold; font-size: 14px; margin-left: 5px; flex: 1; }
-        .thread-item { background: #fff; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .th-title { font-weight: bold; font-size: 14px; color: #222; margin-bottom: 5px; }
-        .th-meta { font-size: 11px; color: #999; display: flex; justify-content: space-between; }
-
-        /* 详情页 & 个人中心 (保持V3.4样式) */
-        .detail-c { padding: 20px; background: #fff; min-height: 400px; }
-        .d-h1 { font-size: 18px; font-weight: 900; margin-bottom: 10px; line-height: 1.4; }
-        .d-inf { font-size: 12px; color: #999; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .d-txt { font-size: 15px; line-height: 1.8; color: #333; white-space: pre-wrap; }
-        .d-pic { width: 100%; border-radius: 6px; margin-top: 15px; border: 1px solid #eee; }
         
-        .uc-header { background: linear-gradient(135deg, #2c3e50, #000); color: #f1c40f; padding: 25px 20px; display: flex; align-items: center; gap: 15px; }
-        .uc-big-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #f1c40f; object-fit: cover; background: #fff; }
-        .uc-tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; }
-        .uc-tab { flex: 1; text-align: center; padding: 12px; font-size: 13px; font-weight: bold; color: #666; cursor: pointer; border-bottom: 2px solid transparent; }
-        .uc-tab.active { color: #8b0000; border-bottom-color: #8b0000; }
-
         .fab { position: fixed; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #8b0000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 15px rgba(139,0,0,0.3); z-index: 200; cursor: pointer; }
         .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .modal { background: #fff; width: 85%; max-width: 360px; border-radius: 8px; padding: 20px; }
@@ -108,199 +65,91 @@
             <div class="logo">元点社区</div>
             <div class="user-nav" id="auth-area" onclick="handleUserClick()"><span>[ 点击登录 ]</span></div>
         </div>
-        <div class="slogan-bar">科技向善 · 从 0 到 1 · 见证未来</div>
         
-        <div class="token-dash">
-            <div>🔥 算力池总量</div><div class="tk-num">21,045,992</div>
-        </div>
-        <div class="token-dash" style="border-top:none; padding-top:0;">
-            <div>⛏️ 今日已产出</div><div class="tk-num" style="color:#27ae60">+1,204</div>
-        </div>
-
-        <div class="news-bar"><span class="news-tag">快讯</span><span class="news-content" id="news-text">正在接入全球 AI 资讯网络...</span></div>
-
         <div class="section">
-            <div class="sec-head"><span class="sec-title">📖 AI 百科与工具库</span><span class="sec-more" onclick="goWiki('all')">进入库 ></span></div>
-            <div class="row-item" onclick="goWiki('all')"><div class="row-icon">🧰</div><div class="row-info"><div class="row-t">全栈工具矩阵 (20+)</div><div class="row-d">ChatGPT, DeepSeek, MJ, Sora, Suno...</div></div></div>
-            <div class="row-item" onclick="goWiki('wiki_base')"><div class="row-icon">📚</div><div class="row-info"><div class="row-t">系统化：新人必读基础</div><div class="row-d">从 0 到 1 建立 AI 认知</div></div></div>
-            <div class="row-item" onclick="goWiki('wiki_prac')"><div class="row-icon">⚔️</div><div class="row-info"><div class="row-t">系统化：实战演练手册</div><div class="row-d">手把手教你解决具体痛点</div></div></div>
-        </div>
-
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">📍 全国组织 (省份)</span></div>
-            <div class="prov-box" id="prov-list"></div>
-        </div>
-
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">⚡ 垂直专区</span></div>
-            <div class="row-item" onclick="goList('art_music','AI 绘画 / 音乐')"><div class="row-icon">🎨</div><div class="row-info"><div class="row-t">AI 绘画 / 音乐</div><div class="row-d">Midjourney, Stable Diffusion, Suno</div></div></div>
-            <div class="row-item" onclick="goList('video_anim','AI 视频 / 动画')"><div class="row-icon">🎬</div><div class="row-info"><div class="row-t">AI 视频 / 动画</div><div class="row-d">Sora, Runway, Pika, Luma</div></div></div>
-            <div class="row-item" onclick="goList('text','AI 写作 / 论文')"><div class="row-icon">📝</div><div class="row-info"><div class="row-t">AI 写作 / 论文</div></div></div>
-            <div class="row-item" onclick="goList('dev','训练 / 开发')"><div class="row-icon">💻</div><div class="row-info"><div class="row-t">训练 / 开发</div></div></div>
+            <div class="sec-head"><span class="sec-title">📖 AI 百科与工具库</span><span class="sec-more" onclick="goWiki('all')">全部 ></span></div>
+            <div style="display:flex; padding:15px; justify-content:space-around;">
+                <div class="tool-btn" onclick="goWiki('wiki_gpt')"><div class="tool-icon" style="background:#74aa9c; color:#fff;">G</div><div class="tool-name">GPT</div></div>
+                <div class="tool-btn" onclick="goWiki('wiki_deepseek')"><div class="tool-icon" style="background:#4f46e5; color:#fff;">D</div><div class="tool-name">DeepSeek</div></div>
+                <div class="tool-btn" onclick="goWiki('wiki_mj')"><div class="tool-icon" style="background:#333; color:#fff;">MJ</div><div class="tool-name">Midjourney</div></div>
+                <div class="tool-btn" onclick="goWiki('wiki_sora')"><div class="tool-icon" style="background:#000; color:#fff;">S</div><div class="tool-name">Sora</div></div>
+            </div>
+            <div class="row-item" onclick="goWiki('all')"><div class="row-icon">📚</div><div class="row-info"><div class="row-t">进入完整知识库</div><div class="row-d">查看 20+ 主流工具教程</div></div></div>
         </div>
 
         <div class="section" style="border-color:#d4a373;">
-            <div class="sec-head" style="background:#fffaf0;"><span class="sec-title" style="border-color:#d35400; color:#d35400;">💰 价值与变现</span><span class="sec-more" onclick="goList('money','变现专区')">进入 ></span></div>
-            <div style="padding:10px; background:#fffbe6; color:#b7950b; font-size:11px; border-bottom:1px solid #eee;">⚠️ 严禁售卖违禁内容，违者封号并配合调查！</div>
+            <div class="sec-head" style="background:#fffaf0;"><span class="sec-title" style="color:#d35400;">💰 价值与变现</span><span class="sec-more" onclick="goList('money','变现专区')">进入 ></span></div>
             <div class="row-item" onclick="goList('money_help','付费求助')"><div class="row-icon" style="color:#d35400">🆘</div><div class="row-info"><div class="row-t">付费求助</div></div></div>
-            <div class="row-item" onclick="goList('money_sale','干货售卖')"><div class="row-icon" style="color:#d35400">🛍️</div><div class="row-info"><div class="row-t">干货售卖 / 提示词</div></div></div>
-            <div class="row-item" onclick="goList('money_b2b','企业定制')"><div class="row-icon" style="color:#d35400">🏢</div><div class="row-info"><div class="row-t">企业定制需求</div></div></div>
+            <div class="row-item" onclick="goList('money_sale','干货售卖')"><div class="row-icon" style="color:#d35400">🛍️</div><div class="row-info"><div class="row-t">干货售卖</div></div></div>
         </div>
 
-        <div class="section">
-            <div class="sec-head"><span class="sec-title">✨ 作品集展示</span><span class="sec-more" onclick="goList('showcase','作品集')">全部 ></span></div>
-            <div class="gallery-wrap">
-                <div class="gallery-card" onclick="openPostModal('showcase')"><span style="font-size:20px;">➕</span><span style="margin-top:5px;">发布</span></div>
-                <div class="gallery-card" onclick="goList('showcase','作品集')">🚀<br>应用</div>
-                <div class="gallery-card" onclick="goList('showcase','作品集')">🎨<br>画廊</div>
-            </div>
-        </div>
-
-        <div class="section"><div class="sec-head"><span class="sec-title">🎯 任务悬赏</span><span class="sec-more" onclick="goList('bounty','悬赏')">接单 ></span></div><div id="bounty-preview" class="row-item" style="color:#999;justify-content:center;">暂无悬赏</div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">🤝 平台共创</span></div><div class="row-item" onclick="goList('coop','共创')"><div class="row-icon">🚩</div><div class="row-info"><div class="row-t">组队参赛 / 合作开发</div></div></div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">🏆 英雄榜</span></div><div id="rank-box" style="padding:10px;">加载中...</div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">📢 站务</span></div><div class="row-item" onclick="goList('gov','站务')"><div class="row-icon">📬</div><div class="row-info"><div class="row-t">意见反馈</div></div></div></div>
-        <div class="section"><div class="sec-head"><span class="sec-title">📅 大事记</span></div><div id="milestone-box" style="padding:15px;font-size:12px;color:#555;">加载中...</div></div>
-
-        <div class="footer">
-            <p>AI 元点 &copy; 2026</p>
-            <div class="wp-link-btn" onclick="showView('view-whitepaper')">阅读《元点社区白皮书》</div>
+        <div class="section"><div class="sec-head"><span class="sec-title">👤 我的</span></div>
+            <div class="row-item" onclick="handleUserClick()"><div class="row-icon">⚙️</div><div class="row-info"><div class="row-t">进入个人中心</div><div class="row-d">查看等级、Token、足迹</div></div></div>
         </div>
     </div>
 
     <div id="view-list" class="view">
         <div class="sub-nav"><span class="back-icon" onclick="goBack('home')">‹</span><span class="page-title" id="list-title">板块</span></div>
-        
-        <div id="wiki-tools" style="display:none;">
-            <div class="wiki-cat-title">💬 对话与逻辑 (LLM)</div>
-            <div class="tool-scroll-row">
-                <div class="tool-btn" onclick="filterWiki('gpt')"><div class="tb-icon">G</div><div class="tb-name">ChatGPT</div></div>
-                <div class="tool-btn" onclick="filterWiki('claude')"><div class="tb-icon">C</div><div class="tb-name">Claude</div></div>
-                <div class="tool-btn" onclick="filterWiki('deepseek')"><div class="tb-icon">D</div><div class="tb-name">DeepSeek</div></div>
-                <div class="tool-btn" onclick="filterWiki('gemini')"><div class="tb-icon">GM</div><div class="tb-name">Gemini</div></div>
-                <div class="tool-btn" onclick="filterWiki('kimi')"><div class="tb-icon">K</div><div class="tb-name">Kimi</div></div>
-                <div class="tool-btn" onclick="filterWiki('doubao')"><div class="tb-icon">B</div><div class="tb-name">豆包</div></div>
-            </div>
-
-            <div class="wiki-cat-title">🎨 视觉创作 (Image)</div>
-            <div class="tool-scroll-row">
-                <div class="tool-btn" onclick="filterWiki('mj')"><div class="tb-icon">MJ</div><div class="tb-name">Midjourney</div></div>
-                <div class="tool-btn" onclick="filterWiki('sd')"><div class="tb-icon">SD</div><div class="tb-name">StableDiff</div></div>
-                <div class="tool-btn" onclick="filterWiki('flux')"><div class="tb-icon">F</div><div class="tb-name">Flux</div></div>
-                <div class="tool-btn" onclick="filterWiki('liblib')"><div class="tb-icon">Li</div><div class="tb-name">Liblib</div></div>
-            </div>
-
-            <div class="wiki-cat-title">🎬 视频与动画 (Video)</div>
-            <div class="tool-scroll-row">
-                <div class="tool-btn" onclick="filterWiki('sora')"><div class="tb-icon">S</div><div class="tb-name">Sora</div></div>
-                <div class="tool-btn" onclick="filterWiki('runway')"><div class="tb-icon">R</div><div class="tb-name">Runway</div></div>
-                <div class="tool-btn" onclick="filterWiki('pika')"><div class="tb-icon">P</div><div class="tb-name">Pika</div></div>
-                <div class="tool-btn" onclick="filterWiki('luma')"><div class="tb-icon">L</div><div class="tb-name">Luma</div></div>
-            </div>
-
-            <div class="wiki-cat-title">🎵 音乐与提效 (Audio/Code)</div>
-            <div class="tool-scroll-row">
-                <div class="tool-btn" onclick="filterWiki('suno')"><div class="tb-icon">Su</div><div class="tb-name">Suno</div></div>
-                <div class="tool-btn" onclick="filterWiki('udio')"><div class="tb-icon">U</div><div class="tb-name">Udio</div></div>
-                <div class="tool-btn" onclick="filterWiki('cursor')"><div class="tb-icon">Cu</div><div class="tb-name">Cursor</div></div>
-                <div class="tool-btn" onclick="filterWiki('notion')"><div class="tb-icon">N</div><div class="tb-name">Notion</div></div>
-            </div>
-            <div style="padding:10px; background:#f0f0f0; font-size:11px; color:#666; text-align:center; margin-top:5px;">↓ 知识分享与讨论区 (点击图标筛选) ↓</div>
-        </div>
-
         <div id="thread-container"></div>
     </div>
 
-    <div id="view-whitepaper" class="view">
-        <div class="wp-container">
-            <div class="wp-close" onclick="goBack('home')">✕</div>
-            <div class="wp-h1">AI 原点白皮书</div>
-            
-            <div class="wp-h2">1. 序言：风暴已至</div>
-            <div class="wp-p">我们正处于人类历史上最剧烈的技术变革前夜。AI 不再是遥远的科幻，它是正在重塑每一行代码、每一张图像、每一个行业的巨浪。在这场海啸面前，只有两种人：一种是被时代抛下的“旁观者”，另一种是驾驭浪潮的“冲浪者”。</div>
-
-            <div class="wp-h2">2. 我们的使命：从 0 到 1</div>
-            <div class="wp-p">“元点”意味着一切的开始。我们建立这个社区，不是为了贩卖焦虑，也不是为了空谈理论。我们的使命只有一个：连接、赋能、实战。我们要让每一个普通人，都能在这里找到哪怕一个微小的切入点（0），通过学习与互助，实现认知的觉醒和价值的变现（1）。</div>
-
-            <div class="wp-h2">3. 社区核心价值观</div>
-            <div class="wp-p">• <b>硬核实战：</b>拒绝假大空。我们只谈怎么用，怎么做，怎么变现。<br>• <b>极致利他：</b>分享不是损失，而是建立影响力的开始。<br>• <b>共生共治：</b>平台属于每一位“元点人”。</div>
-
-            <div class="wp-h2">4. 愿景：构建未来的数字方舟</div>
-            <div class="wp-p">未来 3-5 年，AI 将重构社会分工。元点社区将成为一个去中心化的超级个体孵化器。在这里，你不再是孤独的个体。你有导师，有战友，有工具，有方向。</div>
-
-            <div style="text-align:center; margin-top:40px; font-weight:bold; color:#8b0000;">加入我们，点燃属于你的火炬。</div>
-        </div>
-    </div>
-
     <div id="view-detail" class="view">
-        <div class="sub-nav"><span class="back-icon" onclick="goBack('list')">‹</span><span class="page-title">帖子详情</span></div>
-        <div class="detail-c">
-            <div class="d-h1" id="d-title"></div>
-            <div class="d-inf">楼主: <span id="d-author"></span> &nbsp; Date: <span id="d-date"></span></div>
-            <div class="d-txt" id="d-body"></div>
-            <img id="d-img" class="d-pic" style="display:none;" onclick="window.open(this.src)">
+        <div class="sub-nav"><span class="back-icon" onclick="goBack('list')">‹</span><span class="page-title">详情</span></div>
+        <div style="padding:20px; background:#fff;">
+            <h1 style="font-size:20px; font-weight:900; margin-bottom:10px;" id="d-title"></h1>
+            <div style="font-size:12px; color:#999; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px;">
+                <span id="d-author"></span> · <span id="d-date"></span>
+            </div>
+            <div id="d-body" class="d-content"></div>
+            <img id="d-img" style="max-width:100%; border-radius:8px; margin-top:10px; display:none;">
         </div>
-        <div style="background:#fff; margin-top:10px; padding:15px;">
-            <div style="font-weight:bold; border-bottom:1px solid #eee; padding-bottom:10px;">评论区</div>
+        
+        <div style="background:#fff; margin-top:10px; padding:20px;">
+            <div style="font-weight:bold; margin-bottom:10px;">评论</div>
             <div id="cmt-list"></div>
-            <div style="margin-top:15px; display:flex; gap:10px;"><input id="cmt-input" class="input" style="margin:0; flex:1;" placeholder="发表评论..."><button onclick="submitComment()" class="btn" style="width:auto; padding:0 20px;">发</button></div>
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <input id="cmt-input" class="input" style="margin:0; flex:1;" placeholder="说点什么...">
+                <button onclick="submitComment()" class="btn" style="width:auto; padding:0 20px;">发</button>
+            </div>
         </div>
     </div>
 
     <div id="view-uc" class="view">
         <div class="sub-nav"><span class="back-icon" onclick="goBack('home')">‹</span><span class="page-title">个人中心</span></div>
-        <div class="uc-header">
-            <div class="uc-avatar-box">
-                <img id="uc-full-avatar" class="uc-big-avatar" src="">
-                <div class="uc-avatar-edit" onclick="document.getElementById('avatar-input').click()">📷</div>
-                <input type="file" id="avatar-input" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
-            </div>
-            <div class="uc-info" style="color:#fff;">
-                <div style="font-size:18px; font-weight:bold;" id="uc-full-nick"></div>
-                <div style="font-size:12px; opacity:0.7; margin-top:5px;" id="uc-full-sign"></div>
+        <div style="background:#2c3e50; color:#fff; padding:30px 20px; display:flex; align-items:center; gap:15px;">
+            <img id="uc-avatar" style="width:70px; height:70px; border-radius:50%; border:3px solid #f1c40f; background:#fff;">
+            <div>
+                <div id="uc-nick" style="font-size:18px; font-weight:bold;"></div>
+                <div id="uc-token" style="color:#f1c40f; font-weight:bold; margin-top:5px;">Token: --</div>
             </div>
         </div>
-        <div class="uc-tabs">
-            <div class="uc-tab active" onclick="switchTab('posts')" id="tab-posts">我的发布</div>
-            <div class="uc-tab" onclick="switchTab('replies')" id="tab-replies">我的回复</div>
-        </div>
-        <div id="uc-content" style="background:#fff; min-height:300px;"></div>
         <div style="padding:20px;">
-            <div style="margin-bottom:15px;">
-                <input id="edit-nick" class="input" placeholder="修改昵称"><input id="edit-sign" class="input" placeholder="修改签名">
-                <button class="btn" onclick="saveProfile()">保存资料</button>
-            </div>
-            <button onclick="logout()" style="width:100%; padding:10px; background:#fff; border:1px solid #ccc; color:#666;">退出登录</button>
+            <button onclick="logout()" style="width:100%; padding:10px; border:1px solid #ccc; background:#fff;">退出登录</button>
         </div>
     </div>
 
     <div class="fab" onclick="openPostModal()">+</div>
-
     <div id="modal-post" class="modal-mask">
         <div class="modal">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;">发布内容 <span onclick="closeModal('modal-post')">✕</span></div>
+            <div style="font-weight:bold; margin-bottom:15px;">发布帖子 <span onclick="closeModal('modal-post')" style="float:right;">✕</span></div>
             <select id="p-cat" class="input">
-                <option value="wiki_base">百科-基础</option>
-                <option value="wiki_prac">百科-实战</option>
-                <option value="tool_gpt">工具-ChatGPT</option>
-                <option value="tool_mj">工具-Midjourney</option>
+                <option value="wiki_gpt">Wiki - GPT</option>
+                <option value="wiki_deepseek">Wiki - DeepSeek</option>
                 <option value="money_help">付费求助</option>
-                <option value="other">综合讨论</option>
+                <option value="other">日常讨论</option>
             </select>
             <input id="p-title" class="input" placeholder="标题">
-            <textarea id="p-content" class="input" style="height:100px" placeholder="正文"></textarea>
-            <div style="border:1px dashed #ccc; padding:10px; text-align:center; margin-bottom:10px;" onclick="document.getElementById('p-file').click()">📸 上传图片</div>
-            <input type="file" id="p-file" style="display:none" accept="image/*" onchange="gotFile(this)">
-            <button class="btn" onclick="doPost()">立即发布</button>
+            <textarea id="p-content" class="input" style="height:100px" placeholder="支持 Markdown 格式：**加粗**"></textarea>
+            <button class="btn" onclick="doPost()">发布 (+10 Token)</button>
         </div>
     </div>
 
     <div id="modal-auth" class="modal-mask">
         <div class="modal">
-            <h3 style="text-align:center;">用户登录</h3>
-            <input id="email" class="input" placeholder="邮箱"><input id="pwd" type="password" class="input" placeholder="密码">
+            <h3 style="text-align:center;">登录/注册</h3>
+            <input id="email" class="input" placeholder="邮箱">
+            <input id="pwd" type="password" class="input" placeholder="密码">
             <button class="btn" onclick="doAuth()">提交</button>
-            <div style="text-align:center; margin-top:15px; font-size:12px; cursor:pointer;" onclick="toggleAuth()">切换注册</div>
             <div style="text-align:center; margin-top:10px; color:#999; cursor:pointer;" onclick="closeModal('modal-auth')">关闭</div>
         </div>
     </div>
@@ -309,186 +158,155 @@
         const SB_URL = 'https://dodvxzmzggxlztuhivvp.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
-        let sb=null, user=null, isReg=false, curCat=null, curPid=null, uploadFile=null, scrollMem={};
-        const provs = "京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新台港澳";
+        let sb = null, user = null, curCat = null, curPid = null;
+
+        // --- 核心：排版渲染引擎 (修复乱码) ---
+        function formatContent(text) {
+            if(!text) return '';
+            // 1. 转义 HTML 防止 XSS
+            let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            // 2. 渲染 Markdown 语法
+            safe = safe.replace(/^# (.*$)/gm, '<h2>$1</h2>'); // 一级标题
+            safe = safe.replace(/^## (.*$)/gm, '<h3>$1</h3>'); // 二级标题
+            safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // 加粗
+            safe = safe.replace(/\n/g, '<br>'); // 换行
+            return safe;
+        }
 
         async function init() {
-            if(!window.supabase) return setTimeout(init, 500);
             sb = window.supabase.createClient(SB_URL, SB_KEY);
             const {data} = await sb.auth.getUser();
-            if(data.user) { user=data.user; fetchProfile(); }
-            const pBox = document.getElementById('prov-list');
-            provs.split('').forEach(p => pBox.innerHTML+=`<div class="prov-tag" onclick="goList('prov_${p}','${p}分舵')">${p}</div>`);
+            if(data.user) { user = data.user; updateAuthUI(); }
             loadHomeData();
         }
 
-        async function fetchProfile() {
-            const {data} = await sb.from('profiles').select('*').eq('id', user.id).single();
-            if(data) document.getElementById('auth-area').innerHTML = `<div class="u-info"><div class="u-nick">${data.nickname||user.email.split('@')[0]}</div><div class="u-lv">LV.${data.level||1}</div></div><img class="u-avatar" src="${data.avatar_url||`https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}`}">`;
+        function updateAuthUI() {
+            // 获取用户资料
+            sb.from('profiles').select('*').eq('id', user.id).single().then(({data}) => {
+                const nick = data?.nickname || user.email.split('@')[0];
+                const avt = data?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}`;
+                document.getElementById('auth-area').innerHTML = `<img src="${avt}" class="u-avatar"> <span style="font-weight:bold;color:#333;">${nick}</span>`;
+                
+                // 填充个人中心
+                document.getElementById('uc-avatar').src = avt;
+                document.getElementById('uc-nick').innerText = nick;
+                document.getElementById('uc-token').innerText = `Token: ${data?.token_balance || 0}`;
+            });
         }
 
         async function loadHomeData() {
-            const {data:n} = await sb.from('news').select('*').eq('type','global').limit(1);
-            if(n&&n.length) document.getElementById('news-text').innerText = n[0].content;
-            const {data:m} = await sb.from('news').select('*').eq('type','milestone').limit(3);
-            if(m) document.getElementById('milestone-box').innerHTML = m.map(x=>`<div>• ${new Date(x.created_at).toLocaleDateString()} ${x.content}</div>`).join('');
-            const {data:r} = await sb.from('profiles').select('*').order('token_balance',{ascending:false}).limit(3);
-            if(r) document.getElementById('rank-box').innerHTML = r.map((u,i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #eee;"><span>${i+1}. ${(u.nickname||u.id).substring(0,6)}</span><span style="color:#d35400;font-weight:bold;">${u.token_balance}</span></div>`).join('');
+            // 简单加载逻辑
         }
 
-        // 路由 & Wiki逻辑
-        function showView(id) { 
-            const current = document.querySelector('.view.active');
-            if(current) scrollMem[current.id] = window.scrollY;
-            document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); 
-            document.getElementById(id).classList.add('active'); 
-            if(id === 'view-home' || id === 'view-list') setTimeout(()=>window.scrollTo(0, scrollMem[id] || 0), 0);
-            else window.scrollTo(0,0);
+        // --- 路由系统 ---
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0,0);
         }
         function goBack(t) { showView(t==='home'?'view-home':'view-list'); }
         
         function goList(cat, title) {
             document.getElementById('list-title').innerText = title;
-            document.getElementById('wiki-tools').style.display = 'none';
             curCat = cat; loadThreadList(cat); showView('view-list');
         }
         function goWiki(subCat) {
-            document.getElementById('list-title').innerText = 'AI 百科与工具库';
-            document.getElementById('wiki-tools').style.display = 'block';
-            filterWiki(subCat === 'all' ? null : subCat); // all显示全部wiki
-            showView('view-list');
-        }
-        function filterWiki(toolTag) {
-            const box = document.getElementById('thread-container');
-            box.innerHTML = '<div style="padding:30px;text-align:center;color:#999;">筛选中...</div>';
-            let q = sb.from('posts').select('*, profiles(nickname)').order('created_at',{ascending:false}).limit(30);
-            // 筛选逻辑: 如果toolTag为空，显示所有wiki开头；否则显示特定category
-            if(toolTag) q = q.ilike('category', `%${toolTag}%`);
-            else q = q.ilike('category', 'wiki%'); // 默认显示百科类
-            
-            q.then(({data}) => {
-                if(!data||!data.length) box.innerHTML='<div style="padding:30px;text-align:center;color:#ccc;">暂无内容</div>';
-                else box.innerHTML = data.map(p => `<div class="thread-item" onclick="goDetail('${p.id}')"><div class="th-title">${p.title}</div><div class="th-meta"><span>${p.profiles?.nickname||'匿名'}</span><span>${new Date(p.created_at).toLocaleDateString()}</span></div></div>`).join('');
-            });
+            goList(subCat === 'all' ? 'wiki' : subCat, 'AI 百科');
         }
 
-        // 常规加载
+        // --- 数据逻辑 ---
         async function loadThreadList(cat) {
             const box = document.getElementById('thread-container');
             box.innerHTML = '<div style="padding:30px;text-align:center;color:#999;">加载中...</div>';
-            let q = sb.from('posts').select('*, profiles(nickname)').order('created_at',{ascending:false}).limit(20);
-            if(cat && !cat.startsWith('prov_')) q = q.eq('category', cat);
+            
+            let q = sb.from('posts').select('*, profiles(nickname)').order('created_at', {ascending: false});
+            
+            // 分类筛选修复
+            if (cat === 'wiki') q = q.ilike('category', 'wiki%');
+            else if (cat) q = q.eq('category', cat);
+            
             const {data} = await q;
-            if(!data||!data.length) { box.innerHTML='<div style="padding:30px;text-align:center;color:#ccc;">暂无内容</div>'; return; }
-            box.innerHTML = data.map(p => `<div class="thread-item" onclick="goDetail('${p.id}')"><div class="th-title">${p.title}</div><div class="th-meta"><span>${p.profiles?.nickname||'匿名'} · ${p.category}</span><span>${new Date(p.created_at).toLocaleDateString()}</span></div></div>`).join('');
+            if(!data || !data.length) { box.innerHTML = '<div style="padding:30px;text-align:center;color:#ccc;">暂无内容</div>'; return; }
+            
+            box.innerHTML = data.map(p => `
+                <div class="row-item" onclick="goDetail('${p.id}')">
+                    <div class="row-info">
+                        <div class="row-t">${p.title}</div>
+                        <div class="row-d">${p.profiles?.nickname||'匿名'} · ${new Date(p.created_at).toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         async function goDetail(id) {
             curPid = id;
-            const {data:p} = await sb.from('posts').select('*, profiles(nickname)').eq('id',id).single();
+            const {data:p} = await sb.from('posts').select('*, profiles(nickname)').eq('id', id).single();
             if(p) {
                 document.getElementById('d-title').innerText = p.title;
                 document.getElementById('d-author').innerText = p.profiles?.nickname || '匿名';
-                document.getElementById('d-date').innerText = new Date(p.created_at).toLocaleString();
-                document.getElementById('d-body').innerText = p.content;
-                const img = document.getElementById('d-img');
-                if(p.image_url) { img.src=p.image_url; img.style.display='block'; } else { img.style.display='none'; }
+                document.getElementById('d-date').innerText = new Date(p.created_at).toLocaleDateString();
+                
+                // 核心修复：使用 innerHTML + formatContent 渲染内容
+                document.getElementById('d-body').innerHTML = formatContent(p.content);
+                
+                if(p.image_url) { 
+                    document.getElementById('d-img').src = p.image_url; 
+                    document.getElementById('d-img').style.display = 'block'; 
+                } else {
+                    document.getElementById('d-img').style.display = 'none';
+                }
             }
-            loadComments(id); showView('view-detail');
+            loadComments(id);
+            showView('view-detail');
         }
 
         async function loadComments(pid) {
-            const {data} = await sb.from('comments').select('*, profiles(nickname)').eq('post_id',pid).order('created_at',{ascending:true});
+            const {data} = await sb.from('comments').select('*, profiles(nickname)').eq('post_id', pid);
             const box = document.getElementById('cmt-list');
-            if(!data||!data.length) box.innerHTML='<div style="color:#ccc;">暂无评论</div>';
-            else box.innerHTML = data.map(c=>`<div style="padding:8px 0; border-bottom:1px dashed #eee;"><b>${c.profiles?.nickname||'匿名'}</b>: ${c.content}</div>`).join('');
+            box.innerHTML = data?.length ? data.map(c => `<div style="padding:10px 0; border-bottom:1px dashed #eee;"><b>${c.profiles?.nickname}</b>: ${c.content}</div>`).join('') : '<div style="color:#ccc">暂无评论</div>';
+        }
+
+        async function doPost() {
+            if(!user) return openAuth();
+            const title = document.getElementById('p-title').value;
+            const content = document.getElementById('p-content').value;
+            const cat = document.getElementById('p-cat').value;
+            
+            const {error} = await sb.from('posts').insert({
+                title, content, category: cat, author_id: user.id
+            });
+            
+            if(error) alert('发布失败: ' + error.message);
+            else { alert('发布成功！Token +10'); closeModal('modal-post'); if(curCat) loadThreadList(curCat); }
         }
 
         async function submitComment() {
-            if(!user) return alert("请登录");
-            await sb.from('comments').insert({post_id:curPid, user_id:user.id, content:document.getElementById('cmt-input').value});
-            document.getElementById('cmt-input').value=''; loadComments(curPid);
+            if(!user) return openAuth();
+            const txt = document.getElementById('cmt-input').value;
+            await sb.from('comments').insert({ post_id: curPid, user_id: user.id, content: txt });
+            document.getElementById('cmt-input').value = ''; loadComments(curPid);
         }
 
-        // 足迹
-        async function openUC() {
-            if(!user) return openAuth('login');
-            showView('view-uc');
-            const {data} = await sb.from('profiles').select('*').eq('id',user.id).single();
-            if(data) {
-                document.getElementById('uc-full-nick').innerText = data.nickname || '未设置';
-                document.getElementById('uc-full-sign').innerText = data.signature || '暂无签名';
-                document.getElementById('edit-nick').value = data.nickname || '';
-                document.getElementById('edit-sign').value = data.signature || '';
-                if(data.avatar_url) document.getElementById('uc-full-avatar').src = data.avatar_url;
-            }
-            switchTab('posts');
-        }
-
-        async function switchTab(tab) {
-            document.querySelectorAll('.uc-tab').forEach(t=>t.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
-            const box = document.getElementById('uc-content');
-            box.innerHTML = '<div style="padding:20px;text-align:center;">加载中...</div>';
-            if(tab === 'posts') {
-                const {data} = await sb.from('posts').select('*').eq('author_id', user.id).order('created_at',{ascending:false});
-                if(!data||!data.length) box.innerHTML='<div style="padding:20px;text-align:center;color:#ccc">暂无发布</div>';
-                else box.innerHTML = data.map(p=>`<div class="thread-item" onclick="goDetail('${p.id}')"><div class="th-title">${p.title}</div><div class="th-meta">${new Date(p.created_at).toLocaleDateString()}</div></div>`).join('');
-            } else {
-                const {data} = await sb.from('comments').select('*, posts(title)').eq('user_id', user.id).order('created_at',{ascending:false});
-                if(!data||!data.length) box.innerHTML='<div style="padding:20px;text-align:center;color:#ccc">暂无回复</div>';
-                else box.innerHTML = data.map(c=>`<div class="thread-item" onclick="goDetail('${c.post_id}')"><div class="th-title">回复: ${c.content}</div><div class="th-meta">原帖: ${c.posts?.title||'未知'}</div></div>`).join('');
-            }
-        }
-
-        async function saveProfile() {
-            await sb.from('profiles').upsert({id:user.id, nickname:document.getElementById('edit-nick').value, signature:document.getElementById('edit-sign').value});
-            alert("保存成功"); openUC(); fetchProfile();
-        }
-        async function uploadAvatar(input) {
-            if(!input.files[0]) return;
-            const f = input.files[0];
-            const fname = `avatar_${user.id}_${Date.now()}`;
-            await sb.storage.from('images').upload(fname, f);
-            const { data } = sb.storage.from('images').getPublicUrl(fname);
-            await sb.from('profiles').upsert({ id: user.id, avatar_url: data.publicUrl });
-            openUC(); fetchProfile();
-        }
-
-        function handleUserClick() { if(!user) openAuth('login'); else openUC(); }
-        function gotFile(i) { if(i.files[0]) { uploadFile=i.files[0]; document.getElementById('file-label').innerText="✅ 已选图"; } }
-        async function doPost() {
-            if(!user) return openAuth('login');
-            const btn = document.querySelector('#modal-post .btn'); btn.innerText="发布中..."; btn.disabled=true;
-            try {
-                let url=null;
-                if(uploadFile) {
-                    const f=`${Date.now()}_${uploadFile.name.replace(/\W/g,'')}`;
-                    await sb.storage.from('images').upload(f,uploadFile);
-                    url=sb.storage.from('images').getPublicUrl(f).data.publicUrl;
-                }
-                await sb.from('posts').insert({
-                    author_id:user.id, title:document.getElementById('p-title').value,
-                    content:document.getElementById('p-content').value, category:document.getElementById('p-cat').value, image_url:url
-                });
-                alert("发布成功"); closeModal('modal-post'); if(curCat) loadThreadList(curCat);
-            } catch(e){alert(e.message);} finally{btn.innerText="立即发布"; btn.disabled=false;}
-        }
         async function doAuth() {
-            const e=document.getElementById('email').value, p=document.getElementById('pwd').value;
-            try {
-                const {error} = isReg ? await sb.auth.signUp({email:e,password:p}) : await sb.auth.signInWithPassword({email:e,password:p});
-                if(error) throw error;
-                if(isReg) alert("请去验证邮箱"); else location.reload();
-            } catch(e){alert(e.message);}
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pwd').value;
+            const {error} = await sb.auth.signInWithPassword({email: e, password: p});
+            if(error) { // 尝试注册
+                const {error: regErr} = await sb.auth.signUp({email: e, password: p});
+                if(regErr) alert(regErr.message);
+                else alert("注册成功，请去邮箱验证！");
+            } else {
+                location.reload();
+            }
         }
-        async function logout() { await sb.auth.signOut(); location.reload(); }
-        function openAuth(t) { isReg=(t==='register'); document.getElementById('auth-title').innerText=isReg?"注册":"登录"; document.getElementById('modal-auth').style.display='flex'; }
-        function toggleAuth() { isReg=!isReg; document.getElementById('auth-title').innerText=isReg?"注册":"登录"; }
-        function openPostModal(c) { if(!user) return openAuth('login'); document.getElementById('modal-post').style.display='flex'; if(c) document.getElementById('p-cat').value=c; }
-        function closeModal(id) { document.getElementById(id).style.display='none'; }
 
-        setTimeout(init, 200);
+        function openPostModal() { if(!user) openAuth(); else document.getElementById('modal-post').style.display='block'; }
+        function openAuth() { document.getElementById('modal-auth').style.display='block'; }
+        function closeModal(id) { document.getElementById(id).style.display='none'; }
+        function handleUserClick() { if(!user) openAuth(); else showView('view-uc'); }
+        async function logout() { await sb.auth.signOut(); location.reload(); }
+
+        setTimeout(init, 100);
     </script>
 </body>
 </html>
