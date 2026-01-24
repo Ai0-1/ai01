@@ -6,21 +6,21 @@
     <title>元点社区 | 深度学习与变现</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= 2号基准 (V3.1) ================= */
+        /* ================= V3.2 修正版 (修复存储功能) ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background-color: #f8f5ec; color: #333; font-family: "Verdana", "Microsoft YaHei", sans-serif; font-size: 12px; margin: 0; padding-bottom: 60px; }
+        body { background-color: #f8f5ec; color: #333; font-family: "Verdana", sans-serif; font-size: 12px; margin: 0; padding-bottom: 60px; }
         a { text-decoration: none; color: #333; cursor: pointer; }
         ::-webkit-scrollbar { width: 0; background: transparent; }
         .view { display: none; min-height: 100vh; padding-bottom: 80px; }
         .view.active { display: block; }
 
-        /* 顶部导航 */
+        /* 顶部 */
         .header { background: #fff; height: 45px; border-bottom: 2px solid #b83b3b; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 18px; font-weight: 900; color: #b83b3b; }
-        .user-nav { font-size: 12px; color: #666; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .user-nav { font-size: 12px; color: #666; font-weight: bold; }
         .top-avatar { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #ddd; object-fit: cover; background: #eee; }
 
-        /* 板块通用 */
+        /* 板块 */
         .slogan { background: #b83b3b; color: #fff; text-align: center; padding: 5px; font-size: 11px; letter-spacing: 1px; }
         .ticker-wrap { background: #333; color: #0f0; padding: 6px 10px; overflow: hidden; white-space: nowrap; font-family: monospace; font-size: 11px; border-bottom: 1px solid #ccc; }
         .forum-box { background: #fff; margin: 8px 5px; border: 1px solid #dcdacb; }
@@ -33,7 +33,7 @@
         .row-title { font-size: 13px; font-weight: bold; color: #004499; margin-bottom: 2px; }
         .row-desc { font-size: 11px; color: #888; }
 
-        /* 特殊板块 */
+        /* 标签与专区 */
         .prov-box { padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
         .prov-tag { border: 1px solid #ccc; background: #fff; padding: 2px 8px; font-size: 11px; color: #555; cursor: pointer; }
         .money-head { background: #fff8e1; color: #b45309; border-bottom-color: #ffe0b2; }
@@ -47,52 +47,41 @@
         .whitepaper { background: #333; color: #ccc; padding: 30px 15px; margin-top: 20px; text-align: center; }
         .wp-title { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 10px; font-family: serif; }
 
-        /* 列表页 & 详情页 */
+        /* 列表/详情 */
         .sub-nav { background: #fff; height: 44px; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0 10px; position: sticky; top: 0; z-index: 101; }
         .page-title { font-weight: bold; font-size: 14px; margin-left: 10px; }
         .thread-item { background: #fff; padding: 12px; border-bottom: 1px solid #eee; }
         .detail-body { padding: 15px; background: #fff; min-height: 400px; }
         .d-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
         .d-content { line-height: 1.6; font-size: 14px; margin-top: 15px; color: #222; }
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 48px; height: 48px; background: #b83b3b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 200; }
-        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-        .modal { background: #fff; width: 85%; border-radius: 4px; border: 1px solid #999; padding: 15px; }
-        .input { width: 100%; padding: 8px; border: 1px solid #ccc; margin-bottom: 8px; }
-        .btn { width: 100%; padding: 8px; background: #b83b3b; color: #fff; border: none; font-weight: bold; }
-
-        /* ================= 个人中心 (User Center) - 新增 ================= */
-        .uc-header { 
-            background: linear-gradient(135deg, #2c3e50, #000); 
-            color: #f1c40f; 
-            padding: 20px 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+        
+        /* 用户中心 (User Center) */
+        .uc-header { background: linear-gradient(135deg, #2c3e50, #000); color: #f1c40f; padding: 20px 15px; display: flex; align-items: center; gap: 15px; }
         .uc-avatar-box { position: relative; }
         .uc-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #f1c40f; object-fit: cover; background: #fff; }
         .uc-avatar-edit { position: absolute; bottom: 0; right: 0; background: #b83b3b; color: #fff; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        
         .uc-info { flex: 1; }
         .uc-name { font-size: 16px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 5px; }
         .uc-level-tag { background: #b83b3b; color: #fff; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; }
         .uc-sign { font-size: 11px; color: #ccc; margin-top: 4px; font-style: italic; }
-        
         .uc-stats { display: flex; background: #fff; padding: 15px 0; border-bottom: 1px solid #eee; }
         .uc-stat-item { flex: 1; text-align: center; border-right: 1px solid #eee; }
         .uc-stat-item:last-child { border: none; }
         .uc-stat-num { font-size: 16px; font-weight: bold; color: #b83b3b; }
         .uc-stat-lbl { font-size: 11px; color: #666; margin-top: 2px; }
-
         .uc-section { background: #fff; margin-top: 10px; padding: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
         .uc-sec-title { font-weight: bold; border-left: 3px solid #b83b3b; padding-left: 8px; margin-bottom: 10px; font-size: 13px; }
-        
         .badge-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .badge { background: #fef9e7; border: 1px solid #f1c40f; color: #b7950b; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 4px; }
-
         .form-group { margin-bottom: 10px; }
         .form-label { font-size: 11px; color: #666; margin-bottom: 4px; display: block; }
+
+        /* 交互组件 */
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 48px; height: 48px; background: #b83b3b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 200; }
+        .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: #fff; width: 85%; border-radius: 4px; border: 1px solid #999; padding: 15px; }
+        .input { width: 100%; padding: 8px; border: 1px solid #ccc; margin-bottom: 8px; }
+        .btn { width: 100%; padding: 8px; background: #b83b3b; color: #fff; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -107,18 +96,9 @@
 
         <div class="forum-box">
             <div class="box-head"><span>📖 AI 百科与科普</span><span class="box-more" onclick="goList('wiki','百科')">更多 ></span></div>
-            <div class="row-item" onclick="goList('wiki_base','基础百科')">
-                <div class="row-icon">📚</div>
-                <div class="row-info"><div class="row-title">基础百科</div><div class="row-desc">新人必读，概念扫盲</div></div>
-            </div>
-            <div class="row-item" onclick="goList('wiki_prac','实战演练')">
-                <div class="row-icon">⚔️</div>
-                <div class="row-info"><div class="row-title">实战演练</div><div class="row-desc">手把手教学，落地操作</div></div>
-            </div>
-            <div class="row-item" onclick="goList('wiki_pro','大神指路')">
-                <div class="row-icon">🧙‍♂️</div>
-                <div class="row-info"><div class="row-title">大神指路</div><div class="row-desc">进阶技巧，思维提升</div></div>
-            </div>
+            <div class="row-item" onclick="goList('wiki_base','基础百科')"><div class="row-icon">📚</div><div class="row-info"><div class="row-title">基础百科</div><div class="row-desc">新人必读，概念扫盲</div></div></div>
+            <div class="row-item" onclick="goList('wiki_prac','实战演练')"><div class="row-icon">⚔️</div><div class="row-info"><div class="row-title">实战演练</div><div class="row-desc">手把手教学，落地操作</div></div></div>
+            <div class="row-item" onclick="goList('wiki_pro','大神指路')"><div class="row-icon">🧙‍♂️</div><div class="row-info"><div class="row-title">大神指路</div><div class="row-desc">进阶技巧，思维提升</div></div></div>
         </div>
 
         <div class="forum-box">
@@ -208,11 +188,7 @@
     </div>
 
     <div id="view-uc" class="view">
-        <div class="sub-nav">
-            <span onclick="goBack('home')" style="font-size:20px; padding:0 10px; cursor:pointer;">‹</span>
-            <span class="page-title">我的主页</span>
-        </div>
-        
+        <div class="sub-nav"><span onclick="goBack('home')" style="font-size:20px; padding:0 10px; cursor:pointer;">‹</span><span class="page-title">我的主页</span></div>
         <div class="uc-header">
             <div class="uc-avatar-box">
                 <img id="uc-avatar-img" class="uc-avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">
@@ -220,60 +196,33 @@
                 <input type="file" id="avatar-input" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
             </div>
             <div class="uc-info">
-                <div class="uc-name">
-                    <span id="uc-nick">加载中...</span>
-                    <span class="uc-level-tag" id="uc-lv">LV.1</span>
-                </div>
-                <div class="uc-sign" id="uc-sign" onclick="editProfile()">点击设置个性签名...</div>
+                <div class="uc-name"><span id="uc-nick">加载中...</span><span class="uc-level-tag" id="uc-lv">LV.1</span></div>
+                <div class="uc-sign" id="uc-sign">点击下方编辑资料...</div>
             </div>
         </div>
-
         <div class="uc-stats">
-            <div class="uc-stat-item">
-                <div class="uc-stat-num" id="uc-token">--</div>
-                <div class="uc-stat-lbl">Token余额</div>
-            </div>
-            <div class="uc-stat-item">
-                <div class="uc-stat-num" id="uc-exp">--</div>
-                <div class="uc-stat-lbl">经验值</div>
-            </div>
-            <div class="uc-stat-item">
-                <div class="uc-stat-num">0</div>
-                <div class="uc-stat-lbl">被点赞</div>
-            </div>
+            <div class="uc-stat-item"><div class="uc-stat-num" id="uc-token">--</div><div class="uc-stat-lbl">Token</div></div>
+            <div class="uc-stat-item"><div class="uc-stat-num" id="uc-exp">--</div><div class="uc-stat-lbl">经验值</div></div>
+            <div class="uc-stat-item"><div class="uc-stat-num">0</div><div class="uc-stat-lbl">获赞</div></div>
         </div>
-
         <div class="uc-section">
-            <div class="uc-sec-title">🏅 荣耀徽章 (Wall of Honor)</div>
-            <div class="badge-grid" id="uc-badges">
-                </div>
+            <div class="uc-sec-title">🏅 荣耀徽章</div>
+            <div class="badge-grid" id="uc-badges"></div>
         </div>
-
         <div class="uc-section">
             <div class="uc-sec-title">⚙️ 资料设置</div>
-            <div class="form-group">
-                <label class="form-label">昵称</label>
-                <input id="edit-nick" class="input" placeholder="输入新昵称">
-            </div>
-            <div class="form-group">
-                <label class="form-label">个性签名</label>
-                <input id="edit-sign" class="input" placeholder="一句话介绍自己">
-            </div>
+            <div class="form-group"><label class="form-label">昵称</label><input id="edit-nick" class="input" placeholder="输入新昵称"></div>
+            <div class="form-group"><label class="form-label">个性签名</label><input id="edit-sign" class="input" placeholder="一句话介绍自己"></div>
             <button class="btn" onclick="saveProfile()" style="width:100%">保存修改</button>
         </div>
-
-        <div style="padding:20px;">
-            <button onclick="logout()" style="width:100%; padding:10px; background:#fff; border:1px solid #ccc; color:#666;">退出登录</button>
-        </div>
+        <div style="padding:20px;"><button onclick="logout()" style="width:100%; padding:10px; background:#fff; border:1px solid #ccc; color:#666;">退出登录</button></div>
     </div>
 
     <div class="fab" onclick="openPostModal()">+</div>
 
     <div id="modal-post" class="modal-mask">
         <div class="modal">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold;">
-                发布内容 <span onclick="closeModal('modal-post')">✕</span>
-            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold;">发布内容 <span onclick="closeModal('modal-post')">✕</span></div>
             <select id="p-cat" class="input">
                 <option value="wiki_base">百科-基础</option>
                 <option value="money_help">变现-求助</option>
@@ -326,41 +275,41 @@
             loadThreadList(null, 'feed-list');
         }
 
-        // ============ 核心逻辑：用户中心 ============
+        // ============ 核心逻辑：用户中心 (Upsert 修复版) ============
         async function openUC() {
             if(!user) return openAuth('login');
             showView('view-uc');
             
-            // 获取最新资料
             const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
             if(p) {
                 document.getElementById('uc-nick').innerText = p.nickname || '未设置昵称';
-                document.getElementById('uc-sign').innerText = p.signature || '点击设置个性签名...';
+                document.getElementById('uc-sign').innerText = p.signature || '这个人很懒...';
                 document.getElementById('uc-token').innerText = p.token_balance || 0;
                 document.getElementById('uc-exp').innerText = p.exp || 0;
                 document.getElementById('uc-lv').innerText = 'LV.' + (p.level || 1);
                 
-                // 头像
                 if(p.avatar_url) document.getElementById('uc-avatar-img').src = p.avatar_url;
-                else document.getElementById('uc-avatar-img').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}`; // 默认头像
+                else document.getElementById('uc-avatar-img').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}`;
 
-                // 徽章
                 const badges = p.badges || [];
                 const bBox = document.getElementById('uc-badges');
                 if(badges.length === 0) bBox.innerHTML = '<span style="color:#999;font-size:11px;">暂无徽章</span>';
                 else bBox.innerHTML = badges.map(b => `<div class="badge">🎖️ ${b}</div>`).join('');
 
-                // 填入编辑框
                 document.getElementById('edit-nick').value = p.nickname || '';
                 document.getElementById('edit-sign').value = p.signature || '';
+            } else {
+                // 如果没有资料，自动初始化
+                document.getElementById('uc-nick').innerText = '新用户';
             }
         }
 
         async function saveProfile() {
             const nick = document.getElementById('edit-nick').value;
             const sign = document.getElementById('edit-sign').value;
-            const { error } = await sb.from('profiles').update({ nickname: nick, signature: sign }).eq('id', user.id);
-            if(error) alert('保存失败');
+            // 关键：使用 upsert，如果不存在就插入，如果存在就更新
+            const { error } = await sb.from('profiles').upsert({ id: user.id, nickname: nick, signature: sign });
+            if(error) alert('保存失败: ' + error.message);
             else { alert('保存成功'); openUC(); }
         }
 
@@ -368,10 +317,17 @@
             if(!input.files[0]) return;
             const file = input.files[0];
             const fname = `avatar_${user.id}_${Date.now()}`;
-            await sb.storage.from('images').upload(fname, file);
+            // 1. 上传
+            const { error: upErr } = await sb.storage.from('images').upload(fname, file);
+            if(upErr) return alert('上传失败: ' + upErr.message);
+            
+            // 2. 获取链接
             const { data } = sb.storage.from('images').getPublicUrl(fname);
-            await sb.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', user.id);
-            openUC(); // 刷新显示
+            
+            // 3. 更新资料 (Upsert)
+            const { error: dbErr } = await sb.from('profiles').upsert({ id: user.id, avatar_url: data.publicUrl });
+            if(dbErr) alert('更新失败: ' + dbErr.message);
+            else openUC();
         }
 
         // ============ 常规逻辑 ============
@@ -395,7 +351,6 @@
             const {data:p} = await sb.from('posts').select('*, profiles(nickname)').eq('id',id).single();
             if(p) {
                 document.getElementById('d-title').innerText=p.title;
-                // 显示发帖人昵称
                 const authorName = p.profiles && p.profiles.nickname ? p.profiles.nickname : p.author_id.substring(0,6);
                 document.getElementById('d-author').innerText=authorName;
                 document.getElementById('d-date').innerText=new Date(p.created_at).toLocaleDateString();
@@ -408,7 +363,6 @@
         }
 
         async function loadComments(pid) {
-            // 关联查询评论者的昵称
             const {data} = await sb.from('comments').select('*, profiles(nickname)').eq('post_id',pid);
             const box = document.getElementById('cmt-list');
             if(!data||!data.length) { box.innerHTML='暂无评论'; return; }
@@ -450,7 +404,6 @@
         }
 
         function renderUser() {
-            // 获取头像，没有则用首字母
             const avatarUrl = user.user_metadata?.avatar_url; 
             document.getElementById('auth-area').innerHTML = `
                 <div class="top-avatar" onclick="openUC()" style="cursor:pointer; display:flex; align-items:center; justify-content:center;">
