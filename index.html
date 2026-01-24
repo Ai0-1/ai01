@@ -6,7 +6,7 @@
     <title>元点社区 | 硬核实战</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= V4.6 完整复刻修复版 ================= */
+        /* ================= V4.6 严谨复刻版：12层完整架构 + 排版修复 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background-color: #f7f5f0; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 80px; line-height: 1.5; }
         
@@ -32,7 +32,7 @@
         .news-tag { background: #d35400; color: #fff; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; flex-shrink: 0; }
         .news-content { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
 
-        /* 核心样式 */
+        /* 核心板块样式 */
         .section { background: #fff; margin: 12px 10px; border: 1px solid #dcdacb; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .sec-head { background: #fcfbf9; padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .sec-title { font-weight: 800; font-size: 14px; color: #444; border-left: 4px solid #8b0000; padding-left: 8px; }
@@ -43,7 +43,8 @@
         .row-t { font-weight: bold; font-size: 13px; color: #2c3e50; }
         .row-d { font-size: 11px; color: #888; margin-top: 2px; }
 
-        /* Wiki 矩阵 */
+        /* Wiki 矩阵 (仅在二级页面显示) */
+        .wiki-tools-container { padding: 15px; background: #fff; border-bottom: 1px solid #eee; }
         .tool-scroll-row { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
         .tool-btn { min-width: 60px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .tool-icon { width: 45px; height: 45px; border-radius: 12px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 5px; border: 1px solid #eee; font-weight: bold; }
@@ -94,14 +95,8 @@
         <div class="news-bar"><span class="news-tag">快讯</span><span class="news-content" id="news-text">正在接入全球 AI 资讯网络...</span></div>
 
         <div class="section">
-            <div class="sec-head"><span class="sec-title">📖 AI 百科与工具库</span><span class="sec-more" onclick="goWiki('all')">全部 ></span></div>
-            <div style="display:flex; padding:15px; justify-content:space-around;">
-                <div class="tool-btn" onclick="goWiki('wiki_gpt')"><div class="tool-icon" style="background:#74aa9c; color:#fff;">G</div><div class="tool-name">GPT</div></div>
-                <div class="tool-btn" onclick="goWiki('wiki_deepseek')"><div class="tool-icon" style="background:#4f46e5; color:#fff;">D</div><div class="tool-name">DeepSeek</div></div>
-                <div class="tool-btn" onclick="goWiki('wiki_mj')"><div class="tool-icon" style="background:#333; color:#fff;">MJ</div><div class="tool-name">Midjourney</div></div>
-                <div class="tool-btn" onclick="goWiki('wiki_sora')"><div class="tool-icon" style="background:#000; color:#fff;">S</div><div class="tool-name">Sora</div></div>
-            </div>
-            <div class="row-item" onclick="goWiki('all')"><div class="row-icon">📚</div><div class="row-info"><div class="row-t">进入完整知识库</div><div class="row-d">查看 20+ 主流工具教程</div></div></div>
+            <div class="sec-head"><span class="sec-title">📖 AI 百科与工具库</span><span class="sec-more" onclick="goWiki('all')">进入库 ></span></div>
+            <div class="row-item" onclick="goWiki('all')"><div class="row-icon">📚</div><div class="row-info"><div class="row-t">进入完整知识库</div><div class="row-d">查看 ChatGPT, DeepSeek, MJ 等 20+ 主流工具教程</div></div></div>
             <div class="row-item" onclick="goWiki('wiki_prac')"><div class="row-icon">⚔️</div><div class="row-info"><div class="row-t">实战演练手册</div><div class="row-d">手把手教你解决具体痛点</div></div></div>
         </div>
 
@@ -145,6 +140,19 @@
 
     <div id="view-list" class="view">
         <div class="sub-nav"><span class="back-icon" onclick="goBack('home')">‹</span><span class="page-title" id="list-title">板块</span></div>
+        
+        <div id="wiki-tools" style="display:none;">
+            <div class="wiki-tools-container">
+                <div style="display:flex; justify-content:space-around;">
+                    <div class="tool-btn" onclick="filterWiki('gpt')"><div class="tool-icon" style="background:#74aa9c; color:#fff;">G</div><div class="tool-name">GPT</div></div>
+                    <div class="tool-btn" onclick="filterWiki('deepseek')"><div class="tool-icon" style="background:#4f46e5; color:#fff;">D</div><div class="tool-name">DeepSeek</div></div>
+                    <div class="tool-btn" onclick="filterWiki('mj')"><div class="tool-icon" style="background:#333; color:#fff;">MJ</div><div class="tool-name">Midjourney</div></div>
+                    <div class="tool-btn" onclick="filterWiki('sora')"><div class="tool-icon" style="background:#000; color:#fff;">S</div><div class="tool-name">Sora</div></div>
+                </div>
+                <div style="text-align:center; font-size:10px; color:#999; margin-top:10px;">点击图标筛选工具教程</div>
+            </div>
+        </div>
+
         <div id="thread-container"></div>
     </div>
 
@@ -269,10 +277,31 @@
         
         function goList(cat, title) {
             document.getElementById('list-title').innerText = title;
+            // 默认隐藏 Wiki 矩阵，只有 goWiki 时才显示
+            document.getElementById('wiki-tools').style.display = 'none';
             curCat = cat; loadThreadList(cat); showView('view-list');
         }
+        
         function goWiki(subCat) {
-            goList(subCat === 'all' ? 'wiki' : subCat, 'AI 百科');
+            document.getElementById('list-title').innerText = 'AI 百科与工具库';
+            // 显示 Wiki 矩阵
+            document.getElementById('wiki-tools').style.display = 'block';
+            filterWiki(subCat === 'all' ? null : subCat); 
+            showView('view-list');
+        }
+
+        function filterWiki(toolTag) {
+            const box = document.getElementById('thread-container');
+            box.innerHTML = '<div style="padding:30px;text-align:center;color:#999;">筛选中...</div>';
+            let q = sb.from('posts').select('*, profiles(nickname)').order('created_at',{ascending:false}).limit(30);
+            
+            if(toolTag) q = q.ilike('category', `%${toolTag}%`);
+            else q = q.ilike('category', 'wiki%');
+            
+            q.then(({data}) => {
+                if(!data||!data.length) box.innerHTML='<div style="padding:30px;text-align:center;color:#ccc;">暂无内容</div>';
+                else box.innerHTML = data.map(p => `<div class="row-item" onclick="goDetail('${p.id}')"><div class="row-info"><div class="row-t">${p.title}</div><div class="row-d">${p.profiles?.nickname||'匿名'}</div></div></div>`).join('');
+            });
         }
 
         // --- 数据逻辑 ---
@@ -303,7 +332,7 @@
                 document.getElementById('d-title').innerText = p.title;
                 document.getElementById('d-author').innerText = p.profiles?.nickname || '匿名';
                 document.getElementById('d-date').innerText = new Date(p.created_at).toLocaleDateString();
-                document.getElementById('d-body').innerHTML = formatContent(p.content); // 修复核心
+                document.getElementById('d-body').innerHTML = formatContent(p.content); // 核心修复
                 
                 if(p.image_url) { 
                     document.getElementById('d-img').src = p.image_url; 
