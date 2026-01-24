@@ -6,7 +6,7 @@
     <title>元点社区 | 硬核实战</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* ================= V4.5 终极修复版：排版引擎 & 权限修复 ================= */
+        /* ================= V4.6 完整复刻修复版 ================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background-color: #f7f5f0; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; margin: 0; padding-bottom: 80px; line-height: 1.5; }
         
@@ -21,8 +21,19 @@
         .user-nav { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #666; cursor: pointer; }
         .u-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; object-fit: cover; background: #eee; }
         
+        .slogan-bar { background: #8b0000; color: #fff; text-align: center; padding: 6px; font-size: 11px; letter-spacing: 1px; }
+        
+        /* Token 仪表盘 */
+        .token-dash { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666; }
+        .tk-num { font-family: monospace; font-weight: bold; color: #d35400; font-size: 13px; }
+
+        /* 新闻条 */
+        .news-bar { background: #fff8e1; color: #5d4037; border-bottom: 1px solid #e0e0e0; padding: 8px 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; }
+        .news-tag { background: #d35400; color: #fff; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; flex-shrink: 0; }
+        .news-content { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+
         /* 核心样式 */
-        .section { background: #fff; margin: 12px 10px; border: 1px solid #dcdacb; border-radius: 4px; overflow: hidden; }
+        .section { background: #fff; margin: 12px 10px; border: 1px solid #dcdacb; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .sec-head { background: #fcfbf9; padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .sec-title { font-weight: 800; font-size: 14px; color: #444; border-left: 4px solid #8b0000; padding-left: 8px; }
         .sec-more { font-size: 11px; color: #999; cursor: pointer; }
@@ -33,10 +44,9 @@
         .row-d { font-size: 11px; color: #888; margin-top: 2px; }
 
         /* Wiki 矩阵 */
-        .wiki-tools-container { padding: 15px; background: #fff; border-bottom: 1px solid #eee; }
         .tool-scroll-row { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
         .tool-btn { min-width: 60px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .tool-icon { width: 45px; height: 45px; border-radius: 12px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 5px; border: 1px solid #eee; }
+        .tool-icon { width: 45px; height: 45px; border-radius: 12px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 5px; border: 1px solid #eee; font-weight: bold; }
         .tool-name { font-size: 10px; color: #333; font-weight: bold; }
 
         /* 文章排版引擎 (核心修复) */
@@ -45,6 +55,13 @@
         .d-content h3 { font-size: 15px; font-weight: bold; margin: 15px 0 5px 0; color: #444; }
         .d-content p { margin-bottom: 10px; }
         .d-content b { color: #8b0000; background: #fff0f0; padding: 0 2px; }
+
+        /* 特殊板块 */
+        .prov-box { padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .prov-tag { border: 1px solid #e0e0e0; background: #fff; border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #555; cursor: pointer; }
+        .gallery-wrap { display: flex; overflow-x: auto; gap: 10px; padding: 15px; }
+        .gallery-card { min-width: 120px; height: 80px; border: 1px dashed #ccc; background: #fafafa; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; font-size: 11px; cursor: pointer; flex-shrink: 0; }
+        .footer { text-align: center; padding: 40px 20px; color: #999; font-size: 11px; }
 
         /* 其他通用 */
         .sub-nav { background: #fff; height: 44px; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 10px; position: sticky; top: 0; z-index: 101; }
@@ -65,7 +82,17 @@
             <div class="logo">元点社区</div>
             <div class="user-nav" id="auth-area" onclick="handleUserClick()"><span>[ 点击登录 ]</span></div>
         </div>
+        <div class="slogan-bar">科技向善 · 从 0 到 1 · 见证未来</div>
         
+        <div class="token-dash">
+            <div>🔥 算力池总量</div><div class="tk-num">21,045,992</div>
+        </div>
+        <div class="token-dash" style="border-top:none; padding-top:0;">
+            <div>⛏️ 今日已产出</div><div class="tk-num" style="color:#27ae60">+1,204</div>
+        </div>
+
+        <div class="news-bar"><span class="news-tag">快讯</span><span class="news-content" id="news-text">正在接入全球 AI 资讯网络...</span></div>
+
         <div class="section">
             <div class="sec-head"><span class="sec-title">📖 AI 百科与工具库</span><span class="sec-more" onclick="goWiki('all')">全部 ></span></div>
             <div style="display:flex; padding:15px; justify-content:space-around;">
@@ -75,17 +102,45 @@
                 <div class="tool-btn" onclick="goWiki('wiki_sora')"><div class="tool-icon" style="background:#000; color:#fff;">S</div><div class="tool-name">Sora</div></div>
             </div>
             <div class="row-item" onclick="goWiki('all')"><div class="row-icon">📚</div><div class="row-info"><div class="row-t">进入完整知识库</div><div class="row-d">查看 20+ 主流工具教程</div></div></div>
+            <div class="row-item" onclick="goWiki('wiki_prac')"><div class="row-icon">⚔️</div><div class="row-info"><div class="row-t">实战演练手册</div><div class="row-d">手把手教你解决具体痛点</div></div></div>
+        </div>
+
+        <div class="section">
+            <div class="sec-head"><span class="sec-title">📍 全国组织 (省份)</span></div>
+            <div class="prov-box" id="prov-list"></div>
+        </div>
+
+        <div class="section">
+            <div class="sec-head"><span class="sec-title">⚡ 垂直专区</span></div>
+            <div class="row-item" onclick="goList('art','AI 绘画 / 音乐')"><div class="row-icon">🎨</div><div class="row-info"><div class="row-t">AI 绘画 / 音乐</div><div class="row-d">Midjourney, Stable Diffusion, Suno</div></div></div>
+            <div class="row-item" onclick="goList('video','AI 视频 / 动画')"><div class="row-icon">🎬</div><div class="row-info"><div class="row-t">AI 视频 / 动画</div><div class="row-d">Sora, Runway, Pika</div></div></div>
+            <div class="row-item" onclick="goList('text','AI 写作 / 论文')"><div class="row-icon">📝</div><div class="row-info"><div class="row-t">AI 写作 / 论文</div></div></div>
+            <div class="row-item" onclick="goList('dev','训练 / 开发')"><div class="row-icon">💻</div><div class="row-info"><div class="row-t">训练 / 开发</div></div></div>
         </div>
 
         <div class="section" style="border-color:#d4a373;">
             <div class="sec-head" style="background:#fffaf0;"><span class="sec-title" style="color:#d35400;">💰 价值与变现</span><span class="sec-more" onclick="goList('money','变现专区')">进入 ></span></div>
+            <div style="padding:10px; background:#fffbe6; color:#b7950b; font-size:11px; border-bottom:1px solid #eee;">⚠️ 严禁售卖违禁内容，违者封号并配合调查！</div>
             <div class="row-item" onclick="goList('money_help','付费求助')"><div class="row-icon" style="color:#d35400">🆘</div><div class="row-info"><div class="row-t">付费求助</div></div></div>
             <div class="row-item" onclick="goList('money_sale','干货售卖')"><div class="row-icon" style="color:#d35400">🛍️</div><div class="row-info"><div class="row-t">干货售卖</div></div></div>
         </div>
 
-        <div class="section"><div class="sec-head"><span class="sec-title">👤 我的</span></div>
-            <div class="row-item" onclick="handleUserClick()"><div class="row-icon">⚙️</div><div class="row-info"><div class="row-t">进入个人中心</div><div class="row-d">查看等级、Token、足迹</div></div></div>
+        <div class="section">
+            <div class="sec-head"><span class="sec-title">✨ 作品集展示</span><span class="sec-more" onclick="goList('showcase','作品集')">全部 ></span></div>
+            <div class="gallery-wrap">
+                <div class="gallery-card" onclick="openPostModal('showcase')"><span style="font-size:20px;">➕</span><span style="margin-top:5px;">发布</span></div>
+                <div class="gallery-card" onclick="goList('showcase','作品集')">🚀<br>应用</div>
+                <div class="gallery-card" onclick="goList('showcase','作品集')">🎨<br>画廊</div>
+            </div>
         </div>
+
+        <div class="section"><div class="sec-head"><span class="sec-title">🎯 任务悬赏</span><span class="sec-more" onclick="goList('bounty','悬赏')">接单 ></span></div><div id="bounty-preview" class="row-item" style="color:#999;justify-content:center;">暂无悬赏</div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">🤝 平台共创</span></div><div class="row-item" onclick="goList('coop','共创')"><div class="row-icon">🚩</div><div class="row-info"><div class="row-t">组队参赛 / 合作开发</div></div></div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">🏆 英雄榜</span></div><div id="rank-box" style="padding:10px;">加载中...</div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">📢 站务</span></div><div class="row-item" onclick="goList('gov','站务')"><div class="row-icon">📬</div><div class="row-info"><div class="row-t">意见反馈</div></div></div></div>
+        <div class="section"><div class="sec-head"><span class="sec-title">📅 大事记</span></div><div id="milestone-box" style="padding:15px;font-size:12px;color:#555;">加载中...</div></div>
+
+        <div class="footer"><p>AI 元点 &copy; 2026</p></div>
     </div>
 
     <div id="view-list" class="view">
@@ -159,35 +214,36 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZHZ4em16Z2d4bHp0dWhpdnZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwNDI5NjAsImV4cCI6MjA4NDYxODk2MH0.nE8dIJv2u1m5JcELnT6kZhjyOhz9ltj3NsfKwkT1Ajw';
         
         let sb = null, user = null, curCat = null, curPid = null;
+        const provs = "京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新台港澳";
 
         // --- 核心：排版渲染引擎 (修复乱码) ---
         function formatContent(text) {
             if(!text) return '';
-            // 1. 转义 HTML 防止 XSS
             let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            // 2. 渲染 Markdown 语法
-            safe = safe.replace(/^# (.*$)/gm, '<h2>$1</h2>'); // 一级标题
-            safe = safe.replace(/^## (.*$)/gm, '<h3>$1</h3>'); // 二级标题
-            safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // 加粗
-            safe = safe.replace(/\n/g, '<br>'); // 换行
+            safe = safe.replace(/^# (.*$)/gm, '<h2>$1</h2>');
+            safe = safe.replace(/^## (.*$)/gm, '<h3>$1</h3>');
+            safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            safe = safe.replace(/\n/g, '<br>');
             return safe;
         }
 
         async function init() {
+            if(!window.supabase) return setTimeout(init, 500);
             sb = window.supabase.createClient(SB_URL, SB_KEY);
             const {data} = await sb.auth.getUser();
             if(data.user) { user = data.user; updateAuthUI(); }
+            
+            const pBox = document.getElementById('prov-list');
+            provs.split('').forEach(p => pBox.innerHTML+=`<div class="prov-tag" onclick="goList('prov_${p}','${p}分舵')">${p}</div>`);
+            
             loadHomeData();
         }
 
         function updateAuthUI() {
-            // 获取用户资料
             sb.from('profiles').select('*').eq('id', user.id).single().then(({data}) => {
                 const nick = data?.nickname || user.email.split('@')[0];
                 const avt = data?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}`;
                 document.getElementById('auth-area').innerHTML = `<img src="${avt}" class="u-avatar"> <span style="font-weight:bold;color:#333;">${nick}</span>`;
-                
-                // 填充个人中心
                 document.getElementById('uc-avatar').src = avt;
                 document.getElementById('uc-nick').innerText = nick;
                 document.getElementById('uc-token').innerText = `Token: ${data?.token_balance || 0}`;
@@ -195,7 +251,12 @@
         }
 
         async function loadHomeData() {
-            // 简单加载逻辑
+            const {data:n} = await sb.from('news').select('*').eq('type','global').limit(1);
+            if(n&&n.length) document.getElementById('news-text').innerText = n[0].content;
+            const {data:m} = await sb.from('news').select('*').eq('type','milestone').limit(3);
+            if(m) document.getElementById('milestone-box').innerHTML = m.map(x=>`<div>• ${new Date(x.created_at).toLocaleDateString()} ${x.content}</div>`).join('');
+            const {data:r} = await sb.from('profiles').select('*').order('token_balance',{ascending:false}).limit(3);
+            if(r) document.getElementById('rank-box').innerHTML = r.map((u,i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #eee;"><span>${i+1}. ${(u.nickname||u.id).substring(0,6)}</span><span style="color:#d35400;font-weight:bold;">${u.token_balance}</span></div>`).join('');
         }
 
         // --- 路由系统 ---
@@ -218,10 +279,7 @@
         async function loadThreadList(cat) {
             const box = document.getElementById('thread-container');
             box.innerHTML = '<div style="padding:30px;text-align:center;color:#999;">加载中...</div>';
-            
             let q = sb.from('posts').select('*, profiles(nickname)').order('created_at', {ascending: false});
-            
-            // 分类筛选修复
             if (cat === 'wiki') q = q.ilike('category', 'wiki%');
             else if (cat) q = q.eq('category', cat);
             
@@ -245,9 +303,7 @@
                 document.getElementById('d-title').innerText = p.title;
                 document.getElementById('d-author').innerText = p.profiles?.nickname || '匿名';
                 document.getElementById('d-date').innerText = new Date(p.created_at).toLocaleDateString();
-                
-                // 核心修复：使用 innerHTML + formatContent 渲染内容
-                document.getElementById('d-body').innerHTML = formatContent(p.content);
+                document.getElementById('d-body').innerHTML = formatContent(p.content); // 修复核心
                 
                 if(p.image_url) { 
                     document.getElementById('d-img').src = p.image_url; 
@@ -291,7 +347,7 @@
             const e = document.getElementById('email').value;
             const p = document.getElementById('pwd').value;
             const {error} = await sb.auth.signInWithPassword({email: e, password: p});
-            if(error) { // 尝试注册
+            if(error) { 
                 const {error: regErr} = await sb.auth.signUp({email: e, password: p});
                 if(regErr) alert(regErr.message);
                 else alert("注册成功，请去邮箱验证！");
@@ -306,7 +362,7 @@
         function handleUserClick() { if(!user) openAuth(); else showView('view-uc'); }
         async function logout() { await sb.auth.signOut(); location.reload(); }
 
-        setTimeout(init, 100);
+        setTimeout(init, 200);
     </script>
 </body>
 </html>
